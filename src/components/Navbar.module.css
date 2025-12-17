@@ -1,0 +1,51 @@
+.nav {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    top: auto;
+    right: auto;
+    transform: none;
+    width: auto;
+    max-width: none;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    align-items: center;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.link {
+    color: var(--foreground);
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.7;
+    transition: opacity 0.3s, color 0.3s;
+    cursor: pointer;
+}
+
+.link:hover {
+    opacity: 1;
+    color: var(--primary);
+}
+
+.contactBtn {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.contactBtn:hover {
+    background: var(--primary-dark, #cc2e2e);
+    /* Fallback to a darker red if var not set */
+}

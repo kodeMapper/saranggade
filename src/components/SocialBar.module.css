@@ -1,0 +1,37 @@
+.socialBar {
+    position: fixed;
+    bottom: 2.15rem;
+    right: 2rem;
+    z-index: 100;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.iconLink {
+    color: var(--foreground);
+    opacity: 0.7;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconLink:hover {
+    opacity: 1;
+    transform: translateY(-3px);
+    color: var(--primary);
+}
+
+@media (max-width: 768px) {
+    .socialBar {
+        display: none;
+        /* Hide on mobile or position differently? Usually bottom bar on mobile */
+    }
+}

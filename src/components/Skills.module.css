@@ -1,0 +1,74 @@
+.skills {
+    padding: 0 1rem;
+    background: var(--background);
+    overflow: hidden;
+    transition: background 0.3s;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--foreground);
+    letter-spacing: 2px;
+}
+
+.marqueeContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+    mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+}
+
+.marquee {
+    display: flex;
+    gap: 1.5rem;
+    width: max-content;
+}
+
+.tag {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.2rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    color: var(--foreground);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.3s;
+}
+
+.tag:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+}
+
+.tag:hover .icon {
+    filter: brightness(0) invert(1);
+    /* Turn icon white on hover */
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    /* In dark mode, some icons might be black, need generic filter? 
+       Simple Icons are usually colored or black. 
+       Let's keep them natural color but check visibility. 
+       Actually, standard is colored. Dark mode background is dark. */
+}
