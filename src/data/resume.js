@@ -119,8 +119,8 @@ export const resumeData = {
     }
   ],
   skills: {
-    languages: ["JavaScript", "Node.js", "Express", "HTML5", "CSS3", "Python", "Java", "C++", "PHP", "MySQL"],
-    tools: ["VS Code", "Git", "GitHub", "Postman", "MongoDB", "Figma", "Vercel", "Render"],
-    frameworks: ["React.js", "Next.js", "TailwindCSS", "Bootstrap", "Framer Motion"]
+    languages: ["JavaScript", "Node", "Express", "HTML", "CSS", "Bootstrap", "Python", "Java", "C", "PHP", "MySQL"],
+    tools: ["VS Code", "Eclipse", "Intellij", "MIT App Inventor", "Postman", "MongoDB"],
+    frameworks: ["Vercel", "Git", "GitHub", "MS Power BI", "Tableau", "Star UML", "Render"]
   }
 };

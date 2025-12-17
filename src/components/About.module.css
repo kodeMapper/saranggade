@@ -1,7 +1,7 @@
 .about {
     padding: 2rem 1rem;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: auto auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -13,7 +13,7 @@
     font-family: var(--font-outfit);
     font-size: 1rem;
     letter-spacing: 0.5rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--section-title);
     margin-bottom: 4rem;
     text-transform: uppercase;
 }
@@ -63,7 +63,7 @@
     font-family: 'Fira Code', monospace;
     font-size: 2.5rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--foreground);
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
@@ -118,14 +118,14 @@
 
 .greeting {
     font-size: 1.1rem;
-    color: #fff;
+    color: var(--foreground);
     margin-bottom: 0.5rem;
 }
 
 .bioText {
     font-size: 1.05rem;
     line-height: 1.7;
-    color: #94a3b8;
+    color: var(--text-muted);
     /* Slate-400 equivalent */
 }
 

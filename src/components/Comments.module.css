@@ -5,10 +5,14 @@
 }
 
 .title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
     text-align: center;
-    color: var(--foreground);
+    font-family: var(--font-outfit);
+    font-size: 1.5rem;
+    letter-spacing: 1rem;
+    font-weight: 300;
+    color: var(--section-title);
+    margin-bottom: 4rem;
+    text-transform: uppercase;
 }
 
 .inputGroup {

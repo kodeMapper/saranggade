@@ -12,7 +12,7 @@ const Projects = ({ data }) => {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
       >
-        Featured Projects
+        Latest Work
       </motion.h2>
 
       <div className={styles.grid}>

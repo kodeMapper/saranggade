@@ -39,7 +39,7 @@ const Comments = () => {
 
   return (
     <section id="comments" className={styles.comments}>
-      <h2 className={styles.title}>Visitor Comments</h2>
+      <h2 className={styles.title}>Visitor Feedback</h2>
       
       <form className={styles.inputGroup} onSubmit={handleSubmit}>
         <input 

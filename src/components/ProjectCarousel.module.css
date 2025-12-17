@@ -7,9 +7,13 @@
 
 .title {
     text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 3rem;
-    color: var(--foreground);
+    font-family: var(--font-outfit);
+    font-size: 1.5rem;
+    letter-spacing: 1rem;
+    color: var(--section-title);
+    margin-bottom: 4rem;
+    text-transform: uppercase;
+    font-weight: 300;
 }
 
 .carouselTrack {

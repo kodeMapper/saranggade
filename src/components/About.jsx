@@ -6,9 +6,9 @@ import styles from './About.module.css';
 const About = ({ data }) => {
   return (
     <section id="about" className={styles.about}>
-        <div className={styles.sectionTitle}>
+        {/* <div className={styles.sectionTitle}>
              A B O U T
-        </div>
+        </div> */}
 
         <div className={styles.contentWrapper}>
             {/* Left Column: Image */}

@@ -24,6 +24,10 @@
   --hero-text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   --hero-intro-color: rgba(255, 255, 255, 0.9);
   /* No backdrop in dark mode */
+
+  /* Text Utilities */
+  --section-title: rgba(255, 255, 255, 0.6);
+  --text-muted: #94a3b8;
 }
 
 [data-theme='light'] {
@@ -53,6 +57,12 @@
   --hero-text-shadow: 0 2px 20px rgba(255, 255, 255, 0.8);
   /* White glow to separate text from image */
   /* Light grey backdrop behind text */
+
+  /* Text Utilities (Light) */
+  --section-title: rgba(0, 0, 0, 0.4);
+  /* Subtle dark for light mode */
+  --text-muted: #475569;
+  /* Slate 600 for readability */
 }
 
 * {
