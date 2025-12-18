@@ -10,6 +10,8 @@ import Comments from "../components/Comments";
 // import LiveStatus from "../components/LiveStatus";
 import Contact from "../components/Contact";
 
+import CodolioProfile from "../components/CodolioProfile";
+
 export default function Home() {
   return (
     <main className="snap-container">
@@ -34,6 +36,10 @@ export default function Home() {
 
       <section id="projects" className="snap-section">
         <StackingCarousel data={resumeData} />
+      </section>
+
+      <section className="snap-section">
+        <CodolioProfile />
       </section>
 
       {/* Grouping Comments and Contact if they are small, or separate? 

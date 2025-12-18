@@ -1,0 +1,234 @@
+.codolio {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--background);
+    padding: 0 1rem;
+    overflow: hidden;
+    transition: background 0.3s;
+}
+
+.title {
+    text-align: left;
+    font-family: var(--font-outfit);
+    font-size: 2rem;
+    /* Slightly larger for column header */
+    letter-spacing: 0.5rem;
+    color: var(--section-title);
+    margin-bottom: 2rem;
+    /* Reduced margin */
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+/* Grid Layout for Content */
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    width: 100%;
+    max-width: 1200px;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+}
+
+/* LEFT COLUMN: Codolio Card */
+.cardColumn {
+    display: flex;
+    flex-direction: column;
+    /* Stack Toggles + Image */
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 7rem;
+}
+
+.toggleContainer {
+    display: flex;
+    background: #1a1a1a;
+    padding: 0.25rem;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    gap: 0.25rem;
+}
+
+.toggleBtn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.4rem;
+    /* More padding for better pill shape */
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-outfit);
+    font-size: 0.9rem;
+    /* Slightly larger text */
+    font-weight: 500;
+    color: #a3a3a3;
+    transition: all 0.3s ease;
+    outline: none;
+    border-radius: 40px;
+    /* Crucial for pill shape */
+}
+
+/* Flip Animation Styles */
+.flipContainer {
+    width: 320px;
+    height: 600px;
+    /* Approximate height based on images */
+    perspective: 1000px;
+    position: relative;
+    border-radius: 20px;
+}
+
+.flipper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    border-radius: 20px;
+}
+
+.cardImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    border-radius: 20px;
+}
+
+.toggleBtn.active {
+    color: #fff;
+    background: #ff6b00;
+    /* Simple orange background again */
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+}
+
+.toggleBtn:hover:not(.active) {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.toggleText {
+    /* No longer need high z-index tricks */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cardImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    border-radius: 20px;
+}
+
+/* RIGHT COLUMN: Coding Platforms */
+.infoColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    color: var(--foreground);
+    text-align: left;
+}
+
+.subHelp {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-weight: 300;
+}
+
+.platformList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.platformCard {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.platformCard:hover {
+    background: var(--glass-bg);
+    border-color: var(--primary);
+    transform: translateX(10px);
+}
+
+.platformIcon {
+    width: 40px;
+    height: 40px;
+    color: var(--primary);
+}
+
+.platformInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.platformName {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.platformDetail {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Mobile adjustments */
+@media (max-width: 900px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .contentGrid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .cardColumn {
+        order: 2;
+        /* Put card below info on mobile? or keep top? User said keep on left (desktop), so top (mobile) is usually standard. Let's keep order 1. */
+        transform: scale(0.8);
+    }
+
+    .infoColumn {
+        text-align: center;
+        align-items: center;
+    }
+
+    .platformCard {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .cropWrapper {
+        width: 100%;
+        max-width: 380px;
+        height: 750px;
+    }
+
+    .iframe {
+        width: 600px;
+        /* Smaller virtual viewport for mobile styling */
+        top: -100px;
+    }
+}
