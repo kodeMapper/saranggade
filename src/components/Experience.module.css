@@ -27,6 +27,19 @@
     border-left: 2px solid var(--glass-border);
 }
 
+@media (max-width: 768px) {
+    .experience {
+        width: 100%;
+        /* Section takes full width */
+    }
+
+    .timeline {
+        width: 80vw;
+        /* Content constrained */
+        margin: 0 auto;
+    }
+}
+
 .item {
     margin-bottom: 3rem;
     position: relative;

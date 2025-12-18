@@ -214,9 +214,15 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .card {
-        width: 90%;
+        width: 80vw;
+        max-width: 400px;
+        /* Prevent it getting huge on tablets */
         height: auto;
         min-height: 500px;
+        left: 50% !important;
+        /* Force centering despite absolute positioning */
+        transform: translateX(-50%) !important;
+        /* Center it */
     }
 
     .carouselContainer {

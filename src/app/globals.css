@@ -124,10 +124,28 @@ a {
   width: 100%;
   scroll-snap-align: start;
   position: relative;
-  /* Ensure centering of content if needed, or just container */
   display: flex;
   flex-direction: column;
-  /* Center content vertically by default? */
   justify-content: center;
   overflow: hidden;
+}
+
+/* Disable snap and fixed heights on mobile for better content flow */
+@media (max-width: 768px) {
+  .snap-container {
+    height: auto;
+    overflow-y: auto;
+    scroll-snap-type: none;
+    /* Disable snap */
+  }
+
+  .snap-section {
+    height: auto;
+    min-height: 100vh;
+    scroll-snap-align: none;
+    overflow: visible;
+    /* Allow content to grow */
+    padding: 4rem 0;
+    /* Add breathing room */
+  }
 }

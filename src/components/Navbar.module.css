@@ -20,6 +20,26 @@
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
+@media (max-width: 768px) {
+    .nav {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 1.5rem;
+        width: 90%;
+        max-width: 400px;
+        padding: 0.75rem 1rem;
+        gap: 1rem;
+        justify-content: space-evenly;
+        width: 90vw;
+        /* Navbar needs slightly more than 80vw to be usable */
+        max-width: 350px;
+    }
+
+    .link {
+        font-size: 0.8rem;
+    }
+}
+
 .link {
     color: var(--foreground);
     font-size: 0.9rem;

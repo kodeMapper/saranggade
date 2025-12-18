@@ -12,6 +12,34 @@
     z-index: 1;
 }
 
+@media (max-width: 768px) {
+    .container {
+        padding-top: 15vh;
+        width: 80vw;
+        /* User request constraint */
+        max-width: 80vw;
+        margin: 0 auto;
+    }
+
+    .bigName {
+        margin-bottom: 2rem;
+        font-size: clamp(3rem, 15vw, 6rem);
+        /* Reduced for mobile */
+        flex-direction: column;
+        /* Stack name parts to prevent overlap */
+        gap: 0;
+    }
+
+    .introLine {
+        font-size: 0.9rem;
+        /* Smaller tagline */
+        width: 100%;
+        white-space: normal;
+        /* Allow wrapping */
+        padding: 0 1rem;
+    }
+}
+
 .backgroundLayer {
     position: absolute;
     top: 0;

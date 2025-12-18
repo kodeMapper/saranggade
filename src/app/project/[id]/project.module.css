@@ -7,6 +7,12 @@
     transition: background 0.3s, color 0.3s;
 }
 
+@media (max-width: 768px) {
+    .container {
+        padding: 4rem 1rem;
+    }
+}
+
 .navBar {
     max-width: 1200px;
     margin: 0 auto 3rem auto;

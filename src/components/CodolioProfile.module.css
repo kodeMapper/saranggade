@@ -195,40 +195,58 @@
 
 /* Mobile adjustments */
 @media (max-width: 900px) {
+    .codolio {
+        min-height: auto;
+        height: auto;
+        /* Override the fixed 100vh on mobile */
+        padding: 6rem 1rem 4rem 1rem;
+        /* Increased top padding */
+        overflow: visible;
+    }
+
     .title {
         font-size: 2rem;
+        text-align: center;
     }
 
     .contentGrid {
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: 3rem;
+        width: 80vw;
+        margin: 0 auto;
     }
 
     .cardColumn {
-        order: 2;
-        /* Put card below info on mobile? or keep top? User said keep on left (desktop), so top (mobile) is usually standard. Let's keep order 1. */
-        transform: scale(0.8);
+        order: 1;
+        /* Keep cards on top */
+        transform: scale(0.9);
+        width: 100%;
+        margin-top: 2rem;
+    }
+
+    .flipContainer {
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        aspect-ratio: 320/600;
     }
 
     .infoColumn {
         text-align: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .platformList {
+        width: 100%;
         align-items: center;
     }
 
     .platformCard {
         width: 100%;
         max-width: 400px;
-    }
-
-    .cropWrapper {
-        width: 100%;
-        max-width: 380px;
-        height: 750px;
-    }
-
-    .iframe {
-        width: 600px;
-        /* Smaller virtual viewport for mobile styling */
-        top: -100px;
+        justify-content: center;
+        /* Center content in card */
+        text-align: left;
     }
 }
