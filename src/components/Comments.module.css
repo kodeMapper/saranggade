@@ -32,8 +32,8 @@
     padding: 0.8rem;
     border-radius: 8px;
     border: 1px solid var(--glass-border);
-    background: rgba(0, 0, 0, 0.3);
-    color: #fff;
+    background: var(--glass-bg);
+    color: var(--foreground);
     font-family: inherit;
 }
 
@@ -65,10 +65,12 @@
 }
 
 .commentCard {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--glass-bg);
     padding: 1rem;
     border-radius: 8px;
     border-left: 3px solid var(--accent);
+    border: 1px solid var(--glass-border);
+    border-left-width: 3px;
 }
 
 .header {
@@ -76,15 +78,16 @@
     justify-content: space-between;
     margin-bottom: 0.5rem;
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: var(--text-muted);
 }
 
 .author {
     font-weight: 600;
-    color: #fff;
+    color: var(--foreground);
 }
 
 .text {
-    color: #e2e8f0;
+    color: var(--foreground);
+    opacity: 0.9;
     font-size: 0.95rem;
 }

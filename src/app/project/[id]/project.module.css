@@ -1,0 +1,367 @@
+.container {
+    padding: 6rem 2rem;
+    min-height: 100vh;
+    background: #000;
+    /* Deep black background */
+    color: #e2e8f0;
+    font-family: var(--font-outfit);
+}
+
+.navBar {
+    max-width: 1200px;
+    margin: 0 auto 3rem auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.backLink {
+    color: #94a3b8;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.backLink:hover {
+    color: #fff;
+}
+
+.navLinks {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.navItem {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.navItem:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Main Grid Layout */
+.gridContainer {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Common Card Style */
+.card {
+    background: #0a0a0a;
+    /* Slightly lighter than pure black */
+    border: 1px solid #262626;
+    border-radius: 24px;
+    padding: 2.5rem;
+}
+
+/* Hero Section */
+.heroCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.label {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #525252;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+}
+
+.summary {
+    font-size: 1.1rem;
+    color: #a3a3a3;
+    line-height: 1.6;
+    max-width: 90%;
+    margin-bottom: 3rem;
+}
+
+.highlightsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.highlightItem {
+    background: #171717;
+    border: 1px solid #262626;
+    padding: 1.2rem;
+    border-radius: 16px;
+    transition: transform 0.2s;
+}
+
+.highlightItem:hover {
+    transform: translateY(-3px);
+    border-color: #404040;
+}
+
+.highlightNumber {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #525252;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.highlightText {
+    font-size: 0.95rem;
+    color: #e5e5e5;
+    font-weight: 500;
+}
+
+/* Sidebar Section */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.actionsCard {
+    background: #0a0a0a;
+    border: 1px solid #262626;
+    border-radius: 24px;
+    padding: 2rem;
+}
+
+.actionTitle {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #737373;
+    margin-bottom: 1.5rem;
+}
+
+
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.statBox {
+    background: #171717;
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.statLabel {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #737373;
+    margin-bottom: 0.5rem;
+    display: block;
+    letter-spacing: 1px;
+}
+
+.statValue {
+    font-size: 2rem;
+    color: #fff;
+    font-weight: 600;
+}
+
+.techList {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.techIcon {
+    width: 40px;
+    height: 40px;
+    background: #171717;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #262626;
+}
+
+.techIcon img {
+    width: 20px;
+    height: 20px;
+    filter: invert(1);
+}
+
+/* Gallery Section */
+.gallerySection {
+    max-width: 1200px;
+    margin: 4rem auto 0 auto;
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    border: 1px solid #262626;
+    background: #0a0a0a;
+}
+
+.galleryTrack {
+    display: flex;
+    width: 100%;
+}
+
+.galleryImageContainer {
+    min-width: 100%;
+    height: 500px;
+    position: relative;
+    /* For image fill */
+}
+
+.galleryImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.galleryControls {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    z-index: 10;
+}
+
+.galleryBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+}
+
+.galleryBtn:hover {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: #3b82f6;
+    /* Blue border */
+    color: #3b82f6;
+}
+
+/* Content Section (Below Hero) */
+.contentRow {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 1.5rem auto 0 auto;
+}
+
+.contentCard {
+    background: #0a0a0a;
+    border: 1px solid #262626;
+    border-radius: 24px;
+    padding: 3rem;
+}
+
+.sectionHeading {
+    font-size: 1.8rem;
+    color: #fff;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+/* Features List */
+.featureList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.featureItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #171717;
+}
+
+.featureIndex {
+    font-family: monospace;
+    color: #525252;
+    font-size: 1rem;
+}
+
+.featureText {
+    color: #d4d4d4;
+    font-size: 1rem;
+}
+
+/* Stack Reasoning */
+.stackGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.stackItem {
+    background: #171717;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid #262626;
+}
+
+.stackHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.stackName {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.stackReason {
+    color: #a3a3a3;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+
+    .gridContainer,
+    .contentRow {
+        grid-template-columns: 1fr;
+    }
+
+    .title {
+        font-size: 2.5rem;
+    }
+
+    .sidebar {
+        order: -1;
+        /* Put stats on top on mobile? Or bottom? Let's keep normally but maybe below hero */
+        order: 1;
+    }
+}

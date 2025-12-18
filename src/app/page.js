@@ -4,10 +4,10 @@ import SocialBar from "../components/SocialBar";
 import Hero from "../components/Hero";
 import About from "../components/About";
 import Experience from "../components/Experience";
-import ProjectCarousel from "../components/ProjectCarousel";
+import StackingCarousel from "../components/StackingCarousel";
 import Skills from "../components/Skills";
 import Comments from "../components/Comments";
-import LiveStatus from "../components/LiveStatus";
+// import LiveStatus from "../components/LiveStatus";
 import Contact from "../components/Contact";
 
 export default function Home() {
@@ -33,7 +33,7 @@ export default function Home() {
       </section>
 
       <section id="projects" className="snap-section">
-        <ProjectCarousel data={resumeData} />
+        <StackingCarousel data={resumeData} />
       </section>
 
       {/* Grouping Comments and Contact if they are small, or separate? 
@@ -49,7 +49,7 @@ export default function Home() {
         <Contact data={resumeData} />
       </section>
 
-      <LiveStatus />
+      {/* <LiveStatus /> */}
     </main>
   );
 }

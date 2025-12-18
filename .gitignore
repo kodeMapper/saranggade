@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+./src/components/Projects.module.css
+./src/components/Projets.jsx
+./src/components/ProjectCarousel.module.css
+./src/components/ProjectCarousel.jsx
+

@@ -53,6 +53,13 @@ const Contact = ({ data }) => {
           </motion.a>
         ))}
       </div>
+
+      <div className={styles.footerText}>
+          website designed and developed by 
+          <a href="https://www.linkedin.com/in/sarang-gade" target="_blank" rel="noopener noreferrer">
+             Sarang <span style={{ fontSize: '0.9em' }}>↗</span>
+          </a>
+      </div>
     </section>
   );
 };
