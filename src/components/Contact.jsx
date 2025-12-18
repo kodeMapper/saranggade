@@ -8,7 +8,7 @@ const Contact = ({ data }) => {
   const socialLinks = [
     { name: 'GitHub', icon: <Github />, url: data.personalInfo.github },
     { name: 'LinkedIn', icon: <Linkedin />, url: data.personalInfo.linkedin },
-    { name: 'Twitter', icon: <Twitter />, url: data.personalInfo.twitter || '#' }, // Placeholder if not in resume
+    { name: 'Twitter', icon: <Twitter />, url: data.personalInfo.twitter || '#' },
     { name: 'Email', icon: <Mail />, url: `mailto:${data.personalInfo.email}` },
   ];
 

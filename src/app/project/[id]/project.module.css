@@ -1,10 +1,10 @@
 .container {
     padding: 6rem 2rem;
     min-height: 100vh;
-    background: #000;
-    /* Deep black background */
-    color: #e2e8f0;
+    background: var(--background);
+    color: var(--foreground);
     font-family: var(--font-outfit);
+    transition: background 0.3s, color 0.3s;
 }
 
 .navBar {
@@ -16,7 +16,7 @@
 }
 
 .backLink {
-    color: #94a3b8;
+    color: var(--text-muted);
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -26,23 +26,24 @@
 }
 
 .backLink:hover {
-    color: #fff;
+    color: var(--foreground);
 }
 
 .navLinks {
     display: flex;
     gap: 1.5rem;
+    align-items: center;
 }
 
 .navItem {
-    color: #94a3b8;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 0.9rem;
     transition: color 0.3s;
 }
 
 .navItem:hover {
-    color: #fff;
+    color: var(--foreground);
     text-decoration: underline;
 }
 
@@ -57,11 +58,11 @@
 
 /* Common Card Style */
 .card {
-    background: #0a0a0a;
-    /* Slightly lighter than pure black */
-    border: 1px solid #262626;
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 24px;
     padding: 2.5rem;
+    transition: background 0.3s, border-color 0.3s;
 }
 
 /* Hero Section */
@@ -75,7 +76,7 @@
     font-size: 0.75rem;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #525252;
+    color: var(--text-muted);
     margin-bottom: 2rem;
     font-weight: 600;
 }
@@ -83,14 +84,14 @@
 .title {
     font-size: 3.5rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--foreground);
     margin-bottom: 1.5rem;
     line-height: 1.1;
 }
 
 .summary {
     font-size: 1.1rem;
-    color: #a3a3a3;
+    color: var(--text-muted);
     line-height: 1.6;
     max-width: 90%;
     margin-bottom: 3rem;
@@ -103,29 +104,29 @@
 }
 
 .highlightItem {
-    background: #171717;
-    border: 1px solid #262626;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     padding: 1.2rem;
     border-radius: 16px;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background 0.3s;
 }
 
 .highlightItem:hover {
     transform: translateY(-3px);
-    border-color: #404040;
+    border-color: var(--primary);
 }
 
 .highlightNumber {
     font-size: 0.7rem;
     text-transform: uppercase;
-    color: #525252;
+    color: var(--text-muted);
     margin-bottom: 0.5rem;
     display: block;
 }
 
 .highlightText {
     font-size: 0.95rem;
-    color: #e5e5e5;
+    color: var(--foreground);
     font-weight: 500;
 }
 
@@ -137,8 +138,8 @@
 }
 
 .actionsCard {
-    background: #0a0a0a;
-    border: 1px solid #262626;
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 24px;
     padding: 2rem;
 }
@@ -147,7 +148,7 @@
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #737373;
+    color: var(--text-muted);
     margin-bottom: 1.5rem;
 }
 
@@ -161,7 +162,7 @@
 }
 
 .statBox {
-    background: #171717;
+    background: var(--glass-bg);
     border-radius: 16px;
     padding: 1.5rem;
 }
@@ -169,7 +170,7 @@
 .statLabel {
     font-size: 0.7rem;
     text-transform: uppercase;
-    color: #737373;
+    color: var(--text-muted);
     margin-bottom: 0.5rem;
     display: block;
     letter-spacing: 1px;
@@ -177,7 +178,7 @@
 
 .statValue {
     font-size: 2rem;
-    color: #fff;
+    color: var(--foreground);
     font-weight: 600;
 }
 
@@ -191,18 +192,18 @@
 .techIcon {
     width: 40px;
     height: 40px;
-    background: #171717;
+    background: var(--glass-bg);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #262626;
+    border: 1px solid var(--glass-border);
 }
 
 .techIcon img {
     width: 20px;
     height: 20px;
-    filter: invert(1);
+    filter: var(--icon-invert);
 }
 
 /* Gallery Section */
@@ -212,8 +213,8 @@
     position: relative;
     overflow: hidden;
     border-radius: 24px;
-    border: 1px solid #262626;
-    background: #0a0a0a;
+    border: 1px solid var(--glass-border);
+    background: var(--card-bg);
 }
 
 .galleryTrack {
@@ -260,9 +261,8 @@
 
 .galleryBtn:hover {
     background: rgba(0, 0, 0, 0.8);
-    border-color: #3b82f6;
-    /* Blue border */
-    color: #3b82f6;
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 /* Content Section (Below Hero) */
@@ -275,15 +275,15 @@
 }
 
 .contentCard {
-    background: #0a0a0a;
-    border: 1px solid #262626;
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 24px;
     padding: 3rem;
 }
 
 .sectionHeading {
     font-size: 1.8rem;
-    color: #fff;
+    color: var(--foreground);
     margin-bottom: 2rem;
     font-weight: 600;
 }
@@ -300,17 +300,17 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    border-bottom: 1px solid #171717;
+    border-bottom: 1px solid var(--glass-border);
 }
 
 .featureIndex {
     font-family: monospace;
-    color: #525252;
+    color: var(--text-muted);
     font-size: 1rem;
 }
 
 .featureText {
-    color: #d4d4d4;
+    color: var(--foreground);
     font-size: 1rem;
 }
 
@@ -322,10 +322,10 @@
 }
 
 .stackItem {
-    background: #171717;
+    background: var(--glass-bg);
     padding: 1.5rem;
     border-radius: 16px;
-    border: 1px solid #262626;
+    border: 1px solid var(--glass-border);
 }
 
 .stackHeader {
@@ -336,13 +336,13 @@
 }
 
 .stackName {
-    color: #fff;
+    color: var(--foreground);
     font-weight: 600;
     font-size: 1rem;
 }
 
 .stackReason {
-    color: #a3a3a3;
+    color: var(--text-muted);
     font-size: 0.9rem;
     line-height: 1.5;
 }

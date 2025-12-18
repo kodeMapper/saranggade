@@ -28,6 +28,7 @@
   /* Text Utilities */
   --section-title: rgba(255, 255, 255, 0.6);
   --text-muted: #94a3b8;
+  --icon-invert: invert(1);
 }
 
 [data-theme='light'] {
@@ -63,6 +64,7 @@
   /* Subtle dark for light mode */
   --text-muted: #475569;
   /* Slate 600 for readability */
+  --icon-invert: none;
 }
 
 * {

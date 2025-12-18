@@ -53,14 +53,14 @@ const About = ({ data }) => {
                         I am a <span className={styles.highlight}>{data.personalInfo.role}</span> based in {data.personalInfo.location}, currently building scalable systems and AI-powered solutions.
                     </p>
                     <p>
-                        Previously, I've worked on <span className={styles.highlight}>ReactJS Landing Pages</span> and <span className={styles.highlight}>Admin Panels</span> at AARA Green Infosolutions. 
+                        Previously, I've worked on ReactJS Landing Pages and Admin Panels at <span className={styles.highlight}>AARA Green Infosolutions. </span> 
                         I specialize in creating end-to-end full-stack applications that solve real user problems.
                     </p>
                     <p>
-                        I am also the **Software Lead** at Embedded Club, RCOEM, fostering a community of developers and innovators.
+                        I am also the <span className={styles.highlight}>Software Lead</span> at Embedded Club, RCOEM, fostering a community of developers and innovators.
                     </p>
                     <p>
-                        When I'm not coding, I'm exploring new tech stacks (`{Object.values(data.skills).flat().slice(0, 3).join(', ')}`) or grinding on <a href={data.personalInfo.leetcode || '#'} className={styles.link} target="_blank">LeetCode</a>!
+                        Software engineer by profession, problem-solver by passion — <span className={styles.highlight}>powered by code and coffee.</span>
                     </p>
                 </div>
             </motion.div>

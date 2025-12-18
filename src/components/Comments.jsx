@@ -13,9 +13,7 @@ const Comments = () => {
     if (saved) {
       setComments(JSON.parse(saved));
     } else {
-      setComments([
-        { id: 1, name: "Visitor", text: "Love the animations! Great work.", date: new Date().toLocaleDateString() }
-      ]);
+      setComments([]);
     }
   }, []);
 

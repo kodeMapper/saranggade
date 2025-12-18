@@ -6,6 +6,7 @@ import styles from './project.module.css';
 import Link from 'next/link';
 import { ChevronLeft, ArrowUpRight, Github, ExternalLink, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ThemeToggle from '../../../components/ThemeToggle';
 
 // This is a dynamic route: /project/[id]
 
@@ -52,6 +53,7 @@ export default function ProjectDetail({ params }) {
                 <div className={styles.navLinks}>
                     <a href={project.github} target="_blank" className={styles.navItem}>Github</a>
                     <a href={project.demo} target="_blank" className={styles.navItem}>Live</a>
+                    <ThemeToggle />
                 </div>
             </nav>
 
@@ -92,15 +94,38 @@ export default function ProjectDetail({ params }) {
                         </div>
 
                         <div className={styles.techList}>
-                            {project.tech.split(',').slice(0, 5).map((t, i) => (
-                                <div key={i} className={styles.techIcon} title={t.trim()}>
-                                    <img
-                                        src={`https://cdn.simpleicons.org/${t.trim().toLowerCase().replace(/[\s\.]/g, '')}`}
-                                        onError={(e) => { e.target.style.display = 'none'; }}
-                                        alt=""
-                                    />
-                                </div>
-                            ))}
+                            {project.tech.split(',').slice(0, 5).map((t, i) => {
+                                const raw = t.trim();
+                                const map = {
+                                    "Node.js": "nodedotjs",
+                                    "React": "react",
+                                    "Flask": "flask",
+                                    "Python": "python",
+                                    "MongoDB": "mongodb",
+                                    "Express": "express",
+                                    "Next.js": "nextdotjs",
+                                    "Socket.io": "socketdotio",
+                                    "ESP32": "espressif",
+                                    "Arduino": "arduino",
+                                    "Google Maps": "googlemaps",
+                                    "IoT": "internetofthings", // fallback/best guess
+                                    "HTML5": "html5",
+                                    "CSS3": "css3",
+                                    "JavaScript": "javascript",
+                                    "Framer Motion": "framer"
+                                };
+                                const slug = map[raw] || raw.toLowerCase().replace(/[\s\.]/g, '');
+
+                                return (
+                                    <div key={i} className={styles.techIcon} title={raw}>
+                                        <img
+                                            src={`https://cdn.simpleicons.org/${slug}`}
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                            alt={raw}
+                                        />
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

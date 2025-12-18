@@ -89,3 +89,10 @@
     height: 24px;
     object-fit: contain;
 }
+
+.iconFallback {
+    width: 24px;
+    height: 24px;
+    color: var(--primary);
+    opacity: 0.8;
+}

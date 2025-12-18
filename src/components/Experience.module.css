@@ -76,6 +76,45 @@
     display: block;
 }
 
+.cardContent {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.textContent {
+    flex: 1;
+}
+
+.imageContainer {
+    flex-shrink: 0;
+    width: 280px;
+    /* Increased from 150px to maximize visibility */
+    height: auto;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.expImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    /* or contain if we want full document? cover usually looks better in grid. */
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.expImage:hover {
+    transform: scale(1.05);
+    /* Slight zoom on hover */
+    cursor: pointer;
+    /* Suggest interaction? Only if we add modal later. For now just nice feel */
+}
+
 .list {
     list-style-type: disc;
     padding-left: 1.2rem;
@@ -83,4 +122,20 @@
     opacity: 0.8;
     font-size: 0.95rem;
     line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .cardContent {
+        flex-direction: column-reverse;
+        /* Put image on top or bottom? Maybe bottom is better for flow, or top? */
+        /* Actually standard timeline: Image often works well on top on mobile, or bottom. Let's try bottom (column). */
+        flex-direction: column;
+    }
+
+    .imageContainer {
+        width: 100%;
+        max-width: 300px;
+        /* Limit width on mobile */
+        margin-top: 1rem;
+    }
 }

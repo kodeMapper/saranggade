@@ -27,14 +27,23 @@ const Experience = ({ data }) => {
           >
             <div className={styles.dot} />
             <div className={styles.card}>
-              <h3 className={styles.role}>{exp.title}</h3>
-              <div className={styles.company}>{exp.company} | {exp.location}</div>
-              <span className={styles.date}>{exp.duration}</span>
-              <ul className={styles.list}>
-                {exp.highlights.map((point, i) => (
-                  <li key={i}>{point}</li>
-                ))}
-              </ul>
+              <div className={styles.cardContent}>
+                  <div className={styles.textContent}>
+                      <h3 className={styles.role}>{exp.title}</h3>
+                      <div className={styles.company}>{exp.company} | {exp.location}</div>
+                      <span className={styles.date}>{exp.duration}</span>
+                      <ul className={styles.list}>
+                        {exp.highlights.map((point, i) => (
+                          <li key={i}>{point}</li>
+                        ))}
+                      </ul>
+                  </div>
+                  {exp.image && (
+                    <div className={styles.imageContainer}>
+                      <img src={exp.image} alt={exp.company} className={styles.expImage} />
+                    </div>
+                  )}
+              </div>
             </div>
           </motion.div>
         ))}

@@ -9,6 +9,8 @@ const wrap = (min, max, v) => {
   return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
 };
 
+import { Code2 } from 'lucide-react';
+
 const getSkillSlug = (skill) => {
   const map = {
     "JavaScript": "javascript",
@@ -25,7 +27,7 @@ const getSkillSlug = (skill) => {
     "VS Code": "visualstudiocode",
     "Eclipse": "eclipseide",
     "Intellij": "intellijidea",
-    "MIT App Inventor": "androidstudio", 
+    "MIT App Inventor": "android", 
     "Postman": "postman",
     "MongoDB": "mongodb",
     "Vercel": "vercel",
@@ -33,24 +35,39 @@ const getSkillSlug = (skill) => {
     "GitHub": "github",
     "MS Power BI": "powerbi",
     "Tableau": "tableau",
-    "Star UML": "uml",
+    "Star UML": "uml", 
     "Render": "render"
   };
   return map[skill] || skill.toLowerCase().replace(/[\s\.]/g, '');
 };
 
 const SkillTag = ({ skill }) => {
+  const [error, setError] = useState(false);
   const slug = getSkillSlug(skill);
-  const iconUrl = `https://cdn.simpleicons.org/${slug}`;
+  
+  // Explicit local overrides for downloaded icons
+  const localMap = {
+      "Java": "/images/skills/java.svg",
+      "VS Code": "/images/skills/vscode.svg",
+      "Tableau": "/images/skills/tableau.svg",
+      "CSS": "/images/skills/css.svg",
+      "MS Power BI": "/images/skills/powerbi.svg"
+  };
+
+  const iconUrl = localMap[skill] || `https://cdn.simpleicons.org/${slug}`;
 
   return (
     <div className={styles.tag}>
-      <img 
-        src={iconUrl} 
-        alt="" 
-        className={styles.icon} 
-        onError={(e) => { e.target.style.display = 'none'; }} 
-      />
+      {!error ? (
+        <img 
+            src={iconUrl} 
+            alt={skill} 
+            className={styles.icon} 
+            onError={() => setError(true)} 
+        />
+      ) : (
+        <Code2 size={24} className={styles.iconFallback} />
+      )}
       <span>{skill}</span>
     </div>
   );
