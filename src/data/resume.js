@@ -107,8 +107,8 @@ export const resumeData = {
       name: "Personal Portfolio Website",
       tech: "Next.js 14, Framer Motion, CSS Modules",
       date: "Dec 2024",
-      github: "https://github.com/kodeMapper/Portfolio",
-      demo: "https://sarang-gade.vercel.app/",
+      github: "https://github.com/kodeMapper/saranggade",
+      demo: "https://saranggade.vercel.app/",
       image: "/images/projects/portfolio/landing.png",
       points: [
         "Interactive 3D portfolio featuring immersive scroll-snap.",
