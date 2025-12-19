@@ -5,6 +5,7 @@ import Navbar from '../../../../components/Navbar';
 import styles from './Review.module.css';
 
 export default function ReviewUpdate() {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     const { id } = useParams();
     const router = useRouter();
     const [update, setUpdate] = useState(null);
@@ -16,7 +17,7 @@ export default function ReviewUpdate() {
         // Fetch update details
         const fetchUpdate = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/admin/updates/${id}`);
+                const res = await fetch(`${API_URL}/api/admin/updates/${id}`);
                 if (!res.ok) throw new Error("Update not found");
                 const data = await res.json();
                 setUpdate(data);
@@ -77,7 +78,7 @@ export default function ReviewUpdate() {
 
         try {
             setMessage("Uploading image...");
-            const res = await fetch('http://localhost:5000/api/upload', {
+            const res = await fetch(`${API_URL}/api/upload`, {
                 method: 'POST',
                 body: data
             });
@@ -96,7 +97,7 @@ export default function ReviewUpdate() {
 
     const handleApprove = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/updates/${id}/approve`, {
+            const res = await fetch(`${API_URL}/api/admin/updates/${id}/approve`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ editedData: formData })
@@ -116,7 +117,7 @@ export default function ReviewUpdate() {
     const handleReject = async () => {
         if (!confirm("Are you sure you want to ignore this update?")) return;
         try {
-            await fetch(`http://localhost:5000/api/admin/updates/${id}/reject`, { method: 'POST' });
+            await fetch(`${API_URL}/api/admin/updates/${id}/reject`, { method: 'POST' });
             setMessage("Update rejected.");
             setTimeout(() => router.push('/'), 2000);
         } catch (err) {
