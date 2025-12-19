@@ -25,7 +25,7 @@
     "react-dom": "19.2.1",
     "react-markdown": "^10.1.0",
     "styled-components": "^6.1.19",
-    "uuid": "^13.0.0"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "babel-plugin-react-compiler": "1.0.0",
