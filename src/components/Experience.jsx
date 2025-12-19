@@ -34,7 +34,7 @@ const Experience = ({ data }) => {
                       <span className={styles.date}>{exp.duration}</span>
                       <ul className={styles.list}>
                         {exp.highlights.map((point, i) => (
-                          <li key={i}>{point}</li>
+                          <li key={i} dangerouslySetInnerHTML={{ __html: point }} />
                         ))}
                       </ul>
                   </div>

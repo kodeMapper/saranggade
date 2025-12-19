@@ -30,9 +30,6 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
-
 # vercel
 .vercel
 
@@ -40,8 +37,40 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# ===========================================
+# BACKEND SENSITIVE FILES - DO NOT COMMIT!
+# ===========================================
+
+# Environment variables (CRITICAL - contains passwords!)
+backend/.env
+.env
+.env.local
+.env.development
+.env.production
+
+# LinkedIn session cookies (contains auth tokens)
+backend/services/linkedin_cookies.json
+
+# State files (not sensitive but local-only)
+backend/state.json
+backend/pending_updates.json
+
+# Debug logs
+backend/services/linkedin_debug.txt
+backend/services/codolio_debug.txt
+backend/services/*.log
+backend/services/debug_*.png
+
+# Uploaded files (user content)
+backend/uploads/
+
+# Node modules for backend
+backend/node_modules/
+
+# ===========================================
+# OLD/UNUSED FILES
+# ===========================================
 ./src/components/Projects.module.css
 ./src/components/Projets.jsx
 ./src/components/ProjectCarousel.module.css
 ./src/components/ProjectCarousel.jsx
-

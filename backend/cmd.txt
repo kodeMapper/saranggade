@@ -1,0 +1,9 @@
+to invoke checks (new repos) manually: Invoke-RestMethod -Method Post -Uri "http://localhost:5000/api/trigger-check"
+
+
+# Trigger LinkedIn Check
+Invoke-RestMethod -Method Post -Uri "http://localhost:5000/api/trigger-linkedin"
+
+
+# Trigger Codolio Update
+Invoke-RestMethod -Method Post -Uri "http://localhost:5000/api/trigger-codolio"

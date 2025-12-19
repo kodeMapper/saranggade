@@ -13,6 +13,7 @@ import { Code2 } from 'lucide-react';
 
 const getSkillSlug = (skill) => {
   const map = {
+    // Core Languages
     "JavaScript": "javascript",
     "Node": "nodedotjs",
     "Express": "express",
@@ -24,19 +25,37 @@ const getSkillSlug = (skill) => {
     "C": "c",
     "PHP": "php",
     "MySQL": "mysql",
+    
+    // Tools
     "VS Code": "visualstudiocode",
     "Eclipse": "eclipseide",
     "Intellij": "intellijidea",
     "MIT App Inventor": "android", 
     "Postman": "postman",
     "MongoDB": "mongodb",
+    "Supabase": "supabase",
+    "StarUML": "uml",
+    
+    // Frameworks/Platforms
     "Vercel": "vercel",
     "Git": "git",
     "GitHub": "github",
     "MS Power BI": "powerbi",
     "Tableau": "tableau",
     "Star UML": "uml", 
-    "Render": "render"
+    "Render": "render",
+    
+    // LinkedIn skills (cleaned names)
+    "Business Intelligence": "powerbi",
+    "Business Intelligence Tools": "powerbi",
+    "Data Modeling": "databricks",
+    "Raspberry Pi": "raspberrypi",
+    "IoT": "arduino",
+    "API": "fastapi",
+    "Project Management": "trello",
+    "C Programming": "c",
+    "Data Warehousing": "amazonredshift",
+    "Software Development": "codersrank"
   };
   return map[skill] || skill.toLowerCase().replace(/[\s\.]/g, '');
 };

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ExternalLink, Github, ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 import styles from './StackingCarousel.module.css';
 import Link from 'next/link';
+import { getTechIcon } from '../utils/techIcons';
 
 const StackingCarousel = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -128,19 +129,17 @@ const StackingCarousel = ({ data }) => {
 
                         <div className={styles.footerRow}>
                              <span className={styles.label}>tech stack used:</span>
-                             <div className={styles.techIcons}>
+                            <div className={styles.techIcons}>
                                 {project.tech.split(',').slice(0, 4).map((t, i) => (
                                     <div key={i} className={styles.techIconWrapper} title={t.trim()}>
-                                        {/* Using Simple Icons CDN for logos based on tech name */}
                                         <img 
-                                            src={`https://cdn.simpleicons.org/${t.trim().toLowerCase().replace(/[\s\.]/g, '')}`}
+                                            src={getTechIcon(t)}
                                             className={styles.techIconImg}
                                             onError={(e) => {
                                                 e.target.style.display = 'none'; 
-                                                // Fallback to text if icon fails
                                                 e.target.parentNode.innerText = t.trim().substring(0,2);
                                             }}
-                                            alt=""
+                                            alt={t.trim()}
                                         />
                                     </div>
                                 ))}

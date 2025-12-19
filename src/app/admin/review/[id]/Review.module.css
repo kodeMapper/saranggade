@@ -1,0 +1,95 @@
+.container {
+    padding-top: 100px;
+    min-height: 100vh;
+    background: #0a0a0a;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.content {
+    width: 600px;
+    max-width: 90%;
+}
+
+.title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(to right, #64ffda, #00bfff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #8892b0;
+}
+
+.input,
+.textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    font-size: 1rem;
+}
+
+.textarea {
+    height: 100px;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.approveBtn {
+    background: #28a745;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.approveBtn:hover {
+    background: #218838;
+}
+
+.rejectBtn {
+    background: #dc3545;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.rejectBtn:hover {
+    background: #c82333;
+}
+
+.message {
+    margin-top: 1rem;
+    text-align: center;
+    font-weight: bold;
+}

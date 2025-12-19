@@ -2,6 +2,7 @@
     position: fixed;
     bottom: 2.15rem;
     right: 2rem;
+    margin-right: 3rem;
     z-index: 100;
     display: flex;
     gap: 1.5rem;

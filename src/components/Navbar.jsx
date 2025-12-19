@@ -52,12 +52,13 @@ const Navbar = () => {
           layout: { duration: 0.5 }
       }}
       style={{
+          // width: "80vw",
           bottom: isScrolled ? "auto" : "2rem",
           top: isScrolled ? "1rem" : "auto",
           // Centering using margin auto logic
           left: isScrolled ? "0" : "2rem",
           right: isScrolled ? "0" : "auto",
-          margin: isScrolled ? "0 auto" : "0",
+          margin: isScrolled ? "0 auto" : undefined,
           width: "fit-content", // Ensure it doesn't stretch
           
           padding: isScrolled ? "0.5rem 1.5rem" : "0.75rem 1.5rem",

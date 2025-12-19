@@ -1,0 +1,244 @@
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const path = require('path');
+require('dotenv').config();
+const { sendUpdateEmail } = require('./emailService');
+const { adddPendingUpdate, getPendingUpdates } = require('./pendingUpdatesManager');
+const { getState, saveState } = require('./stateManager');
+
+const RESUME_PATH = path.join(__dirname, '../../src/data/resume.json');
+const COOKIES_PATH = path.join(__dirname, 'linkedin_cookies.json');
+const LOG_FILE = path.join(__dirname, 'linkedin_debug.txt');
+
+const LINKEDIN_EMAIL = process.env.LINKEDIN_EMAIL;
+const LINKEDIN_PASSWORD = process.env.LINKEDIN_PASSWORD;
+const PROFILE_URL = 'https://www.linkedin.com/in/sarang-gade';
+
+const log = (msg) => {
+    const timestamp = new Date().toISOString();
+    const logMsg = `[${timestamp}] ${msg}\n`;
+    console.log(msg);
+    fs.appendFileSync(LOG_FILE, logMsg);
+};
+
+const getSeenItems = () => {
+    const state = getState();
+    return state.seenLinkedinItems || [];
+};
+
+const markItemAsSeen = (identifier) => {
+    const state = getState();
+    if (!state.seenLinkedinItems) state.seenLinkedinItems = [];
+    if (!state.seenLinkedinItems.includes(identifier)) {
+        state.seenLinkedinItems.push(identifier);
+        saveState(state);
+    }
+};
+
+const checkLinkedinUpdates = async () => {
+    log("🔵 Starting LinkedIn Update Cycle (Review Mode)...");
+    let browser;
+    try {
+        browser = await puppeteer.launch({
+            headless: false,
+            defaultViewport: null,
+            args: ['--start-maximized', '--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+
+        let resumeData = JSON.parse(fs.readFileSync(RESUME_PATH, 'utf8'));
+        const seenItems = getSeenItems();
+        const pendingUpdates = getPendingUpdates();
+
+        // 1. Session Management
+        if (fs.existsSync(COOKIES_PATH)) {
+            const cookies = JSON.parse(fs.readFileSync(COOKIES_PATH));
+            await page.setCookie(...cookies);
+            log("🍪 Loaded session cookies.");
+        }
+
+        // 2. Explicit Login Flow
+        log("🔑 Navigating to Login...");
+        await page.goto('https://www.linkedin.com/login', { waitUntil: 'domcontentloaded' });
+        await new Promise(r => setTimeout(r, 2000));
+
+        if ((await page.url()).includes("feed") || (await page.url()).includes("checkpoint")) {
+            log("✅ Already logged in.");
+        } else {
+            await page.type('#username', LINKEDIN_EMAIL);
+            await page.type('#password', LINKEDIN_PASSWORD);
+            await page.click('button[type="submit"]');
+            try {
+                await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 });
+            } catch (e) { log("⚠️ Navigation timeout proceeding..."); }
+            const cookies = await page.cookies();
+            fs.writeFileSync(COOKIES_PATH, JSON.stringify(cookies, null, 2));
+            log("🍪 Cookies saved.");
+        }
+
+        // 3. Scrape EXPERIENCE
+        const expUrl = `${PROFILE_URL}/details/experience/`;
+        log(`🔍 Scrape Exp: ${expUrl}`);
+        await page.goto(expUrl, { waitUntil: 'domcontentloaded' });
+        await new Promise(r => setTimeout(r, 6000));
+
+        const scrapedExperience = await page.evaluate(() => {
+            const items = Array.from(document.querySelectorAll('.pvs-list__paged-list-item, li.artdeco-list__item, li.pvs-list__item--line-separated'));
+            return items.map(item => {
+                const spans = Array.from(item.querySelectorAll('span[aria-hidden="true"]'));
+                if (spans.length < 2) return null;
+                return {
+                    title: spans[0]?.innerText?.trim(),
+                    company: spans[1]?.innerText?.split('·')[0]?.trim(),
+                    date: spans[2]?.innerText?.split('·')[0]?.trim(),
+                    location: spans.length > 3 ? spans[3]?.innerText?.trim() : ''
+                };
+            }).filter(i => i && i.title);
+        });
+
+        // 4. Scrape SKILLS
+        const skillUrl = `${PROFILE_URL}/details/skills/`;
+        log(`🔍 Scrape Skills: ${skillUrl}`);
+        await page.goto(skillUrl, { waitUntil: 'domcontentloaded' });
+        await new Promise(r => setTimeout(r, 5000));
+        const scrapedSkills = await page.evaluate(() => {
+            const items = Array.from(document.querySelectorAll('.pvs-list__paged-list-item, li.artdeco-list__item'));
+            return items.map(item => {
+                const span = item.querySelector('span[aria-hidden="true"]');
+                return span ? span.innerText.trim() : null;
+            }).filter(s => s);
+        });
+        log(`📊 Scraped ${scrapedSkills.length} skills: ${scrapedSkills.slice(0, 10).join(', ')}...`);
+
+        // 5. Scrape CERTIFICATIONS
+        const certUrl = `${PROFILE_URL}/details/certifications/`;
+        log(`🔍 Scrape Certs: ${certUrl}`);
+        await page.goto(certUrl, { waitUntil: 'domcontentloaded' });
+        await new Promise(r => setTimeout(r, 5000));
+        const scrapedCerts = await page.evaluate(() => {
+            const items = Array.from(document.querySelectorAll('.pvs-list__paged-list-item, li.artdeco-list__item'));
+            return items.map(item => {
+                const spans = Array.from(item.querySelectorAll('span[aria-hidden="true"]'));
+                if (spans.length < 1) return null;
+                return {
+                    name: spans[0]?.innerText?.trim(),
+                    issuer: spans[1]?.innerText?.trim(),
+                    date: spans[2]?.innerText?.trim()
+                };
+            }).filter(c => c && c.name);
+        });
+
+        // Filter out misidentified recommendations (not actual certifications)
+        const validCerts = scrapedCerts.filter(c => {
+            const name = c.name.toLowerCase();
+            // Exclude if it looks like a recommendation/endorsement
+            if (name.includes('someone') ||
+                name.includes('professor') ||
+                name.includes('student') ||
+                name.includes('university') ||
+                name.includes('college') ||
+                name.includes(' at ') ||
+                name.startsWith('someone')) {
+                return false;
+            }
+            return true;
+        });
+
+        // 6. PROCESSING (Pending Updates) - GitHub-like approach
+        let updatesQueued = 0;
+
+        // Experience
+        const existingExp = resumeData.experience || [];
+        for (const role of scrapedExperience) {
+            const id = `EXP:${role.title}:${role.company}`;
+            if (seenItems.includes(id)) continue;
+
+            // Check if exists in resume
+            const existsInResume = existingExp.some(e => e.title === role.title && e.company === role.company);
+            // Check if already pending
+            const isAlreadyPending = pendingUpdates.find(u => u.type === 'linkedin_experience' && u.data.title === role.title && u.data.company === role.company);
+
+            if (!existsInResume && !isAlreadyPending) {
+                log(`🚀 New Pending Role: ${role.title}`);
+                const update = adddPendingUpdate('linkedin_experience', {
+                    id: `${role.title}_${role.company}`,
+                    name: `${role.title} at ${role.company}`,
+                    title: role.title,
+                    company: role.company,
+                    duration: role.date,
+                    location: role.location,
+                    image: "/images/experience/default.png",
+                    highlights: ["Imported from LinkedIn"]
+                });
+                // Send email for THIS update
+                const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
+                await sendUpdateEmail('LinkedIn Experience', { name: `${role.title} at ${role.company}`, description: role.date }, reviewLink);
+                updatesQueued++;
+            } else if (existsInResume) {
+                markItemAsSeen(id);
+            }
+        }
+
+        // Skills - Batch approach (one pending for all new skills)
+        const existingSkills = [
+            ...(resumeData.skills.languages || []),
+            ...(resumeData.skills.tools || []),
+            ...(resumeData.skills.frameworks || [])
+        ];
+        const newSkills = [...new Set(scrapedSkills.filter(s => !existingSkills.includes(s) && !seenItems.includes(`SKILL:${s}`)))];
+        const skillsAlreadyPending = pendingUpdates.find(u => u.type === 'linkedin_skill');
+
+        if (newSkills.length > 0 && !skillsAlreadyPending) {
+            log(`✨ New Pending Skills: ${newSkills.length}`);
+            const update = adddPendingUpdate('linkedin_skill', {
+                id: 'linkedin_new_skills_batch',
+                name: `${newSkills.length} New Skills`,
+                skills: newSkills
+            });
+            const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
+            await sendUpdateEmail('LinkedIn Skills', { name: `${newSkills.length} New Skills`, description: newSkills.slice(0, 5).join(', ') + '...' }, reviewLink);
+            updatesQueued++;
+        }
+
+        // Certifications
+        if (!resumeData.certifications) resumeData.certifications = [];
+        const existingCertNames = resumeData.certifications.map(c => c.name);
+        for (const cert of validCerts) {
+            const id = `CERT:${cert.name}`;
+            if (seenItems.includes(id)) continue;
+
+            const isAlreadyPending = pendingUpdates.find(u => u.type === 'linkedin_certification' && u.data.name === cert.name);
+
+            if (!existingCertNames.includes(cert.name) && !isAlreadyPending) {
+                log(`📜 New Pending Cert: ${cert.name}`);
+                const update = adddPendingUpdate('linkedin_certification', {
+                    id: cert.name,
+                    name: cert.name,
+                    issuer: cert.issuer,
+                    date: cert.date
+                });
+                const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
+                await sendUpdateEmail('LinkedIn Certification', { name: cert.name, description: `Issued by ${cert.issuer}` }, reviewLink);
+                updatesQueued++;
+            } else if (existingCertNames.includes(cert.name)) {
+                markItemAsSeen(id);
+            }
+        }
+
+        // 7. Summary
+        if (updatesQueued > 0) {
+            log(`✅ Queued ${updatesQueued} updates for review. Emails sent.`);
+        } else {
+            log("✅ No new updates found (or all already pending).");
+        }
+
+    } catch (err) {
+        log(`❌ Error: ${err.message}`);
+        console.error(err);
+    } finally {
+        if (browser) await browser.close();
+        log("🔵 Finished LinkedIn Check.");
+    }
+};
+
+module.exports = { checkLinkedinUpdates, markItemAsSeen };
