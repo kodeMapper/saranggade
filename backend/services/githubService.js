@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { getState, saveState } = require('./stateManager');
 
-const USERNAME = 'kodeMapper';
+const USERNAME = process.env.GITHUB_USERNAME || 'kodeMapper';
 
 const checkGithubUpdates = async () => {
     try {
