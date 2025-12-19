@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: portfolio-backend
+    env: docker
+    plan: free
+    region: singapore
+    buildCommand: docker build -t backend .
+    startCommand: docker run -p 5000:5000 backend
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: LINKEDIN_EMAIL
+        sync: false
+      - key: LINKEDIN_PASSWORD
+        sync: false
+      - key: CODOLIO_EMAIL
+        sync: false
+      - key: CODOLIO_PASSWORD
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_USERNAME
+        sync: false

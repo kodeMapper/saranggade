@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+Dockerfile
+.git
+.next
+.DS_Store
+backend/uploads/*
+!backend/uploads/.gitkeep
