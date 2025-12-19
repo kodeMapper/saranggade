@@ -2,12 +2,12 @@
     position: fixed;
     bottom: 2rem;
     left: 2rem;
-    margin-left: 3rem;
     top: auto;
     right: auto;
     transform: none;
-    width: auto;
-    max-width: none;
+    width: fit-content;
+    /* Don't stretch */
+    max-width: 90vw;
     background: var(--glass-bg);
     backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
@@ -19,21 +19,37 @@
     gap: 2rem;
     align-items: center;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.5s ease-in-out;
+}
+
+/* Scrolled State (Desktop) */
+.nav[data-scrolled="true"] {
+    bottom: auto;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1.5rem;
 }
 
 @media (max-width: 768px) {
-    .nav {
+
+    .nav,
+    .nav[data-scrolled="true"] {
         left: 50%;
         transform: translateX(-50%);
         bottom: 1.5rem;
+        top: auto;
+        /* Always at bottom on mobile */
         width: 90%;
+        /* Use percentage width */
         max-width: 400px;
         padding: 0.75rem 1rem;
-        gap: 1rem;
-        justify-content: space-evenly;
-        width: 90vw;
-        /* Navbar needs slightly more than 80vw to be usable */
-        max-width: 350px;
+        gap: 0.5rem;
+        /* Reduce gap */
+        justify-content: space-between;
+        /* Better spacing for items */
+        margin: 0;
+        /* Reset any margins */
     }
 
     .link {

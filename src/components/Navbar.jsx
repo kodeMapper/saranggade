@@ -41,6 +41,7 @@ const Navbar = () => {
     <motion.nav 
       layout
       className={styles.nav}
+      data-scrolled={isScrolled}
       initial={{ y: 100, opacity: 0, x: 0 }}
       animate={{ 
           y: 0, 
@@ -50,18 +51,6 @@ const Navbar = () => {
           duration: 0.5, 
           ease: "easeInOut",
           layout: { duration: 0.5 }
-      }}
-      style={{
-          // width: "80vw",
-          bottom: isScrolled ? "auto" : "2rem",
-          top: isScrolled ? "1rem" : "auto",
-          // Centering using margin auto logic
-          left: isScrolled ? "0" : "2rem",
-          right: isScrolled ? "0" : "auto",
-          margin: isScrolled ? "0 auto" : undefined,
-          width: "fit-content", // Ensure it doesn't stretch
-          
-          padding: isScrolled ? "0.5rem 1.5rem" : "0.75rem 1.5rem",
       }}
     >
       {navItems.map((item) => (
