@@ -209,28 +209,40 @@ app.post('/api/trigger-linkedin', async (req, res) => {
 let isSimulating = false; // Memory lock to prevent race conditions
 
 app.get('/api/simulate-update', async (req, res) => {
-    if (isSimulating) {
-        return res.send("<h1>⏳ Please wait, simulation already in progress...</h1>");
-    }
-    isSimulating = true;
+    // ... (existing simulation code)
+});
 
+// Dedicated Email Connection Test Route
+app.get('/api/test-email', async (req, res) => {
     try {
-        const fakeUpdate = {
-            id: "TEST-REPO-123",
-            name: "Test-Portfolio-Project",
-            html_url: "https://github.com/kodeMapper/test-repo",
-            description: "This is a simulated project to test the automation system.",
-            language: "JavaScript",
-            created_at: new Date().toISOString()
-        };
+        await sendUpdateEmail('TEST_CONNECTION', { title: 'Verifying Email Service', description: 'This is a test to check if the backend can reach Gmail.' }, 'http://localhost:3000');
+        res.send("<h1>✅ Email Test Initiated</h1><p>Check server logs for 'Email sent successfully' or error details.</p>");
+    } catch (error) {
+        res.status(500).send(`<h1>❌ Test Failed</h1><p>${error.message}</p>`);
+    }
+});
+if (isSimulating) {
+    return res.send("<h1>⏳ Please wait, simulation already in progress...</h1>");
+}
+isSimulating = true;
 
-        // Check if duplicate for simulation too
-        const updates = require('./services/pendingUpdatesManager').getPendingUpdates();
-        const isAlreadyPending = updates.find(u => u.type === 'github' && u.data.id === fakeUpdate.id);
+try {
+    const fakeUpdate = {
+        id: "TEST-REPO-123",
+        name: "Test-Portfolio-Project",
+        html_url: "https://github.com/kodeMapper/test-repo",
+        description: "This is a simulated project to test the automation system.",
+        language: "JavaScript",
+        created_at: new Date().toISOString()
+    };
 
-        if (isAlreadyPending) {
-            isSimulating = false;
-            return res.send(`
+    // Check if duplicate for simulation too
+    const updates = require('./services/pendingUpdatesManager').getPendingUpdates();
+    const isAlreadyPending = updates.find(u => u.type === 'github' && u.data.id === fakeUpdate.id);
+
+    if (isAlreadyPending) {
+        isSimulating = false;
+        return res.send(`
                 <div style="font-family: sans-serif; padding: 20px;">
                     <h1>⚠️ Already Pending</h1>
                     <p>This test update is already waiting for your review.</p>
@@ -238,15 +250,15 @@ app.get('/api/simulate-update', async (req, res) => {
                     <a href="http://localhost:3000/admin/review/${isAlreadyPending.id}" style="background: #0070f3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Go to Review</a>
                 </div>
             `);
-        }
+    }
 
-        console.log("🧪 Simulating new GitHub repo...");
-        const update = adddPendingUpdate('github', fakeUpdate);
-        const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
+    console.log("🧪 Simulating new GitHub repo...");
+    const update = adddPendingUpdate('github', fakeUpdate);
+    const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
 
-        await sendUpdateEmail('GitHub Project (SIMULATION)', fakeUpdate, reviewLink);
+    await sendUpdateEmail('GitHub Project (SIMULATION)', fakeUpdate, reviewLink);
 
-        res.send(`
+    res.send(`
             <div style="font-family: sans-serif; padding: 20px;">
                 <h1 style="color: green;">✅ Simulation Sent!</h1>
                 <p>Check your email for the notification.</p>
@@ -254,12 +266,12 @@ app.get('/api/simulate-update', async (req, res) => {
                 <a href="${reviewLink}" style="background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Review Now</a>
             </div>
         `);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error");
-    } finally {
-        isSimulating = false;
-    }
+} catch (err) {
+    console.error(err);
+    res.status(500).send("Error");
+} finally {
+    isSimulating = false;
+}
 });
 
 app.listen(PORT, () => {
