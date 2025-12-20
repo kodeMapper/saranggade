@@ -2,8 +2,8 @@ const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // upgrade later with STARTTLS
+    port: 465,
+    secure: true, // true for 465, false for other ports
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -11,7 +11,9 @@ const transporter = nodemailer.createTransport({
     tls: {
         rejectUnauthorized: false
     },
-    family: 4 // Force IPv4 to avoid ETIMEDOUT on some cloud providers
+    family: 4, // Force IPv4
+    connectionTimeout: 30000, // 30 seconds
+    socketTimeout: 30000
 });
 
 const sendUpdateEmail = async (updateType, data, reviewLink) => {
