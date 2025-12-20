@@ -119,7 +119,9 @@ const checkLinkedinUpdates = async () => {
         // 3. Scrape EXPERIENCE
         const expUrl = `${PROFILE_URL}/details/experience/`;
         log(`🔍 Scrape Exp: ${expUrl}`);
-        await page.goto(expUrl, { waitUntil: 'domcontentloaded' });
+        try {
+            await page.goto(expUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+        } catch (e) { log("⚠️ Experience page timeout. Continuing..."); }
         await new Promise(r => setTimeout(r, 6000));
 
         const scrapedExperience = await page.evaluate(() => {
@@ -139,7 +141,9 @@ const checkLinkedinUpdates = async () => {
         // 4. Scrape SKILLS
         const skillUrl = `${PROFILE_URL}/details/skills/`;
         log(`🔍 Scrape Skills: ${skillUrl}`);
-        await page.goto(skillUrl, { waitUntil: 'domcontentloaded' });
+        try {
+            await page.goto(skillUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+        } catch (e) { log("⚠️ Skills page timeout. Continuing..."); }
 
         // Better Wait Strategy
         try {
@@ -165,7 +169,9 @@ const checkLinkedinUpdates = async () => {
         // 5. Scrape CERTIFICATIONS
         const certUrl = `${PROFILE_URL}/details/certifications/`;
         log(`🔍 Scrape Certs: ${certUrl}`);
-        await page.goto(certUrl, { waitUntil: 'domcontentloaded' });
+        try {
+            await page.goto(certUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+        } catch (e) { log("⚠️ Certs page timeout. Continuing..."); }
         await new Promise(r => setTimeout(r, 5000));
         const scrapedCerts = await page.evaluate(() => {
             const items = Array.from(document.querySelectorAll('.pvs-list__paged-list-item, li.artdeco-list__item'));
