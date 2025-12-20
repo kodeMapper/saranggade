@@ -8,6 +8,18 @@ const navItems = ["Home", "About", "Experience", "Projects", "Contact"];
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile(); // Initial check
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const container = document.querySelector('.snap-container');
@@ -39,18 +51,20 @@ const Navbar = () => {
 
   return (
     <motion.nav 
-      layout
       className={styles.nav}
       data-scrolled={isScrolled}
-      initial={{ y: 100, opacity: 0, x: 0 }}
+      initial={{ opacity: 0, y: 100 }}
       animate={{ 
-          y: 0, 
-          opacity: 1, 
+        opacity: 1, 
+        y: 0,
+        transform: (isScrolled || isMobile) ? 'translateX(-50%)' : 'translateX(0%)',
+        left: (isScrolled || isMobile) ? '50%' : '2rem',
+        top: isMobile ? 'auto' : (isScrolled ? '1rem' : 'calc(100vh - 6rem)'),
+        bottom: isMobile ? '1.5rem' : 'auto' // Ensure bottom is unset on desktop
       }}
       transition={{ 
-          duration: 0.5, 
-          ease: "easeInOut",
-          layout: { duration: 0.5 }
+        duration: 0.8, 
+        ease: "easeInOut"
       }}
     >
       {navItems.map((item) => (

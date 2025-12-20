@@ -1,13 +1,12 @@
 .nav {
     position: fixed;
-    bottom: 2rem;
+    /* Use top for consistent animation interpolation */
+    top: calc(100vh - 6rem);
     left: 2rem;
-    top: auto;
     right: auto;
-    transform: none;
-    width: fit-content;
-    /* Don't stretch */
-    max-width: 90vw;
+    bottom: auto;
+    width: auto;
+    max-width: none;
     background: var(--glass-bg);
     backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
@@ -19,37 +18,36 @@
     gap: 2rem;
     align-items: center;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    transition: all 0.5s ease-in-out;
+
 }
 
-/* Scrolled State (Desktop) */
-.nav[data-scrolled="true"] {
-    bottom: auto;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.5rem 1.5rem;
+/* Desktop Scrolled Logic (Only affects desktop) */
+@media (min-width: 769px) {
+    .nav[data-scrolled="true"] {
+        top: 1rem;
+        left: 50%;
+        /* transform handled by framer motion */
+        padding: 0.5rem 1.5rem;
+        margin-left: 0;
+    }
 }
 
 @media (max-width: 768px) {
-
-    .nav,
-    .nav[data-scrolled="true"] {
+    .nav {
+        /* Restored from c2c113c: Pure Mobile Alignment */
         left: 50%;
-        transform: translateX(-50%);
+        /* transform handled by framer motion */
         bottom: 1.5rem;
         top: auto;
-        /* Always at bottom on mobile */
+        /* Override desktop top calculation */
         width: 90%;
-        /* Use percentage width */
         max-width: 400px;
         padding: 0.75rem 1rem;
-        gap: 0.5rem;
-        /* Reduce gap */
-        justify-content: space-between;
-        /* Better spacing for items */
+        gap: 1rem;
+        justify-content: space-evenly;
+        width: 90vw;
+        max-width: 350px;
         margin: 0;
-        /* Reset any margins */
     }
 
     .link {
