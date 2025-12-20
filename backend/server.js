@@ -90,8 +90,8 @@ app.post('/api/admin/updates/:id/approve', (req, res) => {
 
         removeUpdate(id);
 
-        // Optional: Trigger Git Commit & Push
-        // performGitCommit(`Added new ${update.type} project: ${dataToSave.name}`);
+        // Trigger Git Commit & Push
+        performGitCommit(`Added new ${update.type} project: ${dataToSave.name || dataToSave.title}`);
 
         res.json({ success: true, message: 'Portfolio updated successfully!' });
     } catch (error) {
@@ -267,8 +267,33 @@ app.listen(PORT, () => {
 });
 
 function performGitCommit(message) {
-    exec(`git add . && git commit -m "${message}" && git push`, (err, stdout, stderr) => {
-        if (err) console.error('Git auto-commit failed:', err);
-        else console.log('Git auto-commit success:', stdout);
+    const USER = process.env.GITHUB_USERNAME || 'kodeMapper';
+    const TOKEN = process.env.GITHUB_TOKEN;
+    const REPO = 'saranggade'; // Your repo name
+
+    if (!TOKEN) {
+        console.error("❌ Cannot auto-commit: GITHUB_TOKEN not found in env.");
+        return;
+    }
+
+    // Authenticated URL
+    const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
+
+    // Chain commands: Config -> Add -> Commit -> Push
+    const commands = [
+        `git config user.email "bot@portfolio.com"`,
+        `git config user.name "Portfolio Bot"`,
+        `git add .`,
+        `git commit -m "${message}"`,
+        `git push "${remoteUrl}" HEAD:main`
+    ].join(' && ');
+
+    console.log("🔄 Starting auto-commit...");
+    exec(commands, (err, stdout, stderr) => {
+        if (err) {
+            console.error('❌ Git auto-commit failed:', stderr || err.message);
+        } else {
+            console.log('✅ Git auto-commit success:', stdout);
+        }
     });
 }
