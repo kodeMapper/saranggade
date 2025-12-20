@@ -7,7 +7,7 @@ const multer = require('multer');
 const path = require('path');
 const { checkGithubUpdates, markRepoAsSeen } = require('./services/githubService');
 const { checkLinkedinUpdates, markItemAsSeen } = require('./services/linkedinService');
-const { sendUpdateEmail } = require('./services/emailService');
+const { sendDiscordNotification } = require('./services/discordService');
 const { adddPendingUpdate, getUpdateById, removeUpdate } = require('./services/pendingUpdatesManager');
 const { updatePortfolio } = require('./services/contentUpdater');
 const { exec } = require('child_process');
@@ -146,18 +146,20 @@ async function runChecks() {
         const updates = require('./services/pendingUpdatesManager').getPendingUpdates();
 
         for (const newRepo of newRepos) {
-            // Check if already pending to avoid spamming email
+            // Check if already pending to avoid spamming
             const isAlreadyPending = updates.find(u => u.type === 'github' && u.data.id === newRepo.id);
 
             if (!isAlreadyPending) {
                 console.log(`📦 New GitHub Repo found: ${newRepo.name}`);
                 const update = adddPendingUpdate('github', newRepo);
-                const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
-                await sendUpdateEmail('GitHub Project', newRepo, reviewLink);
+                const reviewLink = `https://saranggade.vercel.app/admin/review/${update.id}`; // Changed to Prod URL (or env var)
+
+                await sendDiscordNotification('GitHub Project', {
+                    Name: newRepo.name,
+                    Description: newRepo.description || 'No description'
+                }, reviewLink);
+
             } else {
-                // If it's already pending, we just ignore it for this cycle.
-                // This allows the loop to continue to the NEXT repo in newRepos.
-                // So if Repo A is pending, we skip it, but start processing Repo B.
                 console.log(`ℹ️ Repo ${newRepo.name} is already pending review.`);
             }
         }
@@ -171,6 +173,10 @@ app.post('/api/feedback', async (req, res) => {
         const { name, text } = req.body;
         const newFeedback = new Feedback({ name, text });
         await newFeedback.save();
+
+        // Notify via Discord about Feedback
+        await sendDiscordNotification('New Feedback Received', { Name: name, Message: text }, null);
+
         res.status(201).json(newFeedback);
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
@@ -210,11 +216,11 @@ let isSimulating = false; // Memory lock to prevent race conditions
 
 
 
-// Dedicated Email Connection Test Route
+// Dedicated Email Connection Test Route (Now Discord Test)
 app.get('/api/test-email', async (req, res) => {
     try {
-        await sendUpdateEmail('TEST_CONNECTION', { title: 'Verifying Email Service', description: 'This is a test to check if the backend can reach Gmail.' }, 'http://localhost:3000');
-        res.send("<h1>✅ Email Test Initiated</h1><p>Check server logs for 'Email sent successfully' or error details.</p>");
+        await sendDiscordNotification('TEST_CONNECTION', { Status: 'Success', Message: 'Backend can reach Discord!' }, 'https://google.com');
+        res.send("<h1>✅ Discord Notification Sent</h1><p>Check your Discord channel.</p>");
     } catch (error) {
         res.status(500).send(`<h1>❌ Test Failed</h1><p>${error.message}</p>`);
     }
@@ -246,24 +252,23 @@ app.get('/api/simulate-update', async (req, res) => {
                 <div style="font-family: sans-serif; padding: 20px;">
                     <h1>⚠️ Already Pending</h1>
                     <p>This test update is already waiting for your review.</p>
-                    <p>No new email was sent to avoid duplicates.</p>
-                    <a href="http://localhost:3000/admin/review/${isAlreadyPending.id}" style="background: #0070f3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Go to Review</a>
                 </div>
             `);
         }
 
         console.log("🧪 Simulating new GitHub repo...");
         const update = adddPendingUpdate('github', fakeUpdate);
-        const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
+        const reviewLink = `https://saranggade.vercel.app/admin/review/${update.id}`;
 
-        await sendUpdateEmail('GitHub Project (SIMULATION)', fakeUpdate, reviewLink);
+        await sendDiscordNotification('GitHub Project (SIMULATION)', {
+            Name: fakeUpdate.name,
+            Description: fakeUpdate.description
+        }, reviewLink);
 
         res.send(`
             <div style="font-family: sans-serif; padding: 20px;">
-                <h1 style="color: green;">✅ Simulation Sent!</h1>
-                <p>Check your email for the notification.</p>
-                <p>Or click below to review immediately:</p>
-                <a href="${reviewLink}" style="background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Review Now</a>
+                <h1 style="color: #5865F2;">✅ Discord Alert Sent!</h1>
+                <p>Check your channel.</p>
             </div>
         `);
     } catch (err) {

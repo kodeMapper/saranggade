@@ -68,14 +68,24 @@ The backend does the heavy lifting (automation, database).
 1.  Push this code to **GitHub**.
 2.  Go to [Render.com](https://render.com) and create a **Web Service**.
 3.  Connect your GitHub repo.
-4.  Render will auto-detect the `render.yaml` file in this project.
-5.  **Critical:** Add these Environment Variables in Render Dashboard:
-    - `MONGODB_URI`: Your MongoDB Connection String.
-    - `EMAIL_USER` / `EMAIL_PASS`: For sending notifications.
-    - `GITHUB_TOKEN`: To check your repos API.
-    - `LINKEDIN_EMAIL` / `LINKEDIN_PASSWORD`: For scraping.
-    - `CODOLIO_EMAIL` / `CODOLIO_PASSWORD`: For screenshots.
-6.  Deploy!
+4.  **Runtime**: Select **Docker** (Critical for automation to work!).
+5.  **Environment Variables**: Add these in the Dashboard:
+
+    | Variable | Purpose | Example / Value |
+    | :--- | :--- | :--- |
+    | `PORT` | Server Port | `5000` |
+    | `MONGODB_URI` | Database Connection | `mongodb+srv://...` |
+    | `EMAIL_USER` | Gmail Address | `yourname@gmail.com` |
+    | `EMAIL_PASS` | App Password | (16-char code) |
+    | `GITHUB_USERNAME` | Your GitHub Username | `kodeMapper` |
+    | `GITHUB_TOKEN` | **Classic Token** (repo scope) | `ghp_...` (Needed for Auto-Commit) |
+    | `LINKEDIN_EMAIL` | LinkedIn Login | `email` |
+    | `LINKEDIN_PASSWORD`| LinkedIn Login | `password` |
+    | `LINKEDIN_COOKIES` | **Cookie JSON** (Bypass 2FA) | `[{"name":"li_at","value":"..."}]` |
+    | `CODOLIO_EMAIL` | Codolio Login | `email` |
+    | `CODOLIO_PASSWORD` | Codolio Login | `password` |
+
+6.  Deploy! The build might take ~3-5 minutes as it installs chrome drivers.
 
 ### Step 2: Deploy Frontend (Vercel)
 The frontend is the visible website.
@@ -89,56 +99,23 @@ The frontend is the visible website.
 
 ---
 
-## 💻 Local Development
+## 🛠️ Manual Triggers (Testing)
+You can force the bots to run by visiting these links in your browser:
 
-Want to run it on your machine?
-
-### 1. Clone & Install
-```bash
-git clone https://github.com/kodeMapper/saranggade.git
-cd saranggade
-npm install
-
-# Install backend deps
-cd backend
-npm install
-```
-
-### 2. Configure Secrets
-Create a `.env` file in the `backend/` folder:
-```env
-PORT=5000
-MONGODB_URI=mongodb+srv://...
-GITHUB_USERNAME=kodeMapper
-GITHUB_TOKEN=ghp_...
-EMAIL_USER=...
-EMAIL_PASS=...
-```
-
-### 3. Run It
-Open two terminals:
-
-**Terminal 1 (Frontend):**
-```bash
-npm run dev
-# Runs on http://localhost:3000
-```
-
-**Terminal 2 (Backend):**
-```bash
-cd backend
-npm start
-# Runs on http://localhost:5000
-```
+- **Test Email:** `https://your-backend.onrender.com/api/test-email`
+- **Trigger Codolio:** `curl -X POST https://your-backend.onrender.com/api/trigger-codolio`
+- **Trigger LinkedIn:** `curl -X POST https://your-backend.onrender.com/api/trigger-linkedin`
 
 ---
 
-## 🛠️ Tech Stack
+## 💻 Tech Stack
 
 - **Frontend:** Next.js 16, React 19, Framer Motion, Styled Components.
-- **Backend:** Node.js, Express, Puppeteer (Browser Automation).
-- **Database:** MongoDB (for feedback & logs).
-- **Tools:** GitHub API, Nodemailer (Email), Multer (Image Uploads).
+- **Backend:** Node.js, Express, **Puppeteer** (Dockerized for Cloud).
+- **Database:** MongoDB.
+- **Automation:**
+  - **Auto-Commit:** The backend automatically pushes updates to this repo on your behalf.
+  - **Headless Browser:** Runs Chrome inside Docker to scrape data.
 
 ---
 

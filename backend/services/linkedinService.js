@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
-const { sendUpdateEmail } = require('./emailService');
+const { sendDiscordNotification } = require('./discordService');
 const { adddPendingUpdate, getPendingUpdates } = require('./pendingUpdatesManager');
 const { getState, saveState } = require('./stateManager');
 
@@ -161,9 +161,7 @@ const checkLinkedinUpdates = async () => {
             const id = `EXP:${role.title}:${role.company}`;
             if (seenItems.includes(id)) continue;
 
-            // Check if exists in resume
             const existsInResume = existingExp.some(e => e.title === role.title && e.company === role.company);
-            // Check if already pending
             const isAlreadyPending = pendingUpdates.find(u => u.type === 'linkedin_experience' && u.data.title === role.title && u.data.company === role.company);
 
             if (!existsInResume && !isAlreadyPending) {
@@ -178,16 +176,20 @@ const checkLinkedinUpdates = async () => {
                     image: "/images/experience/default.png",
                     highlights: ["Imported from LinkedIn"]
                 });
-                // Send email for THIS update
-                const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
-                await sendUpdateEmail('LinkedIn Experience', { name: `${role.title} at ${role.company}`, description: role.date }, reviewLink);
+
+                // DISCORD NOTIFICATION
+                const reviewLink = `https://saranggade.vercel.app/admin/review/${update.id}`;
+                await sendDiscordNotification('LinkedIn Experience', {
+                    Role: `${role.title} at ${role.company}`,
+                    Date: role.date
+                }, reviewLink);
                 updatesQueued++;
             } else if (existsInResume) {
                 markItemAsSeen(id);
             }
         }
 
-        // Skills - Batch approach (one pending for all new skills)
+        // Skills - Batch approach
         const existingSkills = [
             ...(resumeData.skills.languages || []),
             ...(resumeData.skills.tools || []),
@@ -203,8 +205,13 @@ const checkLinkedinUpdates = async () => {
                 name: `${newSkills.length} New Skills`,
                 skills: newSkills
             });
-            const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
-            await sendUpdateEmail('LinkedIn Skills', { name: `${newSkills.length} New Skills`, description: newSkills.slice(0, 5).join(', ') + '...' }, reviewLink);
+
+            // DISCORD NOTIFICATION
+            const reviewLink = `https://saranggade.vercel.app/admin/review/${update.id}`;
+            await sendDiscordNotification('LinkedIn Skills', {
+                Count: `${newSkills.length} New Skills`,
+                List: newSkills.slice(0, 5).join(', ') + '...'
+            }, reviewLink);
             updatesQueued++;
         }
 
@@ -225,8 +232,13 @@ const checkLinkedinUpdates = async () => {
                     issuer: cert.issuer,
                     date: cert.date
                 });
-                const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
-                await sendUpdateEmail('LinkedIn Certification', { name: cert.name, description: `Issued by ${cert.issuer}` }, reviewLink);
+
+                // DISCORD NOTIFICATION
+                const reviewLink = `https://saranggade.vercel.app/admin/review/${update.id}`;
+                await sendDiscordNotification('LinkedIn Certification', {
+                    Name: cert.name,
+                    Issuer: cert.issuer
+                }, reviewLink);
                 updatesQueued++;
             } else if (existingCertNames.includes(cert.name)) {
                 markItemAsSeen(id);
@@ -235,7 +247,7 @@ const checkLinkedinUpdates = async () => {
 
         // 7. Summary
         if (updatesQueued > 0) {
-            log(`✅ Queued ${updatesQueued} updates for review. Emails sent.`);
+            log(`✅ Queued ${updatesQueued} updates for review. Discord alerts sent.`);
         } else {
             log("✅ No new updates found (or all already pending).");
         }
