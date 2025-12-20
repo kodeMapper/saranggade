@@ -191,7 +191,7 @@ const updateCodolioStats = async () => {
                 `git remote add origin "${remoteUrl}"`,
                 // Fetch current state to avoid rejecting push
                 `git fetch --depth=1 origin main`,
-                `git reset --soft origin/main`,
+                `git reset origin/main`, // Default (Mixed) reset populates the Index. --soft left it empty!
                 // Now add our changes
                 `git add public/images/codolio-*.png`,
                 `git commit -m "Auto-update Codolio stats [skip ci]"`,
