@@ -169,6 +169,31 @@ const updateCodolioStats = async () => {
             log("❌ Could not find 'Development' tab.");
         }
 
+        // 6. Push Changes (Persistence Fix for Render)
+        try {
+            const { exec } = require('child_process');
+            log("🔄 Auto-committing Codolio screenshots...");
+
+            // Reusing the same commit logic (Simplified for service context)
+            const USER = process.env.GITHUB_USERNAME || 'kodeMapper';
+            const TOKEN = process.env.GITHUB_TOKEN;
+            const REPO = 'saranggade';
+            const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
+
+            const commands = [
+                `git config user.email "bot@portfolio.com"`,
+                `git config user.name "Portfolio Bot"`,
+                `git add public/images/codolio-*.png`, // Only add the images
+                `git commit -m "Auto-update Codolio stats [skip ci]"`,
+                `git push "${remoteUrl}" HEAD:main`
+            ].join(' && ');
+
+            exec(commands, (err, stdout, stderr) => {
+                if (err) log(`❌ Git Push Failed: ${stderr}`);
+                else log(`✅ Git Push Success: ${stdout}`);
+            });
+        } catch (e) { log(`❌ Git Error: ${e.message}`); }
+
     } catch (err) {
         log(`❌ CRITICAL ERROR in Codolio Service: ${err.message}`);
         console.error(err);

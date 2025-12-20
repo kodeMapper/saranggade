@@ -51,10 +51,18 @@ const checkLinkedinUpdates = async () => {
         const pendingUpdates = getPendingUpdates();
 
         // 1. Session Management
-        if (fs.existsSync(COOKIES_PATH)) {
+        if (process.env.LINKEDIN_COOKIES) {
+            try {
+                const envCookies = JSON.parse(process.env.LINKEDIN_COOKIES);
+                await page.setCookie(...envCookies);
+                log("🍪 Loaded session cookies from Environment Variable.");
+            } catch (e) {
+                log("⚠️ Error parsing LINKEDIN_COOKIES env var.");
+            }
+        } else if (fs.existsSync(COOKIES_PATH)) {
             const cookies = JSON.parse(fs.readFileSync(COOKIES_PATH));
             await page.setCookie(...cookies);
-            log("🍪 Loaded session cookies.");
+            log("🍪 Loaded session cookies from File.");
         }
 
         // 2. Explicit Login Flow
