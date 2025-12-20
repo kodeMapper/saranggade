@@ -36,8 +36,11 @@ const updateCodolioStats = async () => {
         await page.goto('https://codolio.com/login', { waitUntil: 'networkidle2' });
         await page.type('input[type="email"]', CODOLIO_EMAIL);
         await page.type('input[type="password"]', CODOLIO_PASSWORD);
-        await page.click('button[type="submit"]');
-        await page.waitForNavigation({ waitUntil: 'networkidle2' });
+        // Fix: Use Promise.all to avoid "Navigating frame was detached" race condition
+        await Promise.all([
+            page.waitForNavigation({ waitUntil: 'networkidle2' }),
+            page.click('button[type="submit"]'),
+        ]);
         log("✅ Logged in.");
 
         // 2. Go to Card Page
