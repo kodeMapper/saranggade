@@ -66,7 +66,6 @@ const checkLinkedinUpdates = async () => {
         }
 
         // 2. Validate Session (Try Feed First)
-        // 2. Validate Session (Try Feed First)
         log("🔑 Validating Session...");
         try {
             await page.goto('https://www.linkedin.com/feed/', { waitUntil: 'domcontentloaded', timeout: 60000 });
@@ -83,14 +82,18 @@ const checkLinkedinUpdates = async () => {
             log("⚠️ Session Check Failed: global-nav__me not found.");
         }
 
-        if (isLoggedIn) {
-            log("✅ Session Verified (Nav Bar found)! Skipping Login.");
+        // IMPORTANT: Also trust URL if it stayed on /feed/ (selector might have changed)
+        const currentUrl = await page.url();
+        if (isLoggedIn || currentUrl.includes("/feed")) {
+            log("✅ Session Verified! Skipping Login.");
         } else {
-            const currentUrl = await page.url();
             log("⚠️ Session invalid (URL: " + currentUrl + "). Starting Manual Login...");
 
             // Fallback: Explicit Login
-            await page.goto('https://www.linkedin.com/login', { waitUntil: 'domcontentloaded' });
+            try {
+                await page.goto('https://www.linkedin.com/login', { waitUntil: 'domcontentloaded', timeout: 60000 });
+            } catch (e) { log("⚠️ Login page load timeout. Proceeding..."); }
+
             await page.type('#username', LINKEDIN_EMAIL);
             await page.type('#password', LINKEDIN_PASSWORD);
             await page.click('button[type="submit"]');
@@ -107,7 +110,7 @@ const checkLinkedinUpdates = async () => {
                 return; // Stop here
             }
 
-            // Save new cookies if login worked (unlikely if 2FA triggered, but useful locally)
+            // Save new cookies if login worked
             const cookies = await page.cookies();
             fs.writeFileSync(COOKIES_PATH, JSON.stringify(cookies, null, 2));
             log("🍪 New Cookies saved locally.");
