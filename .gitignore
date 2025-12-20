@@ -74,3 +74,11 @@ backend/node_modules/
 ./src/components/Projets.jsx
 ./src/components/ProjectCarousel.module.css
 ./src/components/ProjectCarousel.jsx
+
+# ===========================================
+# ARCHIVES (Avoid large files)
+# ===========================================
+*.zip
+*.tar
+*.gz
+*.rar
