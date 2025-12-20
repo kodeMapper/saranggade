@@ -41,16 +41,14 @@ const checkLinkedinUpdates = async () => {
     try {
         browser = await puppeteer.launch({
             headless: "new",
-            protocolTimeout: 180000, // 3 minutes for Chrome responses
-            defaultViewport: { width: 1280, height: 800 }, // Fixed viewport saves RAM
+            protocolTimeout: 180000,
+            defaultViewport: { width: 1280, height: 800 },
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
                 '--disable-gpu',
-                '--disable-software-rasterizer',
-                '--single-process', // Reduces memory footprint
-                '--no-zygote'
+                '--disable-software-rasterizer'
             ]
         });
         const page = await browser.newPage();
