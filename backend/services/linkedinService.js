@@ -41,10 +41,30 @@ const checkLinkedinUpdates = async () => {
     try {
         browser = await puppeteer.launch({
             headless: "new",
-            defaultViewport: null,
-            args: ['--start-maximized', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+            protocolTimeout: 180000, // 3 minutes for Chrome responses
+            defaultViewport: { width: 1280, height: 800 }, // Fixed viewport saves RAM
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--disable-software-rasterizer',
+                '--single-process', // Reduces memory footprint
+                '--no-zygote'
+            ]
         });
         const page = await browser.newPage();
+
+        // CRITICAL: Block images/fonts to save RAM and bandwidth
+        await page.setRequestInterception(true);
+        page.on('request', (req) => {
+            const resourceType = req.resourceType();
+            if (['image', 'font', 'media'].includes(resourceType)) {
+                req.abort();
+            } else {
+                req.continue();
+            }
+        });
 
         let resumeData = JSON.parse(fs.readFileSync(RESUME_PATH, 'utf8'));
         const seenItems = getSeenItems();
