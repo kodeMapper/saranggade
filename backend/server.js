@@ -152,12 +152,15 @@ async function runChecks() {
             if (!isAlreadyPending) {
                 console.log(`📦 New GitHub Repo found: ${newRepo.name}`);
                 const update = adddPendingUpdate('github', newRepo);
-                const reviewLink = `https://saranggade.vercel.app/admin/review/${update.id}`; // Changed to Prod URL (or env var)
+                const reviewLink = `https://saranggade.vercel.app/admin/review/${update.id}`;
 
                 await sendDiscordNotification('GitHub Project', {
                     Name: newRepo.name,
                     Description: newRepo.description || 'No description'
                 }, reviewLink);
+
+                // CRITICAL: Mark as known IMMEDIATELY so we don't re-notify on next trigger
+                markRepoAsSeen(newRepo.id);
 
             } else {
                 console.log(`ℹ️ Repo ${newRepo.name} is already pending review.`);
