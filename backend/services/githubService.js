@@ -5,7 +5,12 @@ const USERNAME = process.env.GITHUB_USERNAME || 'kodeMapper';
 
 const checkGithubUpdates = async () => {
     try {
-        const response = await axios.get(`https://api.github.com/users/${USERNAME}/repos?sort=created&direction=desc`);
+        const response = await axios.get(`https://api.github.com/users/${USERNAME}/repos?sort=created&direction=desc`, {
+            headers: {
+                'User-Agent': 'Portfolio-Automation-App',
+                'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : undefined
+            }
+        });
         const repos = response.data;
 
         const state = getState();
