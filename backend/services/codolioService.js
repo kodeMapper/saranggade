@@ -180,12 +180,22 @@ const updateCodolioStats = async () => {
             const REPO = 'saranggade';
             const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
 
+            // Robust "Stateless" Git Push (Works even if .git is missing in Docker)
             const commands = [
-                `git config user.email "bot@portfolio.com"`,
-                `git config user.name "Portfolio Bot"`,
-                `git add public/images/codolio-*.png`, // Only add the images
+                `cd /app`, // Ensure we are in root
+                `git config --global user.email "bot@portfolio.com"`,
+                `git config --global user.name "Portfolio Bot"`,
+                // Ensure it's a git repo (safe Re-init)
+                `git init`,
+                `git remote remove origin || true`, // Remove if exists to avoid collision
+                `git remote add origin "${remoteUrl}"`,
+                // Fetch current state to avoid rejecting push
+                `git fetch --depth=1 origin main`,
+                `git reset --soft origin/main`,
+                // Now add our changes
+                `git add public/images/codolio-*.png`,
                 `git commit -m "Auto-update Codolio stats [skip ci]"`,
-                `git push "${remoteUrl}" HEAD:main`
+                `git push origin HEAD:main`
             ].join(' && ');
 
             exec(commands, (err, stdout, stderr) => {
