@@ -1,4 +1,4 @@
-FROM ghcr.io/puppeteer/puppeteer:21.5.2
+FROM ghcr.io/puppeteer/puppeteer:23.0.0
 
 # Switch to root user to install dependencies if needed
 USER root

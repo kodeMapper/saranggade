@@ -40,9 +40,9 @@ const checkLinkedinUpdates = async () => {
     let browser;
     try {
         browser = await puppeteer.launch({
-            headless: false,
+            headless: "new",
             defaultViewport: null,
-            args: ['--start-maximized', '--no-sandbox', '--disable-setuid-sandbox']
+            args: ['--start-maximized', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
         });
         const page = await browser.newPage();
 

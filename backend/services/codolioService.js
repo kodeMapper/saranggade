@@ -20,8 +20,8 @@ const updateCodolioStats = async () => {
     let browser;
     try {
         browser = await puppeteer.launch({
-            headless: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            headless: "new", // Must be headless in production
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
         });
         const page = await browser.newPage();
 
