@@ -68,13 +68,21 @@ const checkLinkedinUpdates = async () => {
         // 2. Validate Session (Try Feed First)
         log("🔑 Validating Session...");
         await page.goto('https://www.linkedin.com/feed/', { waitUntil: 'domcontentloaded' });
-        await new Promise(r => setTimeout(r, 3000));
 
-        const currentUrl = await page.url();
-        if (currentUrl.includes("feed")) {
-            log("✅ Session Restored! Skipping Login.");
+        let isLoggedIn = false;
+        try {
+            // Check for the "Me" icon in the top nav bar. This ONLY exists if logged in.
+            await page.waitForSelector('.global-nav__me', { timeout: 6000 });
+            isLoggedIn = true;
+        } catch (e) {
+            log("⚠️ Session Check Failed: global-nav__me not found.");
+        }
+
+        if (isLoggedIn) {
+            log("✅ Session Verified (Nav Bar found)! Skipping Login.");
         } else {
-            log("⚠️ Session invalid (Redirected to: " + currentUrl + "). Starting Manual Login...");
+            const currentUrl = await page.url();
+            log("⚠️ Session invalid (URL: " + currentUrl + "). Starting Manual Login...");
 
             // Fallback: Explicit Login
             await page.goto('https://www.linkedin.com/login', { waitUntil: 'domcontentloaded' });
