@@ -124,7 +124,19 @@ const checkLinkedinUpdates = async () => {
         const skillUrl = `${PROFILE_URL}/details/skills/`;
         log(`🔍 Scrape Skills: ${skillUrl}`);
         await page.goto(skillUrl, { waitUntil: 'domcontentloaded' });
-        await new Promise(r => setTimeout(r, 5000));
+
+        // Better Wait Strategy
+        try {
+            await page.waitForSelector('.pvs-list__paged-list-item, .artdeco-list__item', { timeout: 10000 });
+        } catch (e) {
+            log("⚠️ Timeout waiting for skill list items. Taking debug screenshot...");
+        }
+
+        // DEBUG: Capture Screenshot
+        const debugPath = path.join(__dirname, '../../public/images/debug_linkedin_skills.png');
+        await page.screenshot({ path: debugPath, fullPage: true });
+        log("📸 Saved debug_linkedin_skills.png");
+
         const scrapedSkills = await page.evaluate(() => {
             const items = Array.from(document.querySelectorAll('.pvs-list__paged-list-item, li.artdeco-list__item'));
             return items.map(item => {
@@ -168,7 +180,7 @@ const checkLinkedinUpdates = async () => {
             return true;
         });
 
-        // 6. PROCESSING (Pending Updates) - GitHub-like approach
+        // 6. PROCESSING (Pending Updates)
         let updatesQueued = 0;
 
         // Experience
@@ -272,6 +284,35 @@ const checkLinkedinUpdates = async () => {
         log(`❌ Error: ${err.message}`);
         console.error(err);
     } finally {
+        // AUTO-COMMIT DEBUG SCREENSHOTS (Stateless Logic)
+        try {
+            const { exec } = require('child_process');
+            log("🔄 Auto-committing debug screenshots...");
+
+            const USER = process.env.GITHUB_USERNAME || 'kodeMapper';
+            const TOKEN = process.env.GITHUB_TOKEN;
+            const REPO = 'saranggade';
+            const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
+
+            const commands = [
+                `cd /app`,
+                `git config --global user.email "bot@portfolio.com"`,
+                `git config --global user.name "Portfolio Bot"`,
+                `git init`,
+                `git remote remove origin || true`,
+                `git remote add origin "${remoteUrl}"`,
+                `git fetch --depth=1 origin main`,
+                `git reset origin/main`,
+                `git add public/images/debug_linkedin_skills.png`,
+                `git commit -m "Add LinkedIn Debug Screenshot [skip ci]"`,
+                `git push origin HEAD:main`
+            ].join(' && ');
+
+            exec(commands, (err, stdout, stderr) => {
+                if (!err) log(`✅ Debug Screenshot Pushed to GitHub.`);
+            });
+        } catch (e) { log(`❌ Git Error: ${e.message}`); }
+
         if (browser) await browser.close();
         log("🔵 Finished LinkedIn Check.");
     }
