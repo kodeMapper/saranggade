@@ -65,23 +65,39 @@ const checkLinkedinUpdates = async () => {
             log("🍪 Loaded session cookies from File.");
         }
 
-        // 2. Explicit Login Flow
-        log("🔑 Navigating to Login...");
-        await page.goto('https://www.linkedin.com/login', { waitUntil: 'domcontentloaded' });
-        await new Promise(r => setTimeout(r, 2000));
+        // 2. Validate Session (Try Feed First)
+        log("🔑 Validating Session...");
+        await page.goto('https://www.linkedin.com/feed/', { waitUntil: 'domcontentloaded' });
+        await new Promise(r => setTimeout(r, 3000));
 
-        if ((await page.url()).includes("feed") || (await page.url()).includes("checkpoint")) {
-            log("✅ Already logged in.");
+        const currentUrl = await page.url();
+        if (currentUrl.includes("feed")) {
+            log("✅ Session Restored! Skipping Login.");
         } else {
+            log("⚠️ Session invalid (Redirected to: " + currentUrl + "). Starting Manual Login...");
+
+            // Fallback: Explicit Login
+            await page.goto('https://www.linkedin.com/login', { waitUntil: 'domcontentloaded' });
             await page.type('#username', LINKEDIN_EMAIL);
             await page.type('#password', LINKEDIN_PASSWORD);
             await page.click('button[type="submit"]');
+
             try {
                 await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30000 });
             } catch (e) { log("⚠️ Navigation timeout proceeding..."); }
+
+            // Check again (2FA Check)
+            if ((await page.url()).includes("checkpoint") || (await page.url()).includes("challenge")) {
+                log("❌ CRITICAL: LinkedIn is asking for 2FA/OTP. The cookies are invalid or expired.");
+                log("👉 ACTION: Please get FRESH cookies from your browser and update 'LINKEDIN_COOKIES' in Render.");
+                browser.close();
+                return; // Stop here
+            }
+
+            // Save new cookies if login worked (unlikely if 2FA triggered, but useful locally)
             const cookies = await page.cookies();
             fs.writeFileSync(COOKIES_PATH, JSON.stringify(cookies, null, 2));
-            log("🍪 Cookies saved.");
+            log("🍪 New Cookies saved locally.");
         }
 
         // 3. Scrape EXPERIENCE
