@@ -3,59 +3,71 @@
 ## Current Status ✅
 | Feature | Status | Notes |
 |---------|--------|-------|
-| GitHub Automation | ✅ Working | Detects new repos, sends Discord alerts |
+| GitHub Automation | ⚠️ Partial | Works but loses "known repos" on restart |
 | Codolio Automation | ✅ Working | Screenshots update daily, auto-commits to GitHub |
-| Discord Notifications | ✅ Working | Replaced email (SMTP was blocked on Render) |
-| Admin Review Links | ✅ Correct | Using `saranggade.vercel.app` |
+| Discord Notifications | ✅ Working | Primary notification method |
+| Email Notifications | ⚠️ Backup | Fire-and-forget, may timeout on Render |
 
 ---
 
-## Known Issues 🔴
+## Critical Issue 🔴: Ephemeral Filesystem
 
-### 1. LinkedIn Automation Fails on Render
-**Problem:** Render free tier has only 512 MB RAM. LinkedIn pages are heavy (~400-600 MB just for Chrome). The scraper crashes with timeouts and frame detachment errors.
+### The Problem
+Render's free tier uses **ephemeral storage**. Two JSON files are affected:
 
-**Impact:** LinkedIn skills/experience/certifications are NOT being detected.
+| File | Purpose | Impact When Lost |
+|------|---------|------------------|
+| `state.json` | Stores `knownRepos` (IDs of repos already notified) | **Old repos appear as "new"** → Duplicate notifications |
+| `pending_updates.json` | Stores updates awaiting approval | **"Update not found"** on approval links |
 
-**Solutions:**
-| Option | Effort | Cost |
-|--------|--------|------|
-| Upgrade Render to 2GB RAM | Easy | $7/month |
-| Run LinkedIn checks locally only | Medium | Free |
-| Disable LinkedIn automation | None | Free |
-
----
-
-### 2. Pending Updates Lost on Restart
-**Problem:** `pending_updates.json` is stored on Render's filesystem, which is **ephemeral**. When Render restarts (happens often), the file is deleted and all pending updates are lost.
-
-**Impact:** When you click an approval link, it says "Update not found".
-
-**Solution:** Migrate `pendingUpdatesManager.js` to use MongoDB instead of a JSON file.
+### Root Cause
+```
+Server starts → Creates state.json → User gets notified → Server restarts → state.json deleted → Same repos appear "new" again
+```
 
 ---
 
-## Future Work: MongoDB Migration for Pending Updates
+## Solution: MongoDB Migration
 
-### Why?
-MongoDB persists data permanently. Unlike the JSON file:
-- Survives server restarts
-- Can be queried efficiently
-- Already connected (you have `MONGODB_URI`)
+### Why MongoDB?
+- ✅ Data persists permanently (not tied to filesystem)
+- ✅ Already connected (you have `MONGODB_URI`)
+- ✅ No code changes needed on Render dashboard
 
-### How?
-1. Create a `PendingUpdate` Mongoose model
-2. Modify `pendingUpdatesManager.js` to use MongoDB instead of file operations
-3. Test locally, then deploy
+### What to Migrate
 
-### Code Changes Required:
+#### 1. State Manager (knownRepos, seenLinkedinItems)
+**Current:** `backend/state.json`
+**New:** MongoDB collection `botstate`
 
-#### New File: `backend/models/PendingUpdate.js`
+#### 2. Pending Updates
+**Current:** `backend/pending_updates.json`
+**New:** MongoDB collection `pendingupdates`
+
+---
+
+## Implementation Plan
+
+### Step 1: Create Mongoose Models
+
+**File: `backend/models/BotState.js`**
+```javascript
+const mongoose = require('mongoose');
+
+const botStateSchema = new mongoose.Schema({
+    key: { type: String, required: true, unique: true },
+    value: { type: mongoose.Schema.Types.Mixed }
+});
+
+module.exports = mongoose.model('BotState', botStateSchema);
+```
+
+**File: `backend/models/PendingUpdate.js`**
 ```javascript
 const mongoose = require('mongoose');
 
 const pendingUpdateSchema = new mongoose.Schema({
-    type: { type: String, required: true }, // 'github', 'linkedin_experience', etc.
+    type: { type: String, required: true },
     data: { type: mongoose.Schema.Types.Mixed, required: true },
     receivedAt: { type: Date, default: Date.now }
 });
@@ -63,25 +75,55 @@ const pendingUpdateSchema = new mongoose.Schema({
 module.exports = mongoose.model('PendingUpdate', pendingUpdateSchema);
 ```
 
-#### Modified: `backend/services/pendingUpdatesManager.js`
+### Step 2: Modify State Manager
+
+**File: `backend/services/stateManager.js`**
+```javascript
+const BotState = require('../models/BotState');
+
+const getState = async () => {
+    const doc = await BotState.findOne({ key: 'main' });
+    if (!doc) {
+        return { knownRepos: [], seenLinkedinItems: [], codolioStats: {} };
+    }
+    return doc.value;
+};
+
+const saveState = async (state) => {
+    await BotState.findOneAndUpdate(
+        { key: 'main' },
+        { value: state },
+        { upsert: true }
+    );
+};
+
+module.exports = { getState, saveState };
+```
+
+### Step 3: Modify Pending Updates Manager
+
+**File: `backend/services/pendingUpdatesManager.js`**
 ```javascript
 const PendingUpdate = require('../models/PendingUpdate');
 
 const getPendingUpdates = async () => {
-    return await PendingUpdate.find({});
+    return await PendingUpdate.find({}).lean();
 };
 
 const adddPendingUpdate = async (type, data) => {
-    const exists = await PendingUpdate.findOne({ type, 'data.id': data.id });
+    const exists = await PendingUpdate.findOne({ 
+        type, 
+        $or: [{ 'data.id': data.id }, { 'data.name': data.name }] 
+    });
     if (exists) return exists;
     
     const newUpdate = new PendingUpdate({ type, data });
     await newUpdate.save();
-    return newUpdate;
+    return { id: newUpdate._id.toString(), type, data, receivedAt: newUpdate.receivedAt };
 };
 
 const getUpdateById = async (id) => {
-    return await PendingUpdate.findById(id);
+    return await PendingUpdate.findById(id).lean();
 };
 
 const removeUpdate = async (id) => {
@@ -91,19 +133,50 @@ const removeUpdate = async (id) => {
 module.exports = { getPendingUpdates, adddPendingUpdate, getUpdateById, removeUpdate };
 ```
 
-#### Impact on Other Files:
-- `server.js` - All calls to `getPendingUpdates`, `adddPendingUpdate`, etc. must use `await`
-- `linkedinService.js` - Same async updates needed
+### Step 4: Update Callers (Add `await`)
 
-### Estimated Time: ~30 minutes
+Files that need `async/await` updates:
+- `server.js` - `runChecks()`, approval routes
+- `githubService.js` - `checkGithubUpdates()`, `markRepoAsSeen()`
+- `linkedinService.js` - All pending update and state calls
+
+### Step 5: Ensure MongoDB Connection Before Use
+
+In `server.js`, move all cron jobs and routes INSIDE the MongoDB `connect.then()`:
+```javascript
+mongoose.connect(process.env.MONGODB_URI).then(() => {
+    console.log('Connected to MongoDB');
+    
+    // Start cron jobs HERE
+    // Define routes HERE
+    
+    app.listen(PORT);
+});
+```
 
 ---
 
 ## Summary
 
-| Task | Priority | Effort |
-|------|----------|--------|
-| MongoDB migration for pending updates | High | 30 min |
-| LinkedIn RAM issue | Medium | $7/month or disable |
+| Task | Priority | Effort | Impact |
+|------|----------|--------|--------|
+| Migrate `stateManager.js` to MongoDB | 🔴 High | 15 min | Fixes duplicate repo notifications |
+| Migrate `pendingUpdatesManager.js` to MongoDB | 🔴 High | 20 min | Fixes "Update not found" |
+| Update callers with `async/await` | 🟡 Medium | 30 min | Required for above |
 
-**Recommended:** Do the MongoDB migration first. LinkedIn can be run locally for now.
+**Total Estimated Time:** ~1 hour
+
+---
+
+## Quick Reference
+
+### Current Flow (Broken)
+```
+Trigger → Create state.json → Restart → state.json GONE → Old repos = "new"
+```
+
+### After MongoDB (Fixed)
+```
+Trigger → Save to MongoDB → Restart → Read from MongoDB → Old repos = "known"
+```
+
