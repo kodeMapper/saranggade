@@ -208,9 +208,7 @@ app.post('/api/trigger-linkedin', async (req, res) => {
 // SIMULATION ROUTE FOR TESTING (GET for easy browser access)
 let isSimulating = false; // Memory lock to prevent race conditions
 
-app.get('/api/simulate-update', async (req, res) => {
-    // ... (existing simulation code)
-});
+
 
 // Dedicated Email Connection Test Route
 app.get('/api/test-email', async (req, res) => {
@@ -221,28 +219,30 @@ app.get('/api/test-email', async (req, res) => {
         res.status(500).send(`<h1>❌ Test Failed</h1><p>${error.message}</p>`);
     }
 });
-if (isSimulating) {
-    return res.send("<h1>⏳ Please wait, simulation already in progress...</h1>");
-}
-isSimulating = true;
+// Simulation Route
+app.get('/api/simulate-update', async (req, res) => {
+    if (isSimulating) {
+        return res.send("<h1>⏳ Please wait, simulation already in progress...</h1>");
+    }
+    isSimulating = true;
 
-try {
-    const fakeUpdate = {
-        id: "TEST-REPO-123",
-        name: "Test-Portfolio-Project",
-        html_url: "https://github.com/kodeMapper/test-repo",
-        description: "This is a simulated project to test the automation system.",
-        language: "JavaScript",
-        created_at: new Date().toISOString()
-    };
+    try {
+        const fakeUpdate = {
+            id: "TEST-REPO-123",
+            name: "Test-Portfolio-Project",
+            html_url: "https://github.com/kodeMapper/test-repo",
+            description: "This is a simulated project to test the automation system.",
+            language: "JavaScript",
+            created_at: new Date().toISOString()
+        };
 
-    // Check if duplicate for simulation too
-    const updates = require('./services/pendingUpdatesManager').getPendingUpdates();
-    const isAlreadyPending = updates.find(u => u.type === 'github' && u.data.id === fakeUpdate.id);
+        // Check if duplicate for simulation too
+        const updates = require('./services/pendingUpdatesManager').getPendingUpdates();
+        const isAlreadyPending = updates.find(u => u.type === 'github' && u.data.id === fakeUpdate.id);
 
-    if (isAlreadyPending) {
-        isSimulating = false;
-        return res.send(`
+        if (isAlreadyPending) {
+            isSimulating = false;
+            return res.send(`
                 <div style="font-family: sans-serif; padding: 20px;">
                     <h1>⚠️ Already Pending</h1>
                     <p>This test update is already waiting for your review.</p>
@@ -250,15 +250,15 @@ try {
                     <a href="http://localhost:3000/admin/review/${isAlreadyPending.id}" style="background: #0070f3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Go to Review</a>
                 </div>
             `);
-    }
+        }
 
-    console.log("🧪 Simulating new GitHub repo...");
-    const update = adddPendingUpdate('github', fakeUpdate);
-    const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
+        console.log("🧪 Simulating new GitHub repo...");
+        const update = adddPendingUpdate('github', fakeUpdate);
+        const reviewLink = `http://localhost:3000/admin/review/${update.id}`;
 
-    await sendUpdateEmail('GitHub Project (SIMULATION)', fakeUpdate, reviewLink);
+        await sendUpdateEmail('GitHub Project (SIMULATION)', fakeUpdate, reviewLink);
 
-    res.send(`
+        res.send(`
             <div style="font-family: sans-serif; padding: 20px;">
                 <h1 style="color: green;">✅ Simulation Sent!</h1>
                 <p>Check your email for the notification.</p>
@@ -266,12 +266,12 @@ try {
                 <a href="${reviewLink}" style="background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Review Now</a>
             </div>
         `);
-} catch (err) {
-    console.error(err);
-    res.status(500).send("Error");
-} finally {
-    isSimulating = false;
-}
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error");
+    } finally {
+        isSimulating = false;
+    }
 });
 
 app.listen(PORT, () => {
