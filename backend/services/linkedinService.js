@@ -66,8 +66,13 @@ const checkLinkedinUpdates = async () => {
         }
 
         // 2. Validate Session (Try Feed First)
+        // 2. Validate Session (Try Feed First)
         log("🔑 Validating Session...");
-        await page.goto('https://www.linkedin.com/feed/', { waitUntil: 'domcontentloaded' });
+        try {
+            await page.goto('https://www.linkedin.com/feed/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+        } catch (e) {
+            log("⚠️ Navigation timeout (feed might depend on lazy loading). Proceeding to check DOM...");
+        }
 
         let isLoggedIn = false;
         try {
