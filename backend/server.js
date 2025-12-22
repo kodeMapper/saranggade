@@ -63,22 +63,23 @@ mongoose.connect(MONGO_URI)
 
         // --- START SERVER & CRON ONLY AFTER DB CONNECTS ---
 
-        // GitHub: Run every 1 hour (0 * * * *)
-        cron.schedule('0 * * * *', async () => {
-            console.log('⏰ [Hourly] Running GitHub update check...');
+        // GitHub: Run at 12am, 6am, 12pm, 5pm
+        cron.schedule('0 0,6,12,17 * * *', async () => {
+            console.log('⏰ [Scheduled] Running GitHub update check...');
             await runChecks();
         });
 
-        // LinkedIn: Run every 5 hours (0 */5 * * *)
+        // LinkedIn: Run every 5 hours (Keep as is or adjust?)
+        // User didn't specify, keeping default 5-hourly for now
         cron.schedule('0 */5 * * *', async () => {
-            console.log('💼 [5-Hourly] Running LinkedIn update check...');
+            console.log('💼 [Scheduled] Running LinkedIn update check...');
             const { checkLinkedinUpdates } = require('./services/linkedinService');
             await checkLinkedinUpdates();
         });
 
-        // Codolio: Run Daily at Midnight (0 0 * * *)
-        cron.schedule('0 0 * * *', async () => {
-            console.log('🦉 [Daily] Running Codolio Update...');
+        // Codolio: Run at 4am, 11am, 6pm, 11pm
+        cron.schedule('0 4,11,18,23 * * *', async () => {
+            console.log('🦉 [Scheduled] Running Codolio Update...');
             await updateCodolioStats();
         });
 
