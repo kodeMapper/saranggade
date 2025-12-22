@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Navbar from '../../../../components/Navbar';
 import styles from './Review.module.css';
 
 export default function ReviewUpdate() {
@@ -146,7 +145,6 @@ export default function ReviewUpdate() {
 
     return (
         <div className={styles.container}>
-            <Navbar />
             <div className={styles.content}>
                 <h1 className={styles.title}>Review {update.type} Update</h1>
 
@@ -178,15 +176,19 @@ export default function ReviewUpdate() {
 
                             <div className={styles.formGroup}>
                                 <label>Tech Stack</label>
-                                <div className={styles.techGrid} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '8px', marginTop: '8px' }}>
+                                <div className={styles.techGrid}>
                                     {techOptions.map(tech => {
                                         const isChecked = formData.tech?.split(',').map(t => t.trim()).includes(tech);
                                         return (
-                                            <label key={tech} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', cursor: 'pointer' }}>
+                                            <label
+                                                key={tech}
+                                                className={`${styles.techLabel} ${isChecked ? styles.checked : ''}`}
+                                            >
                                                 <input
                                                     type="checkbox"
                                                     checked={isChecked}
                                                     onChange={() => handleTechToggle(tech)}
+                                                    style={{ display: 'none' }}
                                                 />
                                                 {tech}
                                             </label>
