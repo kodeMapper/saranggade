@@ -7,3 +7,6 @@ Invoke-RestMethod -Method Post -Uri "http://localhost:5000/api/trigger-linkedin"
 
 # Trigger Codolio Update
 Invoke-RestMethod -Method Post -Uri "http://localhost:5000/api/trigger-codolio"
+
+/api/admin/reset-github-state 
+# clears the knownRepos array in MongoDB

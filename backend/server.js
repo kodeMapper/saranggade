@@ -239,6 +239,21 @@ app.post('/api/trigger-linkedin', async (req, res) => {
     res.json({ message: 'LinkedIn check started in background' });
 });
 
+// Admin: Reset GitHub State (Force Re-scan)
+app.post('/api/admin/reset-github-state', async (req, res) => {
+    try {
+        const { saveState, getState } = require('./services/stateManager');
+        const state = await getState();
+        state.knownRepos = []; // Clear the array
+        await saveState(state);
+        console.log("⚠️ GitHub State Reset! All repos will be seen as new on next check.");
+        res.json({ message: 'GitHub state reset successfully. Next check will fetch all repos.' });
+    } catch (error) {
+        console.error("Reset failed:", error);
+        res.status(500).json({ error: 'Reset failed' });
+    }
+});
+
 // SIMULATION ROUTE FOR TESTING (GET for easy browser access)
 let isSimulating = false; // Memory lock to prevent race conditions
 
