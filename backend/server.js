@@ -261,6 +261,39 @@ app.post('/api/admin/reset-github-state', async (req, res) => {
     }
 });
 
+// Admin: Manual Update Creation (Mimics automated find)
+app.post('/api/admin/manual-update', async (req, res) => {
+    try {
+        const { type, data } = req.body;
+        // Basic validation
+        if (!type || !data) return res.status(400).json({ error: 'Missing type or data' });
+
+        console.log(`📝 Manual Update Received: ${type}`);
+
+        // Add ID if missing (for continuity)
+        if (!data.id) data.id = `MANUAL-${Date.now()}`;
+
+        // Create Pending Update
+        const update = await adddPendingUpdate(type, data);
+
+        if (update) {
+            const reviewUrl = `/admin/review/${update.id}`;
+            // Notify Discord (Optional, but good for tracking)
+            await sendDiscordNotification('Manual Update Created', {
+                Type: type,
+                Name: data.name || data.title || 'Unknown'
+            }, `https://saranggade.vercel.app${reviewUrl}`);
+
+            res.json({ success: true, message: 'Update created', reviewUrl });
+        } else {
+            res.status(500).json({ error: 'Failed to create update' });
+        }
+    } catch (error) {
+        console.error('Manual update error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // SIMULATION ROUTE FOR TESTING (GET for easy browser access)
 let isSimulating = false; // Memory lock to prevent race conditions
 
