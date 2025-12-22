@@ -40,6 +40,11 @@ app.use(express.json());
 // Serve uploads folder statically so frontend can access images (Legacy support + new uploads if needed locally)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Root Route for Health Check (Keep-Alive)
+app.get('/', (req, res) => {
+    res.send('Backend is running');
+});
+
 // --- UPLOAD ROUTE ---
 app.post('/api/upload', upload.single('coverImage'), (req, res) => {
     if (!req.file) {
