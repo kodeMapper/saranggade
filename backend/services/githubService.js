@@ -4,6 +4,7 @@ const { getState, saveState } = require('./stateManager');
 const USERNAME = process.env.GITHUB_USERNAME || 'kodeMapper';
 
 const checkGithubUpdates = async () => {
+    console.log("🔍 [GitHub Check] Starting...");
     try {
         const response = await axios.get(`https://api.github.com/users/${USERNAME}/repos?sort=created&direction=desc`, {
             headers: {
@@ -12,13 +13,17 @@ const checkGithubUpdates = async () => {
             }
         });
         const repos = response.data;
+        console.log(`🔍 [GitHub Check] Fetched ${repos.length} repos from API.`);
 
         const state = await getState();
         const knownRepos = state.knownRepos || [];
+        console.log(`🔍 [GitHub Check] Found ${knownRepos.length} known repos in DB.`);
+
         const newRepos = [];
 
         for (const repo of repos) {
             if (!knownRepos.includes(repo.id)) {
+                console.log(`✨ [GitHub Check] New repo found: ${repo.name} (ID: ${repo.id})`);
                 // Fetch README content
                 try {
                     const readmeRes = await axios.get(`https://raw.githubusercontent.com/${USERNAME}/${repo.name}/main/README.md`);
@@ -36,10 +41,14 @@ const checkGithubUpdates = async () => {
             }
         }
 
+        if (newRepos.length === 0) {
+            console.log("✅ [GitHub Check] No new repositories found.");
+        }
+
         return newRepos;
 
     } catch (error) {
-        console.error('Error checking GitHub:', error.message);
+        console.error('❌ [GitHub Check] Error:', error.message);
         return null;
     }
 };
