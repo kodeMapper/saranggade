@@ -82,3 +82,12 @@ backend/node_modules/
 *.tar
 *.gz
 *.rar
+
+# ===========================================
+# PERSONAL/IRRELEVANT FILES
+# ===========================================
+GPS.md
+IP.md
+PulseAi.md
+*.pdf
+Todo.md
