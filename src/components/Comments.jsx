@@ -225,11 +225,11 @@ const StyledWrapper = styled.section`
     justify-content: center;
     align-self: flex-start;
     font-family: inherit;
-    color: #717171;
-    font-weight: 600;
+    color: #f2babaff;
+    font-weight: 500;
     width: 40%;
-    background: #313131;
-    border: 1px solid #ae2121ff;
+    background: #04294fda;
+    border: 1px solid #4c6f09ff;
     padding: 12px 16px;
     font-size: inherit;
     gap: 8px;
