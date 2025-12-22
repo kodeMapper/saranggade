@@ -39,7 +39,7 @@ const SocialBar = () => {
       <a href="https://www.linkedin.com/in/sarang-gade" target="_blank" rel="noopener noreferrer" className={styles.iconLink}>
         <Linkedin size={20} />
       </a>
-      <a href="https://twitter.com/yourusername" target="_blank" rel="noopener noreferrer" className={styles.iconLink}>
+      <a href="https://twitter.com/thesaranggade" target="_blank" rel="noopener noreferrer" className={styles.iconLink}>
         <Twitter size={20} />
       </a>
       <a href="mailto:saranganilgade@gmail.com" className={styles.iconLink}>
