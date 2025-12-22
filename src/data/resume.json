@@ -63,24 +63,6 @@
   ],
   "projects": [
     {
-      "name": "Philipcart",
-      "tech": "HTML5, CSS3",
-      "date": "Dec 2025",
-      "github": "https://github.com/kodeMapper/Philipcart",
-      "demo": "https://philipcart.vercel.app",
-      "image": "/images/uploads/upload-1766421357208.png",
-      "points": [
-        "This is a clone of Flipkart landing page"
-      ],
-      "caseStudy": {
-        "summary": "# Philipcart\nThis is a clone of Flipkart landing page\n",
-        "features": [],
-        "stackReasoning": [],
-        "challenges": [],
-        "gallery": []
-      }
-    },
-    {
       "name": "PulseAI – Health Risk Prediction",
       "tech": "Python, Flask, React, MongoDB",
       "date": "Nov 2025",
