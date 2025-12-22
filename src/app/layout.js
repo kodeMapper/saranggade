@@ -20,6 +20,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <body className={`${outfit.variable} ${playfair.variable}`} suppressHydrationWarning>
+        {/* Devicon for tech logos */}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
         {children}
       </body>
     </html>

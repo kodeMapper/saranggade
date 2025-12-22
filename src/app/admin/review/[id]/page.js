@@ -8,6 +8,42 @@ import {
 } from 'lucide-react';
 import styles from './Review.module.css';
 
+// Map technology names to Devicon classes
+const iconMap = {
+    "JavaScript": "devicon-javascript-plain",
+    "TypeScript": "devicon-typescript-plain",
+    "Python": "devicon-python-plain",
+    "Java": "devicon-java-plain",
+    "C++": "devicon-cplusplus-plain",
+    "C": "devicon-c-plain",
+    "PHP": "devicon-php-plain",
+    "React": "devicon-react-original",
+    "Next.js": "devicon-nextjs-original",
+    "Node.js": "devicon-nodejs-plain",
+    "Express": "devicon-express-original",
+    "Flask": "devicon-flask-original",
+    "Django": "devicon-django-plain",
+    "HTML5": "devicon-html5-plain",
+    "CSS3": "devicon-css3-plain",
+    "TailwindCSS": "devicon-tailwindcss-original",
+    "Bootstrap": "devicon-bootstrap-plain",
+    "MongoDB": "devicon-mongodb-plain",
+    "PostgreSQL": "devicon-postgresql-plain",
+    "MySQL": "devicon-mysql-plain",
+    "Firebase": "devicon-firebase-plain",
+    "Supabase": "devicon-supabase-plain",
+    "Docker": "devicon-docker-plain",
+    "AWS": "devicon-amazonwebservices-plain-wordmark",
+    "Git": "devicon-git-plain",
+    "GitHub": "devicon-github-original",
+    "Vercel": "devicon-vercel-original",
+    "Render": "devicon-render-original", // Might not exist in older devicon, fallback handled
+    "Postman": "devicon-postman-plain",
+    "Arduino": "devicon-arduino-plain",
+    "Dart": "devicon-dart-plain",
+    "Flutter": "devicon-flutter-plain"
+};
+
 export default function ReviewUpdate() {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     const { id } = useParams();
@@ -26,11 +62,15 @@ export default function ReviewUpdate() {
                 setUpdate(data);
 
                 if (data.type === 'github') {
+                    // Filter out generic "HTML" if it comes from GitHub default language
+                    let initialTech = data.data.language || '';
+                    if (initialTech === "HTML") initialTech = "";
+
                     setFormData({
                         name: data.data.name,
                         description: data.data.description || '',
                         readme: data.data.readmeContent || '',
-                        tech: data.data.language || '',
+                        tech: initialTech,
                         github: data.data.html_url,
                         demo: data.data.homepage || '',
                         image: "/images/projects/placeholder.png"
@@ -122,11 +162,11 @@ export default function ReviewUpdate() {
         }
     };
 
-    // Extended Tech Options
+    // Tech Options (Removed HTML5 if redundant, kept others)
     const techOptions = [
         "JavaScript", "TypeScript", "Python", "Java", "C++", "C", "PHP",
         "React", "Next.js", "Node.js", "Express", "Flask", "Django",
-        "HTML5", "CSS3", "TailwindCSS", "Framer Motion", "Bootstrap", "Styled Components",
+        "TailwindCSS", "Framer Motion", "Bootstrap", "Styled Components",
         "MongoDB", "PostgreSQL", "MySQL", "Supabase", "Firebase",
         "Docker", "AWS", "Git", "GitHub", "Vercel", "Render", "Postman",
         "IoT", "Raspberry Pi", "Arduino", "ESP32", "Machine Learning", "Data Modeling"
@@ -144,14 +184,18 @@ export default function ReviewUpdate() {
     if (loading) return <div className="p-10 text-white">Loading...</div>;
     if (!update) return <div className="p-10 text-white">Update not found. {message}</div>;
 
-    // Helper to resolve image URL for preview (handle relative paths)
+    // Enhanced Preview URL Logic
     const getPreviewUrl = (path) => {
         if (!path) return null;
-        if (path.startsWith('http')) return path;
-        // If relative, assume it's served by backend proxy or public
-        // For preview purposes, we might need full URL if backend is on 5000 and we are on 3000
-        // BUT we are using proxy in Next config usually OR mapped static files
-        // Let's try raw path first.
+        if (path.startsWith('http')) return path; // Already full URL
+
+        // If it's a relative path from our uploads, prefer the Backend URL to ensure immediate availability
+        // because Next.js public folder might lag in dev mode.
+        // Path format: /images/uploads/filename.ext
+        if (path.includes('/images/uploads/')) {
+            const filename = path.split('/').pop();
+            return `${API_URL}/uploads/${filename}`;
+        }
         return path;
     };
 
@@ -163,7 +207,7 @@ export default function ReviewUpdate() {
                 <div className={styles.card}>
                     {/* Common Name Field */}
                     <div className={styles.formGroup}>
-                        <label><Type size={18} /> Name / Title</label>
+                        <label><Type size={16} /> Name / Title</label>
                         <input name="name" value={formData.name || ''} onChange={handleChange} className={styles.input} />
                     </div>
 
@@ -171,34 +215,38 @@ export default function ReviewUpdate() {
                     {update.type === 'github' && (
                         <>
                             <div className={styles.formGroup}>
-                                <label><MessageSquare size={18} /> Description</label>
+                                <label><MessageSquare size={16} /> Description</label>
                                 <textarea name="description" value={formData.description || ''} onChange={handleChange} className={styles.textarea} />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label><FileText size={18} /> README Content (Case Study)</label>
+                                <label><FileText size={16} /> README Content (Case Study)</label>
                                 <textarea
                                     name="readme"
                                     value={formData.readme || ''}
                                     onChange={handleChange}
                                     className={styles.textarea}
-                                    style={{ fontFamily: 'monospace', fontSize: '13px' }}
+                                    style={{ fontFamily: 'monospace', fontSize: '12px' }}
                                 />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label><Code size={18} /> Tech Stack</label>
+                                <label><Code size={16} /> Tech Stack</label>
                                 <div className={styles.techGrid}>
                                     {techOptions.map(tech => {
                                         const isChecked = formData.tech?.split(',').map(t => t.trim()).includes(tech);
+                                        const iconClass = iconMap[tech] || "devicon-devicon-plain"; // Fallback icon
+
                                         return (
                                             <div
                                                 key={tech}
                                                 className={`${styles.techLabel} ${isChecked ? styles.checked : ''}`}
                                                 onClick={() => handleTechToggle(tech)}
                                             >
-                                                {isChecked && <Check size={14} />}
+                                                {/* Render Devicon */}
+                                                <i className={`${iconClass} ${styles.techIcon}`}></i>
                                                 {tech}
+                                                {isChecked && <Check size={14} style={{ marginLeft: 'auto' }} />}
                                             </div>
                                         );
                                     })}
@@ -214,17 +262,17 @@ export default function ReviewUpdate() {
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label><Github size={18} /> GitHub URL</label>
+                                <label><Github size={16} /> GitHub URL</label>
                                 <input name="github" value={formData.github || ''} onChange={handleChange} className={styles.input} />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label><Monitor size={18} /> Demo URL</label>
+                                <label><Monitor size={16} /> Demo URL</label>
                                 <input name="demo" value={formData.demo || ''} onChange={handleChange} className={styles.input} />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label><ImageIcon size={18} /> Cover Image</label>
+                                <label><ImageIcon size={16} /> Cover Image</label>
                                 <input type="file" onChange={handleImageUpload} className={styles.input} accept="image/*" />
                                 {formData.image && (
                                     <img
@@ -232,9 +280,8 @@ export default function ReviewUpdate() {
                                         alt="Preview"
                                         className={styles.imagePreview}
                                         onError={(e) => {
-                                            // Fallback if local relative path fails (try prepending backend URL if needed)
-                                            // e.target.src = `${API_URL}${formData.image}`;
                                             console.log("Image load failed", formData.image);
+                                            e.target.style.display = 'none'; // Hide if broken
                                         }}
                                     />
                                 )}
@@ -246,28 +293,28 @@ export default function ReviewUpdate() {
                     {update.type === 'linkedin_experience' && (
                         <>
                             <div className={styles.formGroup}>
-                                <label><Briefcase size={18} /> Job Title</label>
+                                <label><Briefcase size={16} /> Job Title</label>
                                 <input name="title" value={formData.title || ''} onChange={handleChange} className={styles.input} required />
                             </div>
                             <div className={styles.formGroup}>
-                                <label><Briefcase size={18} /> Company</label>
+                                <label><Briefcase size={16} /> Company</label>
                                 <input name="company" value={formData.company || ''} onChange={handleChange} className={styles.input} required />
                             </div>
                             <div className={styles.formGroup}>
-                                <label><Calendar size={18} /> Duration</label>
+                                <label><Calendar size={16} /> Duration</label>
                                 <input name="duration" value={formData.duration || ''} onChange={handleChange} className={styles.input} required />
                             </div>
                             <div className={styles.formGroup}>
-                                <label><MapPin size={18} /> Location</label>
+                                <label><MapPin size={16} /> Location</label>
                                 <input name="location" value={formData.location || ''} onChange={handleChange} className={styles.input} />
                             </div>
                             <div className={styles.formGroup}>
-                                <label><ImageIcon size={18} /> Company Logo</label>
+                                <label><ImageIcon size={16} /> Company Logo</label>
                                 <input type="file" onChange={handleImageUpload} className={styles.input} accept="image/*" />
-                                {formData.image && <img src={formData.image} className={styles.imagePreview} alt="Preview" />}
+                                {formData.image && <img src={getPreviewUrl(formData.image)} className={styles.imagePreview} alt="Preview" />}
                             </div>
                             <div className={styles.formGroup}>
-                                <label><Layers size={18} /> Highlights</label>
+                                <label><Layers size={16} /> Highlights</label>
                                 <textarea name="highlights" value={formData.highlights || ''} onChange={handleChange} className={styles.textarea} placeholder="Bullet points..." />
                             </div>
                         </>
@@ -276,7 +323,7 @@ export default function ReviewUpdate() {
                     {/* LinkedIn Skills fields */}
                     {update.type === 'linkedin_skill' && (
                         <div className={styles.formGroup}>
-                            <label><Code size={18} /> Select Skills</label>
+                            <label><Code size={16} /> Select Skills</label>
                             <div className={styles.techGrid}>
                                 {[...new Set(update.data?.skills || [])].map((skill, index) => {
                                     const currentSkills = formData.skills ? formData.skills.split(',').map(s => s.trim()).filter(Boolean) : [];

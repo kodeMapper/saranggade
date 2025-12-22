@@ -38,7 +38,8 @@ const upload = multer({ storage: storage });
 app.use(cors());
 app.use(express.json());
 // Serve uploads folder statically so frontend can access images (Legacy support + new uploads if needed locally)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve uploads folder statically (Point to the shared public folder)
+app.use('/uploads', express.static(UPLOAD_DIR));
 
 // Root Route for Health Check (Keep-Alive)
 app.get('/', (req, res) => {
