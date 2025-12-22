@@ -42,12 +42,16 @@ const sendUpdateEmail = async (updateType, data, reviewLink) => {
         `
     };
 
+    // EMAIL LOGIC DISABLED (Deprecated)
+    /*
     try {
         await transporter.sendMail(mailOptions);
         console.log('✅ Email sent successfully');
     } catch (error) {
         console.error('❌ Error sending email:', error);
     }
+    */
+    console.log("🚫 Email service is disabled. No email sent.");
 };
 
 module.exports = { sendUpdateEmail };

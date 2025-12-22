@@ -2,8 +2,6 @@ const axios = require('axios');
 require('dotenv').config();
 
 // Import email service for backup notifications
-const { sendUpdateEmail } = require('./emailService');
-
 const sendDiscordNotification = async (title, fields, actionLink) => {
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
@@ -45,20 +43,6 @@ const sendDiscordNotification = async (title, fields, actionLink) => {
         console.log("✅ Discord Notification Sent!");
     } catch (error) {
         console.error("❌ Error sending Discord notification:", error.message);
-    }
-
-    // BACKUP: Also send email (fire-and-forget, no await)
-    // This runs in the background and won't block or crash if it fails
-    try {
-        const emailData = {
-            name: fields.Name || fields.Role || fields.Count || title,
-            description: fields.Description || fields.Date || fields.List || ''
-        };
-        sendUpdateEmail(title, emailData, actionLink).catch(e => {
-            console.log("📧 Email backup failed (non-blocking):", e.message);
-        });
-    } catch (e) {
-        // Silently ignore - email is just a backup
     }
 };
 
