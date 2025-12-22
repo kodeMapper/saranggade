@@ -21,17 +21,17 @@ const log = (msg) => {
     fs.appendFileSync(LOG_FILE, logMsg);
 };
 
-const getSeenItems = () => {
-    const state = getState();
+const getSeenItems = async () => {
+    const state = await getState();
     return state.seenLinkedinItems || [];
 };
 
-const markItemAsSeen = (identifier) => {
-    const state = getState();
+const markItemAsSeen = async (identifier) => {
+    const state = await getState();
     if (!state.seenLinkedinItems) state.seenLinkedinItems = [];
     if (!state.seenLinkedinItems.includes(identifier)) {
         state.seenLinkedinItems.push(identifier);
-        saveState(state);
+        await saveState(state);
     }
 };
 
@@ -65,8 +65,8 @@ const checkLinkedinUpdates = async () => {
         });
 
         let resumeData = JSON.parse(fs.readFileSync(RESUME_PATH, 'utf8'));
-        const seenItems = getSeenItems();
-        const pendingUpdates = getPendingUpdates();
+        const seenItems = await getSeenItems();
+        const pendingUpdates = await getPendingUpdates();
 
         // 1. Session Management
         if (process.env.LINKEDIN_COOKIES) {
@@ -234,7 +234,7 @@ const checkLinkedinUpdates = async () => {
 
             if (!existsInResume && !isAlreadyPending) {
                 log(`🚀 New Pending Role: ${role.title}`);
-                const update = adddPendingUpdate('linkedin_experience', {
+                const update = await adddPendingUpdate('linkedin_experience', {
                     id: `${role.title}_${role.company}`,
                     name: `${role.title} at ${role.company}`,
                     title: role.title,
@@ -253,7 +253,7 @@ const checkLinkedinUpdates = async () => {
                 }, reviewLink);
                 updatesQueued++;
             } else if (existsInResume) {
-                markItemAsSeen(id);
+                await markItemAsSeen(id);
             }
         }
 
@@ -268,7 +268,7 @@ const checkLinkedinUpdates = async () => {
 
         if (newSkills.length > 0 && !skillsAlreadyPending) {
             log(`✨ New Pending Skills: ${newSkills.length}`);
-            const update = adddPendingUpdate('linkedin_skill', {
+            const update = await adddPendingUpdate('linkedin_skill', {
                 id: 'linkedin_new_skills_batch',
                 name: `${newSkills.length} New Skills`,
                 skills: newSkills
@@ -294,7 +294,7 @@ const checkLinkedinUpdates = async () => {
 
             if (!existingCertNames.includes(cert.name) && !isAlreadyPending) {
                 log(`📜 New Pending Cert: ${cert.name}`);
-                const update = adddPendingUpdate('linkedin_certification', {
+                const update = await adddPendingUpdate('linkedin_certification', {
                     id: cert.name,
                     name: cert.name,
                     issuer: cert.issuer,
@@ -309,7 +309,7 @@ const checkLinkedinUpdates = async () => {
                 }, reviewLink);
                 updatesQueued++;
             } else if (existingCertNames.includes(cert.name)) {
-                markItemAsSeen(id);
+                await markItemAsSeen(id);
             }
         }
 

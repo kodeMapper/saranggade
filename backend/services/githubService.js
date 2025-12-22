@@ -13,7 +13,7 @@ const checkGithubUpdates = async () => {
         });
         const repos = response.data;
 
-        const state = getState();
+        const state = await getState();
         const knownRepos = state.knownRepos || [];
         const newRepos = [];
 
@@ -44,11 +44,11 @@ const checkGithubUpdates = async () => {
     }
 };
 
-const markRepoAsSeen = (repoId) => {
-    const state = getState();
+const markRepoAsSeen = async (repoId) => {
+    const state = await getState();
     if (!state.knownRepos) state.knownRepos = [];
     state.knownRepos.push(repoId);
-    saveState(state);
+    await saveState(state);
 };
 
 module.exports = { checkGithubUpdates, markRepoAsSeen };

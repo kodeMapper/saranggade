@@ -47,7 +47,35 @@ app.post('/api/upload', upload.single('coverImage'), (req, res) => {
 // MongoDB Connection
 const MONGO_URI = process.env.MONGODB_URI;
 mongoose.connect(MONGO_URI)
-    .then(() => console.log('✅ MongoDB connected successfully'))
+    .then(() => {
+        console.log('✅ MongoDB connected successfully');
+
+        // --- START SERVER & CRON ONLY AFTER DB CONNECTS ---
+
+        // GitHub: Run every 1 hour (0 * * * *)
+        cron.schedule('0 * * * *', async () => {
+            console.log('⏰ [Hourly] Running GitHub update check...');
+            await runChecks();
+        });
+
+        // LinkedIn: Run every 5 hours (0 */5 * * *)
+        cron.schedule('0 */5 * * *', async () => {
+            console.log('💼 [5-Hourly] Running LinkedIn update check...');
+            const { checkLinkedinUpdates } = require('./services/linkedinService');
+            await checkLinkedinUpdates();
+        });
+
+        // Codolio: Run Daily at Midnight (0 0 * * *)
+        cron.schedule('0 0 * * *', async () => {
+            console.log('🦉 [Daily] Running Codolio Update...');
+            await updateCodolioStats();
+        });
+
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on http://localhost:${PORT}`);
+        });
+
+    })
     .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Feedback Schema (Keep existing logic)
@@ -61,17 +89,17 @@ const Feedback = mongoose.model('Feedback', feedbackSchema);
 // --- AUTOMATION ROUTES ---
 
 // Admin: Get Update Info
-app.get('/api/admin/updates/:id', (req, res) => {
-    const update = getUpdateById(req.params.id);
+app.get('/api/admin/updates/:id', async (req, res) => {
+    const update = await getUpdateById(req.params.id);
     if (!update) return res.status(404).json({ error: 'Update not found' });
     res.json(update);
 });
 
 // Admin: Approve Update
-app.post('/api/admin/updates/:id/approve', (req, res) => {
+app.post('/api/admin/updates/:id/approve', async (req, res) => {
     const { id } = req.params;
     const { editedData } = req.body; // Allow user to make edits before approving
-    const update = getUpdateById(id);
+    const update = await getUpdateById(id);
 
     if (!update) return res.status(404).json({ error: 'Update not found' });
 
@@ -81,14 +109,18 @@ app.post('/api/admin/updates/:id/approve', (req, res) => {
 
         // Cleanup based on type
         if (update.type === 'github') {
-            markRepoAsSeen(update.data.id);
+            await markRepoAsSeen(update.data.id);
         } else if (update.type.startsWith('linkedin_')) {
-            if (update.type === 'linkedin_experience') markItemAsSeen(`EXP:${update.data.title}:${update.data.company}`);
-            else if (update.type === 'linkedin_skill') (update.data.skills || []).forEach(s => markItemAsSeen(`SKILL:${s}`));
-            else if (update.type === 'linkedin_certification') markItemAsSeen(`CERT:${update.data.name}`);
+            if (update.type === 'linkedin_experience') await markItemAsSeen(`EXP:${update.data.title}:${update.data.company}`);
+            else if (update.type === 'linkedin_skill') {
+                for (const s of (update.data.skills || [])) {
+                    await markItemAsSeen(`SKILL:${s}`);
+                }
+            }
+            else if (update.type === 'linkedin_certification') await markItemAsSeen(`CERT:${update.data.name}`);
         }
 
-        removeUpdate(id);
+        await removeUpdate(id);
 
         // Trigger Git Commit & Push
         performGitCommit(`Added new ${update.type} project: ${dataToSave.name || dataToSave.title}`);
@@ -101,18 +133,22 @@ app.post('/api/admin/updates/:id/approve', (req, res) => {
 });
 
 // Admin: Reject Update
-app.post('/api/admin/updates/:id/reject', (req, res) => {
+app.post('/api/admin/updates/:id/reject', async (req, res) => {
     const { id } = req.params;
-    const update = getUpdateById(id);
+    const update = await getUpdateById(id);
     if (update) {
         if (update.type === 'github') {
-            markRepoAsSeen(update.data.id); // Mark as seen so we don't fetch it again
+            await markRepoAsSeen(update.data.id); // Mark as seen so we don't fetch it again
         } else if (update.type.startsWith('linkedin_')) {
-            if (update.type === 'linkedin_experience') markItemAsSeen(`EXP:${update.data.title}:${update.data.company}`);
-            else if (update.type === 'linkedin_skill') (update.data.skills || []).forEach(s => markItemAsSeen(`SKILL:${s}`));
-            else if (update.type === 'linkedin_certification') markItemAsSeen(`CERT:${update.data.name}`);
+            if (update.type === 'linkedin_experience') await markItemAsSeen(`EXP:${update.data.title}:${update.data.company}`);
+            else if (update.type === 'linkedin_skill') {
+                for (const s of (update.data.skills || [])) {
+                    await markItemAsSeen(`SKILL:${s}`);
+                }
+            }
+            else if (update.type === 'linkedin_certification') await markItemAsSeen(`CERT:${update.data.name}`);
         }
-        removeUpdate(id);
+        await removeUpdate(id);
     }
     res.json({ success: true, message: 'Update rejected.' });
 });
@@ -120,30 +156,13 @@ app.post('/api/admin/updates/:id/reject', (req, res) => {
 // --- CRON JOBS ---
 const { updateCodolioStats } = require('./services/codolioService');
 
-// GitHub: Run every 1 hour (0 * * * *)
-cron.schedule('0 * * * *', async () => {
-    console.log('⏰ [Hourly] Running GitHub update check...');
-    await runChecks();
-});
-
-// LinkedIn: Run every 5 hours (0 */5 * * *)
-cron.schedule('0 */5 * * *', async () => {
-    console.log('💼 [5-Hourly] Running LinkedIn update check...');
-    const { checkLinkedinUpdates } = require('./services/linkedinService');
-    await checkLinkedinUpdates();
-});
-
-// Codolio: Run Daily at Midnight (0 0 * * *)
-cron.schedule('0 0 * * *', async () => {
-    console.log('🦉 [Daily] Running Codolio Update...');
-    await updateCodolioStats();
-});
+// (Moved inside mongo connect)
 
 async function runChecks() {
     // 1. Check GitHub
     const newRepos = await checkGithubUpdates();
     if (newRepos && newRepos.length > 0) {
-        const updates = require('./services/pendingUpdatesManager').getPendingUpdates();
+        const updates = await require('./services/pendingUpdatesManager').getPendingUpdates();
 
         for (const newRepo of newRepos) {
             // Check if already pending to avoid spamming
@@ -151,7 +170,7 @@ async function runChecks() {
 
             if (!isAlreadyPending) {
                 console.log(`📦 New GitHub Repo found: ${newRepo.name}`);
-                const update = adddPendingUpdate('github', newRepo);
+                const update = await adddPendingUpdate('github', newRepo);
                 const reviewLink = `https://saranggade.vercel.app/admin/review/${update.id}`;
 
                 await sendDiscordNotification('GitHub Project', {
@@ -160,7 +179,7 @@ async function runChecks() {
                 }, reviewLink);
 
                 // CRITICAL: Mark as known IMMEDIATELY so we don't re-notify on next trigger
-                markRepoAsSeen(newRepo.id);
+                await markRepoAsSeen(newRepo.id);
 
             } else {
                 console.log(`ℹ️ Repo ${newRepo.name} is already pending review.`);
@@ -246,7 +265,7 @@ app.get('/api/simulate-update', async (req, res) => {
         };
 
         // Check if duplicate for simulation too
-        const updates = require('./services/pendingUpdatesManager').getPendingUpdates();
+        const updates = await require('./services/pendingUpdatesManager').getPendingUpdates();
         const isAlreadyPending = updates.find(u => u.type === 'github' && u.data.id === fakeUpdate.id);
 
         if (isAlreadyPending) {
@@ -260,7 +279,7 @@ app.get('/api/simulate-update', async (req, res) => {
         }
 
         console.log("🧪 Simulating new GitHub repo...");
-        const update = adddPendingUpdate('github', fakeUpdate);
+        const update = await adddPendingUpdate('github', fakeUpdate);
         const reviewLink = `https://saranggade.vercel.app/admin/review/${update.id}`;
 
         await sendDiscordNotification('GitHub Project (SIMULATION)', {
