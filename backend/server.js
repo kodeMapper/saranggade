@@ -15,15 +15,20 @@ const { exec } = require('child_process');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Configure Multer for Image Uploads
+// Configure Multer for Image Uploads (Save to Frontend Public Folder for Persistence via Git)
+const UPLOAD_DIR = path.join(__dirname, '../public/images/uploads');
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, UPLOAD_DIR);
     },
     filename: (req, file, cb) => {
-        // Unique filename: fieldname-timestamp.ext
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        // Keep extension, simple numeric timestamp
+        const ext = path.extname(file.originalname);
+        cb(null, `upload-${Date.now()}${ext}`);
     }
 });
 const upload = multer({ storage: storage });
@@ -31,7 +36,7 @@ const upload = multer({ storage: storage });
 // Middleware
 app.use(cors());
 app.use(express.json());
-// Serve uploads folder statically so frontend can access images
+// Serve uploads folder statically so frontend can access images (Legacy support + new uploads if needed locally)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- UPLOAD ROUTE ---
@@ -39,8 +44,8 @@ app.post('/api/upload', upload.single('coverImage'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
-    // Return the URL that the frontend can use
-    const imageUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+    // Return the RELATIVE URL that the frontend can use directly
+    const imageUrl = `/images/uploads/${req.file.filename}`;
     res.json({ imageUrl });
 });
 
@@ -155,8 +160,6 @@ app.post('/api/admin/updates/:id/reject', async (req, res) => {
 
 // --- CRON JOBS ---
 const { updateCodolioStats } = require('./services/codolioService');
-
-// (Moved inside mongo connect)
 
 async function runChecks() {
     // 1. Check GitHub
@@ -301,50 +304,50 @@ app.get('/api/simulate-update', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
-
-// Ensure uploads directory exists on startup
-const fs = require('fs');
-if (!fs.existsSync('uploads')) {
-    fs.mkdirSync('uploads');
-}
-
 function performGitCommit(message) {
     const USER = process.env.GITHUB_USERNAME || 'kodeMapper';
     const TOKEN = process.env.GITHUB_TOKEN;
-    const REPO = 'saranggade'; // Your repo name
+    const REPO = 'saranggade';
 
     if (!TOKEN) {
-        console.error("❌ Cannot auto-commit: GITHUB_TOKEN not found in env.");
+        console.error("❌ Cannot auto-commit: GITHUB_TOKEN not found.");
         return;
     }
 
-    // Authenticated URL
     const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
 
-    // Chain commands: Config -> Add -> Commit -> Push (Stateless & Robust)
     const commands = [
-        `cd /app`, // Ensure root
+        `cd /app`,
         `git config --global user.email "bot@portfolio.com"`,
         `git config --global user.name "Portfolio Bot"`,
-        `git init`, // Safe re-init
+        `git init`,
         `git remote remove origin || true`,
         `git remote add origin "${remoteUrl}"`,
-        `git fetch --depth=1 origin main`, // Fetch latest to avoid conflicts
+        `git fetch --depth=1 origin main`,
         `git reset origin/main`,
-        `git add src/data/resume.json public/images/experience/* public/images/codolio-*`, // Specific files to avoid mess
+        `git add src/data/resume.json public/images/*`,
         `git commit -m "${message} [skip ci]"`,
         `git push origin HEAD:main`
     ].join(' && ');
 
     console.log("🔄 Starting auto-commit...");
-    exec(commands, (err, stdout, stderr) => {
+    exec(commands, async (err, stdout, stderr) => {
         if (err) {
             console.error('❌ Git auto-commit failed:', stderr || err.message);
         } else {
             console.log('✅ Git auto-commit success:', stdout);
+
+            // TRIGGER VERCEL DEPLOY HOOK
+            if (process.env.VERCEL_DEPLOY_HOOK) {
+                console.log("🚀 Triggering Vercel Deploy Hook...");
+                try {
+                    // Fetch is available in Node 18+ (Render uses Node 20 usually)
+                    await fetch(process.env.VERCEL_DEPLOY_HOOK);
+                    console.log("✅ Vercel Deploy Hook Triggered.");
+                } catch (e) {
+                    console.error("❌ Failed to trigger Vercel Hook:", e.message);
+                }
+            }
         }
     });
 }

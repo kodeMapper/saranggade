@@ -8,13 +8,21 @@ const updatePortfolio = (type, data) => {
     const resumeData = JSON.parse(fs.readFileSync(RESUME_PATH, 'utf-8'));
 
     if (type === 'github') {
+        // Ensure image path is relative if coming from full URL (e.g. localhost)
+        let imagePath = data.image || "/images/projects/placeholder.png";
+        if (imagePath.startsWith('http') && imagePath.includes('/images/')) {
+            // strip domain if it's our own upload
+            const relativePart = imagePath.split('/images/')[1];
+            if (relativePart) imagePath = `/images/${relativePart}`;
+        }
+
         const newProject = {
             name: data.name,
             tech: data.tech || data.language || "Unknown",
             date: new Date(data.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
             github: data.github || data.html_url,
             demo: data.demo || data.homepage || "",
-            image: data.image || "/images/projects/placeholder.png",
+            image: imagePath,
             points: [
                 data.description || "No description provided."
             ],
@@ -28,7 +36,6 @@ const updatePortfolio = (type, data) => {
         };
         resumeData.projects.unshift(newProject);
     } else if (type === 'linkedin_experience') {
-        // Convert highlights from newline-separated string to array
         const highlights = typeof data.highlights === 'string'
             ? data.highlights.split('\n').map(h => h.trim()).filter(Boolean)
             : data.highlights || [];
