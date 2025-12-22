@@ -9,7 +9,7 @@ const path = require('path');
 const { checkGithubUpdates, markRepoAsSeen } = require('./services/githubService');
 const { checkLinkedinUpdates, markItemAsSeen } = require('./services/linkedinService');
 const { sendDiscordNotification } = require('./services/discordService');
-const { adddPendingUpdate, getUpdateById, removeUpdate } = require('./services/pendingUpdatesManager');
+const { adddPendingUpdate, getUpdateById, resolveUpdate } = require('./services/pendingUpdatesManager');
 const { updatePortfolio } = require('./services/contentUpdater');
 const { exec } = require('child_process');
 
@@ -126,7 +126,8 @@ app.post('/api/admin/updates/:id/approve', async (req, res) => {
             else if (update.type === 'linkedin_certification') await markItemAsSeen(`CERT:${update.data.name}`);
         }
 
-        await removeUpdate(id);
+        // Mark as Approved instead of removing
+        await resolveUpdate(id, 'approved');
 
         // Trigger Git Commit & Push
         performGitCommit(`Added new ${update.type} project: ${dataToSave.name || dataToSave.title}`);
@@ -154,7 +155,8 @@ app.post('/api/admin/updates/:id/reject', async (req, res) => {
             }
             else if (update.type === 'linkedin_certification') await markItemAsSeen(`CERT:${update.data.name}`);
         }
-        await removeUpdate(id);
+        // Mark as Rejected instead of removing
+        await resolveUpdate(id, 'rejected');
     }
     res.json({ success: true, message: 'Update rejected.' });
 });
