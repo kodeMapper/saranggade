@@ -205,11 +205,13 @@ export default function ReviewUpdate() {
                 <h1 className={styles.title}>Review {update.type.replace('_', ' ')}</h1>
 
                 <div className={styles.card}>
-                    {/* Common Name Field */}
-                    <div className={styles.formGroup}>
-                        <label><Type size={16} /> Name / Title</label>
-                        <input name="name" value={formData.name || ''} onChange={handleChange} className={styles.input} />
-                    </div>
+                    {/* Common Name Field - Hide for Experience as it uses specific Title/Company */}
+                    {update.type !== 'linkedin_experience' && (
+                        <div className={styles.formGroup}>
+                            <label><Type size={16} /> Name / Title</label>
+                            <input name="name" value={formData.name || ''} onChange={handleChange} className={styles.input} />
+                        </div>
+                    )}
 
                     {/* GitHub-specific fields */}
                     {update.type === 'github' && (
@@ -309,7 +311,7 @@ export default function ReviewUpdate() {
                                 <input name="location" value={formData.location || ''} onChange={handleChange} className={styles.input} />
                             </div>
                             <div className={styles.formGroup}>
-                                <label><ImageIcon size={16} /> Company Logo</label>
+                                <label><ImageIcon size={16} /> Showcase Image / Certificate</label>
                                 <input type="file" onChange={handleImageUpload} className={styles.input} accept="image/*" />
                                 {formData.image && <img src={getPreviewUrl(formData.image)} className={styles.imagePreview} alt="Preview" />}
                             </div>
