@@ -305,6 +305,12 @@ app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
+// Ensure uploads directory exists on startup
+const fs = require('fs');
+if (!fs.existsSync('uploads')) {
+    fs.mkdirSync('uploads');
+}
+
 function performGitCommit(message) {
     const USER = process.env.GITHUB_USERNAME || 'kodeMapper';
     const TOKEN = process.env.GITHUB_TOKEN;
@@ -318,13 +324,19 @@ function performGitCommit(message) {
     // Authenticated URL
     const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
 
-    // Chain commands: Config -> Add -> Commit -> Push
+    // Chain commands: Config -> Add -> Commit -> Push (Stateless & Robust)
     const commands = [
-        `git config user.email "bot@portfolio.com"`,
-        `git config user.name "Portfolio Bot"`,
-        `git add .`,
-        `git commit -m "${message}"`,
-        `git push "${remoteUrl}" HEAD:main`
+        `cd /app`, // Ensure root
+        `git config --global user.email "bot@portfolio.com"`,
+        `git config --global user.name "Portfolio Bot"`,
+        `git init`, // Safe re-init
+        `git remote remove origin || true`,
+        `git remote add origin "${remoteUrl}"`,
+        `git fetch --depth=1 origin main`, // Fetch latest to avoid conflicts
+        `git reset origin/main`,
+        `git add src/data/resume.json public/images/experience/* public/images/codolio-*`, // Specific files to avoid mess
+        `git commit -m "${message} [skip ci]"`,
+        `git push origin HEAD:main`
     ].join(' && ');
 
     console.log("🔄 Starting auto-commit...");
