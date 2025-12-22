@@ -1,6 +1,11 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import {
+    Check, X, Code, Image as ImageIcon, Monitor, Layout,
+    MessageSquare, Type, Github, Link as LinkIcon,
+    Briefcase, MapPin, Calendar, Layers, FileText
+} from 'lucide-react';
 import styles from './Review.module.css';
 
 export default function ReviewUpdate() {
@@ -13,7 +18,6 @@ export default function ReviewUpdate() {
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        // Fetch update details
         const fetchUpdate = async () => {
             try {
                 const res = await fetch(`${API_URL}/api/admin/updates/${id}`);
@@ -21,7 +25,6 @@ export default function ReviewUpdate() {
                 const data = await res.json();
                 setUpdate(data);
 
-                // Initialize form data based on type
                 if (data.type === 'github') {
                     setFormData({
                         name: data.data.name,
@@ -71,16 +74,11 @@ export default function ReviewUpdate() {
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
         const data = new FormData();
         data.append('coverImage', file);
-
         try {
             setMessage("Uploading image...");
-            const res = await fetch(`${API_URL}/api/upload`, {
-                method: 'POST',
-                body: data
-            });
+            const res = await fetch(`${API_URL}/api/upload`, { method: 'POST', body: data });
             const result = await res.json();
             if (res.ok) {
                 setFormData(prev => ({ ...prev, image: result.imageUrl }));
@@ -124,12 +122,15 @@ export default function ReviewUpdate() {
         }
     };
 
+    // Extended Tech Options
     const techOptions = [
-        "React", "Next.js", "Node.js", "Express", "MongoDB", "PostgreSQL",
-        "JavaScript", "TypeScript", "Python", "Flask", "Django",
-        "HTML5", "CSS3", "TailwindCSS", "Framer Motion",
-        "Docker", "AWS", "Firebase", "Git", "C++", "Java"
-    ];
+        "JavaScript", "TypeScript", "Python", "Java", "C++", "C", "PHP",
+        "React", "Next.js", "Node.js", "Express", "Flask", "Django",
+        "HTML5", "CSS3", "TailwindCSS", "Framer Motion", "Bootstrap", "Styled Components",
+        "MongoDB", "PostgreSQL", "MySQL", "Supabase", "Firebase",
+        "Docker", "AWS", "Git", "GitHub", "Vercel", "Render", "Postman",
+        "IoT", "Raspberry Pi", "Arduino", "ESP32", "Machine Learning", "Data Modeling"
+    ].sort();
 
     const handleTechToggle = (tech) => {
         const currentTechs = formData.tech ? formData.tech.split(',').map(t => t.trim()).filter(Boolean) : [];
@@ -143,15 +144,26 @@ export default function ReviewUpdate() {
     if (loading) return <div className="p-10 text-white">Loading...</div>;
     if (!update) return <div className="p-10 text-white">Update not found. {message}</div>;
 
+    // Helper to resolve image URL for preview (handle relative paths)
+    const getPreviewUrl = (path) => {
+        if (!path) return null;
+        if (path.startsWith('http')) return path;
+        // If relative, assume it's served by backend proxy or public
+        // For preview purposes, we might need full URL if backend is on 5000 and we are on 3000
+        // BUT we are using proxy in Next config usually OR mapped static files
+        // Let's try raw path first.
+        return path;
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.content}>
-                <h1 className={styles.title}>Review {update.type} Update</h1>
+                <h1 className={styles.title}>Review {update.type.replace('_', ' ')}</h1>
 
                 <div className={styles.card}>
                     {/* Common Name Field */}
                     <div className={styles.formGroup}>
-                        <label>Name / Title</label>
+                        <label><Type size={18} /> Name / Title</label>
                         <input name="name" value={formData.name || ''} onChange={handleChange} className={styles.input} />
                     </div>
 
@@ -159,39 +171,35 @@ export default function ReviewUpdate() {
                     {update.type === 'github' && (
                         <>
                             <div className={styles.formGroup}>
-                                <label>Description (Summary)</label>
+                                <label><MessageSquare size={18} /> Description</label>
                                 <textarea name="description" value={formData.description || ''} onChange={handleChange} className={styles.textarea} />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label>Case Study (README Content)</label>
+                                <label><FileText size={18} /> README Content (Case Study)</label>
                                 <textarea
                                     name="readme"
                                     value={formData.readme || ''}
                                     onChange={handleChange}
                                     className={styles.textarea}
-                                    style={{ height: '200px', fontFamily: 'monospace', fontSize: '12px' }}
+                                    style={{ fontFamily: 'monospace', fontSize: '13px' }}
                                 />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label>Tech Stack</label>
+                                <label><Code size={18} /> Tech Stack</label>
                                 <div className={styles.techGrid}>
                                     {techOptions.map(tech => {
                                         const isChecked = formData.tech?.split(',').map(t => t.trim()).includes(tech);
                                         return (
-                                            <label
+                                            <div
                                                 key={tech}
                                                 className={`${styles.techLabel} ${isChecked ? styles.checked : ''}`}
+                                                onClick={() => handleTechToggle(tech)}
                                             >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={isChecked}
-                                                    onChange={() => handleTechToggle(tech)}
-                                                    style={{ display: 'none' }}
-                                                />
+                                                {isChecked && <Check size={14} />}
                                                 {tech}
-                                            </label>
+                                            </div>
                                         );
                                     })}
                                 </div>
@@ -199,29 +207,36 @@ export default function ReviewUpdate() {
                                     name="tech"
                                     value={formData.tech || ''}
                                     onChange={handleChange}
-                                    placeholder="Or type custom here..."
+                                    placeholder="Type custom technologies separated by commas..."
                                     className={styles.input}
-                                    style={{ marginTop: '10px' }}
+                                    style={{ marginTop: '15px' }}
                                 />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label>GitHub URL</label>
+                                <label><Github size={18} /> GitHub URL</label>
                                 <input name="github" value={formData.github || ''} onChange={handleChange} className={styles.input} />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label>Demo URL</label>
+                                <label><Monitor size={18} /> Demo URL</label>
                                 <input name="demo" value={formData.demo || ''} onChange={handleChange} className={styles.input} />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label>Cover Image</label>
+                                <label><ImageIcon size={18} /> Cover Image</label>
                                 <input type="file" onChange={handleImageUpload} className={styles.input} accept="image/*" />
                                 {formData.image && (
-                                    <div style={{ marginTop: 10 }}>
-                                        <img src={formData.image} alt="Preview" style={{ maxWidth: '100%', borderRadius: 8 }} />
-                                    </div>
+                                    <img
+                                        src={getPreviewUrl(formData.image)}
+                                        alt="Preview"
+                                        className={styles.imagePreview}
+                                        onError={(e) => {
+                                            // Fallback if local relative path fails (try prepending backend URL if needed)
+                                            // e.target.src = `${API_URL}${formData.image}`;
+                                            console.log("Image load failed", formData.image);
+                                        }}
+                                    />
                                 )}
                             </div>
                         </>
@@ -231,45 +246,29 @@ export default function ReviewUpdate() {
                     {update.type === 'linkedin_experience' && (
                         <>
                             <div className={styles.formGroup}>
-                                <label>Job Title *</label>
+                                <label><Briefcase size={18} /> Job Title</label>
                                 <input name="title" value={formData.title || ''} onChange={handleChange} className={styles.input} required />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Company *</label>
+                                <label><Briefcase size={18} /> Company</label>
                                 <input name="company" value={formData.company || ''} onChange={handleChange} className={styles.input} required />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Duration *</label>
-                                <input name="duration" value={formData.duration || ''} onChange={handleChange} className={styles.input} placeholder="e.g. April 2025 – August 2025" required />
+                                <label><Calendar size={18} /> Duration</label>
+                                <input name="duration" value={formData.duration || ''} onChange={handleChange} className={styles.input} required />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Location</label>
-                                <input name="location" value={formData.location || ''} onChange={handleChange} className={styles.input} placeholder="e.g. Nagpur, Maharashtra" />
+                                <label><MapPin size={18} /> Location</label>
+                                <input name="location" value={formData.location || ''} onChange={handleChange} className={styles.input} />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Company Logo / Image * (Required)</label>
-                                <input type="file" onChange={handleImageUpload} className={styles.input} accept="image/*" required />
-                                {formData.image && formData.image !== '/images/experience/default.png' && (
-                                    <div style={{ marginTop: 10, padding: '10px', background: 'rgba(40,167,69,0.1)', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
-                                        <img src={formData.image} alt="Preview" style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }} />
-                                        <span style={{ color: '#28a745' }}>✅ Image uploaded</span>
-                                    </div>
-                                )}
-                                {(!formData.image || formData.image === '/images/experience/default.png') && (
-                                    <p style={{ color: '#ff6b6b', fontSize: '0.85rem', marginTop: 6 }}>⚠️ Please upload a company logo or relevant image</p>
-                                )}
+                                <label><ImageIcon size={18} /> Company Logo</label>
+                                <input type="file" onChange={handleImageUpload} className={styles.input} accept="image/*" />
+                                {formData.image && <img src={formData.image} className={styles.imagePreview} alt="Preview" />}
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Highlights (each line = one bullet point)</label>
-                                <textarea
-                                    name="highlights"
-                                    value={formData.highlights || ''}
-                                    onChange={handleChange}
-                                    className={styles.textarea}
-                                    placeholder="Completed 3-month internship...&#10;Built the official website...&#10;Led a team of 5 developers..."
-                                    style={{ height: '120px' }}
-                                />
-                                <p style={{ fontSize: '0.8rem', color: '#888', marginTop: 4 }}>Each line will become a bullet point in the Experience section</p>
+                                <label><Layers size={18} /> Highlights</label>
+                                <textarea name="highlights" value={formData.highlights || ''} onChange={handleChange} className={styles.textarea} placeholder="Bullet points..." />
                             </div>
                         </>
                     )}
@@ -277,53 +276,41 @@ export default function ReviewUpdate() {
                     {/* LinkedIn Skills fields */}
                     {update.type === 'linkedin_skill' && (
                         <div className={styles.formGroup}>
-                            <label>Select Skills to Add (Uncheck to exclude)</label>
-                            <p style={{ fontSize: '0.8rem', color: '#888', marginBottom: 12 }}>These skills were found on your LinkedIn. Select the ones you want to add to your portfolio.</p>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '8px', marginTop: '8px', maxHeight: '300px', overflowY: 'auto', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+                            <label><Code size={18} /> Select Skills</label>
+                            <div className={styles.techGrid}>
                                 {[...new Set(update.data?.skills || [])].map((skill, index) => {
                                     const currentSkills = formData.skills ? formData.skills.split(',').map(s => s.trim()).filter(Boolean) : [];
                                     const isChecked = currentSkills.includes(skill);
                                     return (
-                                        <label key={`${skill}-${index}`} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem', cursor: 'pointer', padding: '4px 8px', background: isChecked ? 'rgba(40,167,69,0.2)' : 'transparent', borderRadius: 4, transition: 'all 0.2s' }}>
-                                            <input
-                                                type="checkbox"
-                                                checked={isChecked}
-                                                onChange={() => {
-                                                    if (isChecked) {
-                                                        setFormData({ ...formData, skills: currentSkills.filter(s => s !== skill).join(', ') });
-                                                    } else {
-                                                        setFormData({ ...formData, skills: [...currentSkills, skill].join(', ') });
-                                                    }
-                                                }}
-                                            />
+                                        <div
+                                            key={`${skill}-${index}`}
+                                            className={`${styles.techLabel} ${isChecked ? styles.checked : ''}`}
+                                            onClick={() => {
+                                                if (isChecked) {
+                                                    setFormData({ ...formData, skills: currentSkills.filter(s => s !== skill).join(', ') });
+                                                } else {
+                                                    setFormData({ ...formData, skills: [...currentSkills, skill].join(', ') });
+                                                }
+                                            }}
+                                        >
+                                            {isChecked && <Check size={14} />}
                                             {skill}
-                                        </label>
+                                        </div>
                                     );
                                 })}
                             </div>
-                            <p style={{ fontSize: '0.85rem', color: '#28a745', marginTop: 8 }}>✓ Selected: {formData.skills ? formData.skills.split(',').filter(s => s.trim()).length : 0} skills</p>
                         </div>
                     )}
 
-                    {/* LinkedIn Certification fields */}
-                    {update.type === 'linkedin_certification' && (
-                        <>
-                            <div className={styles.formGroup}>
-                                <label>Issuer</label>
-                                <input name="issuer" value={formData.issuer || ''} onChange={handleChange} className={styles.input} />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label>Date</label>
-                                <input name="date" value={formData.date || ''} onChange={handleChange} className={styles.input} />
-                            </div>
-                        </>
-                    )}
-
                     <div className={styles.actions}>
-                        <button onClick={handleReject} className={styles.rejectBtn}>Cancel / Ignore</button>
-                        <button onClick={handleApprove} className={styles.approveBtn}>Approve & Deploy</button>
+                        <button onClick={handleReject} className={styles.rejectBtn}>
+                            <X size={20} /> Ignore
+                        </button>
+                        <button onClick={handleApprove} className={styles.approveBtn}>
+                            <Check size={20} /> Approve & Deploy
+                        </button>
                     </div>
-                    {message && <p className={styles.message}>{message}</p>}
+                    {message && <div className={styles.message}>{message}</div>}
                 </div>
             </div>
         </div>

@@ -1,24 +1,26 @@
 .container {
     padding: 2rem;
     min-height: 100vh;
-    background: radial-gradient(circle at top left, #1a1a2e, var(--background));
-    color: var(--foreground);
+    background: radial-gradient(circle at top left, #1a1a2e, #050505);
+    color: #e2e8f0;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    /* Align top for long content */
+    padding-top: 4rem;
     font-family: var(--font-outfit), sans-serif;
 }
 
 .content {
-    width: 700px;
-    max-width: 100%;
-    animation: fadeIn 0.5s ease-out;
+    width: 800px;
+    max-width: 95%;
+    animation: fadeIn 0.6s ease-out;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(30px);
     }
 
     to {
@@ -28,138 +30,177 @@
 }
 
 .title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
+    font-size: 3rem;
+    margin-bottom: 2.5rem;
     text-align: center;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #a78bfa 0%, #22d3ee 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    text-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
 }
 
+/* Fluid Layout - No rigid border box */
 .card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 2.5rem;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
 }
 
 .formGroup {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.formGroup:hover {
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .formGroup label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--secondary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.8rem;
+    color: #94a3b8;
+    /* Lighter grey for better readability */
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .input,
 .textarea {
     width: 100%;
-    padding: 1rem;
+    padding: 1.2rem;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.2);
-    color: var(--foreground);
-    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    /* Higher contrast border */
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    font-size: 1.1rem;
+    /* Larger text */
     transition: all 0.3s ease;
     outline: none;
     font-family: inherit;
+    line-height: 1.6;
 }
 
 .input:focus,
 .textarea:focus {
-    border-color: var(--primary);
-    background: rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+    border-color: #a78bfa;
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.15);
 }
 
 .textarea {
-    min-height: 120px;
-    resize: vertical;
+    min-height: 150px;
 }
 
 .techGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
 }
 
 .techLabel {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     cursor: pointer;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    /* Brighter pill background */
+    border-radius: 50px;
+    /* Pill shape */
     transition: all 0.2s;
-    border: 1px solid transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
 }
 
 .techLabel:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    color: white;
 }
 
 .techLabel.checked {
-    background: rgba(139, 92, 246, 0.2);
-    border-color: var(--primary);
+    background: #7c3aed;
+    /* Primary purple */
+    border-color: #7c3aed;
     color: white;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
 .actions {
     display: flex;
-    justify-content: space-between;
-    margin-top: 3rem;
-    gap: 1rem;
+    justify-content: flex-end;
+    /* Align to right */
+    gap: 1.5rem;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .approveBtn,
 .rejectBtn {
-    flex: 1;
-    padding: 1rem;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
+    padding: 1.2rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .approveBtn {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    background: #10b981;
+    color: #022c22;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
 }
 
 .approveBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    background: #34d399;
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
 }
 
 .rejectBtn {
     background: transparent;
-    border: 1px solid rgba(239, 68, 68, 0.5);
     color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .rejectBtn:hover {
     background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
-    border-color: #f87171;
+    color: #fca5a5;
+    border-color: #fca5a5;
+}
+
+/* Image Preview Fix */
+.imagePreview {
+    margin-top: 1rem;
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    /* Don't crop */
+    border-radius: 12px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
 }
 
 .message {
