@@ -63,6 +63,24 @@
   ],
   "projects": [
     {
+      "name": "Philipcart",
+      "tech": "HTML5, CSS3, JavaScript",
+      "date": "Dec 2025",
+      "github": "https://github.com/kodeMapper/Philipcart",
+      "demo": "https://philipcart.vercel.app",
+      "image": "/images/uploads/upload-1766413004786.JPG",
+      "points": [
+        "This is a clone of Flipkart landing page"
+      ],
+      "caseStudy": {
+        "summary": "# Philipcart\nThis is a clone of Flipkart landing page\n",
+        "features": [],
+        "stackReasoning": [],
+        "challenges": [],
+        "gallery": []
+      }
+    },
+    {
       "name": "Marvel-Cinematic-Universe",
       "tech": "HTML, CSS3, JavaScript",
       "date": "Dec 2025",
