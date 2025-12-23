@@ -7,7 +7,7 @@ const cron = require('node-cron');
 const multer = require('multer');
 const path = require('path');
 const { checkGithubUpdates, markRepoAsSeen } = require('./services/githubService');
-const { checkLinkedinUpdates, markItemAsSeen } = require('./services/linkedinService');
+const { markItemAsSeen } = require('./services/linkedinService');
 const { sendDiscordNotification } = require('./services/discordService');
 const { adddPendingUpdate, getUpdateById, resolveUpdate } = require('./services/pendingUpdatesManager');
 const { updatePortfolio } = require('./services/contentUpdater');
@@ -70,13 +70,7 @@ mongoose.connect(MONGO_URI)
             await runChecks();
         });
 
-        // LinkedIn: Run every 5 hours (Keep as is or adjust?)
-        // User didn't specify, keeping default 5-hourly for now
-        cron.schedule('0 */5 * * *', async () => {
-            console.log('💼 [Scheduled] Running LinkedIn update check...');
-            const { checkLinkedinUpdates } = require('./services/linkedinService');
-            await checkLinkedinUpdates();
-        });
+        // LinkedIn: DISABLED - Manual updates only (no Puppeteer to save memory)
 
         // Codolio: Run at 4am, 11am, 6pm, 11pm
         cron.schedule('0 4,11,18,23 * * *', async () => {
@@ -240,11 +234,7 @@ app.post('/api/trigger-codolio', async (req, res) => {
     res.json({ message: 'Codolio update started in background' });
 });
 
-app.post('/api/trigger-linkedin', async (req, res) => {
-    console.log('🔵 Manual LinkedIn Check Triggered');
-    checkLinkedinUpdates(); // Async
-    res.json({ message: 'LinkedIn check started in background' });
-});
+// LinkedIn trigger route removed - manual updates only
 
 // Admin: Reset GitHub State (Force Re-scan)
 app.post('/api/admin/reset-github-state', async (req, res) => {
