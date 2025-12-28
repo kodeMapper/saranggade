@@ -37,8 +37,8 @@
   --primary: #7c3aed;
   --secondary: #a78bfa;
   --accent: #0ea5e9;
-  --glass-bg: rgba(226, 232, 240, 0.85);
-  /* Light slate glassmorphism */
+  --glass-bg: rgba(203, 213, 225, 0.9);
+  /* Darker slate glassmorphism */
   --glass-border: rgba(0, 0, 0, 0.1);
   --card-bg: #ffffff;
 
