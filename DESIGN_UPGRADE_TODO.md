@@ -8,16 +8,16 @@
 - [x] **Contact Form Styling**: Optimize `Comments.jsx` for light mode (colors, buttons, hover states).
 
 ## 3. Visual Effects (Reference Adaptations)
-- [ ] **Hero Section - Light Rays**:
-    - [ ] Port `LightRays` component (or equivalent WebGL/Canvas effect).
-    - [ ] Integrate into `Hero.jsx` behind the main content.
-    - [ ] Tune colors to match our Green/Purple/Dark theme.
-- [ ] **Experience Section - Tracing Beam**:
-    - [ ] Implement `TracingBeam` component to follow the scroll position.
-    - [ ] Wrap the current "free-floating" experience timeline with this beam.
-- [ ] **Interactive Cards - Spotlight**:
-    - [ ] Create `SpotlightCard` wrapper.
-    - [ ] Apply to `Skills` and `Projects` items for hover illumination.
+- [x] **Hero Section - Light Rays**:
+    - [x] Port `LightRays` component (or equivalent WebGL/Canvas effect).
+    - [x] Integrate into `Hero.jsx` behind the main content.
+    - [x] Tune colors to match our Green/Purple/Dark theme.
+- [/] **Experience Section - Tracing Beam**:
+    - [x] Implement `TracingBeam` component to follow the scroll position.
+    - [ ] Wrap the current "free-floating" experience timeline with this beam (user reverted).
+- [/] **Interactive Cards - Spotlight**:
+    - [x] Create `SpotlightCard` wrapper component.
+    - [ ] Apply to `Skills` and `Projects` items (requires layout refactoring).
 
 ## 3. Structural Components
 - [x] **Footer**:
@@ -26,5 +26,5 @@
     - [x] Style with `Orbitron` headers and consistent glassmorphism.
 
 ## 4. Refinement
-- [ ] Ensure all new effects are responsive (disable or simplify on mobile if needed).
-- [ ] Verify light/dark mode compatibility for new effects.
+- [x] Ensure all new effects are responsive (disable or simplify on mobile if needed).
+- [x] Verify light/dark mode compatibility for new effects.

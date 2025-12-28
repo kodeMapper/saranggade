@@ -27,15 +27,6 @@ const Hero = ({ data }) => {
             <img src="/images/hero-new-final.png" alt="Sarang Gade" className={styles.heroImage} />
             <div className={styles.overlayGradient}></div>
             
-            <LightRays 
-                raysColor="#8b5cf6" 
-                raysSpeed={0.5} 
-                rayLength={1.5} 
-                lightSpread={0.8}
-                mouseInfluence={0.2}
-                className={styles.raysWrapper}
-            />
-            
             {/* SVG Filter for Melting Liquid Effect */}
             <svg style={{ position: 'absolute', width: 0, height: 0 }}>
               <defs>
@@ -49,6 +40,16 @@ const Hero = ({ data }) => {
               </defs>
             </svg>
         </div>
+{/* 
+        Light Rays Effect - Outside backgroundLayer for proper layering
+        <LightRays 
+            raysColor="#8b5cf6" 
+            raysSpeed={0.5} 
+            rayLength={1.5} 
+            lightSpread={0.8}
+            mouseInfluence={0.2}
+            className={styles.raysWrapper}
+        /> */}
 
         {/* Marathi Logo Top Right */}
         <div className={styles.marathiLogo}>सारंग</div>
