@@ -46,6 +46,8 @@ const iconMap = {
 
 export default function ReviewUpdate() {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const ADMIN_USER = process.env.NEXT_PUBLIC_ADMIN_USER;
+    const ADMIN_PASS = process.env.NEXT_PUBLIC_ADMIN_PASS;
     const { id } = useParams();
     const router = useRouter();
     const [update, setUpdate] = useState(null);
@@ -56,7 +58,11 @@ export default function ReviewUpdate() {
     useEffect(() => {
         const fetchUpdate = async () => {
             try {
-                const res = await fetch(`${API_URL}/api/admin/updates/${id}`);
+                const res = await fetch(`${API_URL}/api/admin/updates/${id}`, {
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(`${ADMIN_USER}:${ADMIN_PASS}`)
+                    }
+                });
                 if (!res.ok) throw new Error("Update not found");
                 const data = await res.json();
                 setUpdate(data);
@@ -118,7 +124,13 @@ export default function ReviewUpdate() {
         data.append('coverImage', file);
         try {
             setMessage("Uploading image...");
-            const res = await fetch(`${API_URL}/api/upload`, { method: 'POST', body: data });
+            const res = await fetch(`${API_URL}/api/upload`, {
+                method: 'POST',
+                body: data,
+                headers: {
+                    'Authorization': 'Basic ' + btoa(`${ADMIN_USER}:${ADMIN_PASS}`)
+                }
+            });
             const result = await res.json();
             if (res.ok) {
                 setFormData(prev => ({ ...prev, image: result.imageUrl }));
@@ -136,7 +148,10 @@ export default function ReviewUpdate() {
         try {
             const res = await fetch(`${API_URL}/api/admin/updates/${id}/approve`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa(`${ADMIN_USER}:${ADMIN_PASS}`)
+                },
                 body: JSON.stringify({ editedData: formData })
             });
             const result = await res.json();
@@ -154,7 +169,12 @@ export default function ReviewUpdate() {
     const handleReject = async () => {
         if (!confirm("Are you sure you want to ignore this update?")) return;
         try {
-            await fetch(`${API_URL}/api/admin/updates/${id}/reject`, { method: 'POST' });
+            await fetch(`${API_URL}/api/admin/updates/${id}/reject`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + btoa(`${ADMIN_USER}:${ADMIN_PASS}`)
+                }
+            });
             setMessage("Update rejected.");
             setTimeout(() => router.push('/'), 2000);
         } catch (err) {

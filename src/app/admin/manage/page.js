@@ -10,6 +10,8 @@ import styles from './Manage.module.css';
 export default function ManagePortfolio() {
     const router = useRouter();
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const ADMIN_USER = process.env.NEXT_PUBLIC_ADMIN_USER;
+    const ADMIN_PASS = process.env.NEXT_PUBLIC_ADMIN_PASS;
     const [activeTab, setActiveTab] = useState('experience');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
@@ -44,7 +46,13 @@ export default function ManagePortfolio() {
 
         try {
             setLoading(true);
-            const res = await fetch(`${API_URL}/api/upload`, { method: 'POST', body: formData });
+            const res = await fetch(`${API_URL}/api/upload`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': 'Basic ' + btoa(`${ADMIN_USER}:${ADMIN_PASS}`)
+                }
+            });
             const data = await res.json();
             if (res.ok) {
                 setExpData(prev => ({ ...prev, image: data.imageUrl }));
@@ -98,7 +106,10 @@ export default function ManagePortfolio() {
         try {
             const res = await fetch(`${API_URL}/api/admin/manual-update`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa(`${ADMIN_USER}:${ADMIN_PASS}`)
+                },
                 body: JSON.stringify({ type, data: payload })
             });
             const result = await res.json();

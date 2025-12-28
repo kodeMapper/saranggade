@@ -39,6 +39,34 @@ app.use(cors());
 app.use(express.json());
 // Serve uploads folder statically so frontend can access images (Legacy support + new uploads if needed locally)
 // Serve uploads folder statically (Point to the shared public folder)
+// Basic Auth Middleware
+const authMiddleware = (req, res, next) => {
+    // Check if route starts with /api/admin
+    if (req.path.startsWith('/api/admin')) {
+        const authheader = req.headers.authorization;
+        if (!authheader) {
+            return res.status(401).json({ error: 'Authentication required' });
+        }
+
+        const auth = new Buffer.from(authheader.split(' ')[1], 'base64').toString().split(':');
+        const user = auth[0];
+        const pass = auth[1];
+
+        const validUser = process.env.ADMIN_USER;
+        const validPass = process.env.ADMIN_PASS;
+
+        if (user === validUser && pass === validPass) {
+            next();
+        } else {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+    } else {
+        next();
+    }
+};
+
+app.use(authMiddleware);
+
 app.use('/uploads', express.static(UPLOAD_DIR));
 
 // Root Route for Health Check (Keep-Alive)
