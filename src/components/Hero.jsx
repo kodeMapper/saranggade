@@ -30,13 +30,18 @@ const Hero = ({ data }) => {
             <svg style={{ position: 'absolute', width: 0, height: 0 }}>
               <defs>
                 <filter id="liquid-melt" x="-20%" y="-20%" width="140%" height="140%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.02 0.5" numOctaves="3" result="noise" />
+                  <feTurbulence type="fractalNoise" baseFrequency="0.02 0.5" numOctaves="3" result="noise">
+                    <animate attributeName="baseFrequency" values="0.02 0.5; 0.03 0.6; 0.01 0.4; 0.02 0.5" dur="10s" repeatCount="indefinite" />
+                  </feTurbulence>
                   <feGenericMatrix in="noise" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="colMat"/>
                   <feDisplacementMap in="SourceGraphic" in2="colMat" scale="20" xChannelSelector="R" yChannelSelector="G" />
                 </filter>
               </defs>
             </svg>
         </div>
+
+        {/* Marathi Logo Top Right */}
+        <div className={styles.marathiLogo}>सारंग</div>
 
         <div className={styles.container}>
             {/* Text backdrop - provides light grey bg for intro lines only */}

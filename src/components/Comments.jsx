@@ -39,7 +39,7 @@ const Comments = () => {
 
   return (
     <StyledWrapper id="comments">
-      <h2 className="title">Feedback</h2>
+      <h2 className="title">Contact Me</h2>
       
       {submitted ? (
         <motion.div 
@@ -129,7 +129,7 @@ const StyledWrapper = styled.section`
     width: 100%;
     max-width: 400px;
     background: linear-gradient(#212121, #212121) padding-box,
-                linear-gradient(145deg, transparent 35%,#e81cff, #40c9ff) border-box;
+                linear-gradient(145deg, transparent 35%,#e81cff, #40ff69ff) border-box;
     border: 2px solid transparent;
     padding: 32px 24px;
     font-size: 14px;
@@ -141,7 +141,7 @@ const StyledWrapper = styled.section`
     box-sizing: border-box;
     border-radius: 16px;
     background-size: 200% 100%;
-    animation: gradient 5s ease infinite;
+    animation: gradient 3s ease infinite;
   }
 
   @keyframes gradient {
@@ -263,21 +263,28 @@ const StyledWrapper = styled.section`
   }
 
   /* Light Mode Styles */
+  /* Light Mode Styles */
   html[data-theme='light'] & .form-container {
     background: linear-gradient(#ffffff, #ffffff) padding-box,
-                linear-gradient(145deg, transparent 35%, #7c3aed, #0ea5e9) border-box;
+                linear-gradient(145deg, transparent 35%, var(--primary), var(--accent)) border-box;
+    border: 2px solid transparent;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Soft shadow for depth */
     color: #0f172a;
+    background-size: 200% 100%;
+    animation: gradient 3s ease infinite;
   }
 
   html[data-theme='light'] & .form-container .form-group label {
-    color: #64748b;
+    color: #475569; /* Darker slate for readability */
+    font-weight: 500;
   }
 
   html[data-theme='light'] & .form-container .form-group input,
   html[data-theme='light'] & .form-container .form-group textarea {
-    color: #0f172a;
+    color: #1e293b;
     border-color: #cbd5e1;
-    background-color: rgba(241, 245, 249, 0.5);
+    background-color: #f8fafc; /* Very light slate */
+    border: 1px solid #cbd5e1;
   }
 
   html[data-theme='light'] & .form-container .form-group input::placeholder,
@@ -288,25 +295,33 @@ const StyledWrapper = styled.section`
   html[data-theme='light'] & .form-container .form-group input:focus,
   html[data-theme='light'] & .form-container .form-group textarea:focus {
     border-color: #7c3aed;
-    background-color: #fff;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
   }
 
   html[data-theme='light'] & .form-container .form-submit-btn {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-    color: #475569;
+    background: transparent;
+    border: 1px solid #7c3aed; /* Primary color border */
+    color: #3a7cedff;
+    font-weight: 600;
   }
+  .form-container .form-submit-btn {
+    align-self: flex-end;
+  }
+
 
   html[data-theme='light'] & .form-container .form-submit-btn:hover:not(:disabled) {
     background-color: #7c3aed;
     border-color: #7c3aed;
-    color: #fff;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
   }
 
   html[data-theme='light'] & .thank-you {
-    background: rgba(34, 197, 94, 0.15);
-    border-color: rgba(34, 197, 94, 0.3);
-    color: #16a34a;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    color: #15803d;
   }
 `;
 

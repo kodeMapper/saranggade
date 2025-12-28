@@ -21,6 +21,7 @@
         margin: 0 auto;
     }
 
+    /* .bigName removed - defined below */
     .bigName {
         margin-bottom: 2rem;
         font-size: clamp(3rem, 15vw, 6rem);
@@ -111,6 +112,38 @@
     /* font-weight: 00; */
     /* Bolder for readability */
     text-shadow: var(--hero-text-shadow);
+}
+
+.marathiLogo {
+    position: absolute;
+    top: 2rem;
+    right: 3rem;
+    font-family: var(--font-kalam);
+    font-size: 3rem;
+    font-weight: 400;
+    color: var(--hero-intro-color);
+    z-index: 100;
+    opacity: 0.9;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .marathiLogo {
+        top: 1.5rem;
+        right: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .bigName {
+        margin-bottom: 2rem;
+        font-size: clamp(2.5rem, 10vw, 5rem);
+        /* Reduced for single line fit */
+        flex-direction: row;
+        /* Force row even on mobile */
+        gap: 1rem;
+        white-space: nowrap;
+    }
 }
 
 .bigName {

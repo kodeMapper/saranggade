@@ -7,7 +7,7 @@
     bottom: auto;
     width: auto;
     max-width: none;
-    background: var(--glass-bg);
+    background: var(--nav-glass-bg, var(--glass-bg));
     backdrop-filter: blur(12px);
     border: 1px solid rgba(204, 224, 22, 0.2);
     padding: 0.75rem 1.5rem;

@@ -73,3 +73,31 @@
     border-left: 2px solid var(--glass-border);
     padding-left: 0.5rem;
 }
+
+/* Light Mode Overrides */
+html[data-theme='light'] .projects {
+    background: #ffffff;
+}
+
+html[data-theme='light'] .card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme='light'] .card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+}
+
+html[data-theme='light'] .projectName {
+    color: #0f172a;
+}
+
+html[data-theme='light'] .description {
+    color: #475569;
+}
+
+html[data-theme='light'] .description li {
+    border-left-color: #cbd5e1;
+}

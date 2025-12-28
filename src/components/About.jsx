@@ -50,7 +50,7 @@ const About = ({ data }) => {
                         Welcome to my digital abode!
                     </p>
                     <p>
-                        I am a <span className={styles.highlight}>{data.personalInfo.role}</span> based in {data.personalInfo.location}, currently building scalable systems and AI-powered solutions.
+                        I am a <span className={styles.highlight}>Computer Science and Electronics student</span> studying at RCOEM Nagpur, Maharashtra, currently building scalable systems and AI-powered solutions.
                     </p>
                     <p>
                         Previously, I've worked on ReactJS Landing Pages and Admin Panels at <span className={styles.highlight}>AARA Green Infosolutions. </span> 
