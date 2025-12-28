@@ -1,0 +1,49 @@
+# 📝 Future Todo List
+
+This file tracks upcoming features and improvements for the portfolio. Some are done already.
+
+---
+
+## 🔐 Security & Authorization
+- [ ] **JWT Authorization:** Protect `/admin` routes with a proper login system. Generate a token on login and verify it on every admin API call.
+- [ ] **External Auth services:** We can use external services (ex. mojoauth or logto.io) also
+- [ ] **Rate Limiting:** Add rate limiting to prevent abuse of public APIs.
+
+---
+
+## 🎨 New Sections & Features
+- [ ] **Certificates Section:** Display certifications from LinkedIn/manual input on the main portfolio page.
+- [ ] **Blogs Section:** Fetch and display blog posts (from Medium, Dev.to, or a custom CMS).
+- [ ] **Education Section:** Add a dedicated section for educational background.
+- [ ] **Awards/Achievements:** A section to showcase hackathon wins, competitions, etc.
+
+---
+
+## ⚙️ Automation Enhancements
+- [ ] **LinkedIn Scraper Fix:** Revisit the session cookie logic or find a more reliable API-based approach.
+- [ ] **Codolio Card Styling:** Allow choosing different themes for the Codolio stats card screenshot.
+- [ ] **Webhook for Review Push:** Send a Discord message when a review is completed/approved.
+
+---
+
+## 💅 UI/UX Polish
+- [ ] **Admin Login Page:** Create a proper styled login page instead of direct route access.
+- [ ] **Admin Dashboard:** Build a single dashboard page listing all pending updates at once.
+- [x] **Theme Persistence:** Remember user's dark/light mode choice in localStorage.
+- [x] **Navbar Styling** Add minimal border colour to the navbar and socialbar. should not be very attention seeking, keep it minimal. The line at bottom of the navbar should be increase as we scroll down (progess bar).
+- [ ] **Lazy loading:** When all the page (main) rendered then only it should be shown on screen, till implement/show the loader.
+- [x] update this new loader - (Implemented)
+
+---
+
+## 🧹 Cleanup
+- [x] **Remove Deprecated Email Code:** Fully remove `emailService.js` and related env vars from documentation.
+- [ ] **Audit Dependencies:** Check for unused npm packages in both frontend and backend.
+
+## Light mode styling enhancement
+- [x] light mode does not looks good. The grey colour of text does not good for UX. Style it in more good and professional way.
+- [x] Also, the hero section (landing section) does not look good in light mode. u can switch in light mode and see yourself.
+
+## 🧹 Make sure all the automations are working properly on time
+
+## 🧹 In the very end, Update the content (new updates) of the portfolio in Projects section. Also update the README

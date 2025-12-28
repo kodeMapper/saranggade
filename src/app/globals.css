@@ -42,28 +42,39 @@
   --glass-border: rgba(0, 0, 0, 0.1);
   --card-bg: #ffffff;
 
-  /* Hero Specifics (Light) */
-  --hero-bg: #f1f5f9;
-  /* Slate 100 */
-  --hero-text-start: rgba(15, 23, 42, 0.95);
+  /* Hero Specifics (Light) - KEEP TOP DARK */
+  --hero-bg: #030014;
+  /* Keep the same dark as dark mode for the image area */
+  --hero-text-start: rgba(15, 23, 42, 0.7);
+  /* Dark text matching dark mode opacity */
   --hero-text-end: rgba(15, 23, 42, 0);
-  --hero-melt-start: rgba(15, 23, 42, 0.9);
+  /* Fade to fully transparent like dark mode */
+  --hero-melt-start: rgba(15, 23, 42, 0.8);
+  /* Dark melt effect */
   --hero-melt-end: rgba(15, 23, 42, 0);
-  --hero-scroll: rgba(15, 23, 42, 0.6);
-  --hero-line: rgba(15, 23, 42, 0.4);
-  --hero-overlay: linear-gradient(to bottom, transparent 40%, #f1f5f9 100%);
+  /* Fade to fully transparent */
+  --hero-scroll: rgba(15, 23, 42, 0.7);
+  --hero-line: rgba(15, 23, 42, 0.5);
+  /* Gradient: dark at top, gradual smooth fade to light at bottom */
+  --hero-overlay: linear-gradient(to bottom,
+      transparent 0%,
+      transparent 30%,
+      rgba(248, 250, 252, 0.3) 50%,
+      rgba(248, 250, 252, 0.7) 70%,
+      #f8fafc 100%);
   --hero-text-backdrop: transparent;
   --backdrop-padding: 0;
   --backdrop-blur: none;
-  --hero-text-shadow: 0 2px 20px rgba(255, 255, 255, 0.8);
-  /* White glow to separate text from image */
-  /* Light grey backdrop behind text */
+  --hero-text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+  /* Dark shadow for legibility on mixed bg */
+  --hero-intro-color: rgba(255, 255, 255, 0.9);
+  /* White intro text */
 
-  /* Text Utilities (Light) */
-  --section-title: rgba(0, 0, 0, 0.4);
-  /* Subtle dark for light mode */
-  --text-muted: #475569;
-  /* Slate 600 for readability */
+  /* Text Utilities (Light) - DARKER FOR READABILITY */
+  --section-title: rgba(0, 0, 0, 0.85);
+  /* Much darker section titles */
+  --text-muted: #1e293b;
+  /* Slate 800 for strong readability */
   --icon-invert: none;
 }
 

@@ -9,6 +9,7 @@ const navItems = ["Home", "About", "Experience", "Projects", "Contact"];
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -26,17 +27,34 @@ const Navbar = () => {
     
     const handleScroll = () => {
         // Use container.scrollTop instead of window.scrollY
-        if (container && container.scrollTop > window.innerHeight - 100) {
-            setIsScrolled(true);
-        } else {
-            setIsScrolled(false);
+        if (container) {
+            if (container.scrollTop > window.innerHeight - 100) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+            
+            // Calculate progress
+            const totalScroll = container.scrollHeight - container.clientHeight;
+            if (totalScroll > 0) {
+                setScrollProgress((container.scrollTop / totalScroll) * 100);
+            }
+        } else { // Fallback (e.g. if snap-container absent)
+           if (window.scrollY > window.innerHeight - 100) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+             const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+             if (totalScroll > 0) {
+                 setScrollProgress((window.scrollY / totalScroll) * 100);
+             }
         }
     };
 
     if (container) {
         container.addEventListener('scroll', handleScroll);
     } else {
-        // Fallback to window detection if container isn't found (though it should be)
         window.addEventListener('scroll', handleScroll);
     }
     
@@ -90,6 +108,12 @@ const Navbar = () => {
             )}
         </AnimatePresence>
       </div>
+      <motion.div 
+        className={styles.progressBar} 
+        style={{ scaleX: scrollProgress / 100, originX: 0 }}
+        initial={{ scaleX: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30, restDelta: 0.001 }}
+      />
     </motion.nav>
   );
 };
