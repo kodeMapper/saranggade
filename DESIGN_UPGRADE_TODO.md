@@ -20,10 +20,10 @@
     - [ ] Apply to `Skills` and `Projects` items for hover illumination.
 
 ## 3. Structural Components
-- [ ] **Footer**:
-    - [ ] Design a new `Footer.jsx` component.
-    - [ ] Include social links, copyright, and potentially a "contact me" call to action or site map.
-    - [ ] Style with `Orbitron` headers and consistent glassmorphism.
+- [x] **Footer**:
+    - [x] Design a new `Footer.jsx` component.
+    - [x] Include social links, copyright, and potentially a "contact me" call to action or site map.
+    - [x] Style with `Orbitron` headers and consistent glassmorphism.
 
 ## 4. Refinement
 - [ ] Ensure all new effects are responsive (disable or simplify on mobile if needed).

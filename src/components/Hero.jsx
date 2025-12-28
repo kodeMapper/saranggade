@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './Hero.module.css';
+import LightRays from './LightRays';
 
 const INTRO_LINES = [
     "Full-Stack Developer & Creative Technologist",
@@ -25,6 +26,15 @@ const Hero = ({ data }) => {
         <div className={styles.backgroundLayer}>
             <img src="/images/hero-new-final.png" alt="Sarang Gade" className={styles.heroImage} />
             <div className={styles.overlayGradient}></div>
+            
+            <LightRays 
+                raysColor="#8b5cf6" 
+                raysSpeed={0.5} 
+                rayLength={1.5} 
+                lightSpread={0.8}
+                mouseInfluence={0.2}
+                className={styles.raysWrapper}
+            />
             
             {/* SVG Filter for Melting Liquid Effect */}
             <svg style={{ position: 'absolute', width: 0, height: 0 }}>

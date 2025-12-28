@@ -150,6 +150,12 @@ a {
   overflow: hidden;
 }
 
+.snap-footer {
+  width: 100%;
+  scroll-snap-align: start;
+  position: relative;
+}
+
 /* Disable snap and fixed heights on mobile for better content flow */
 @media (max-width: 768px) {
   .snap-container {

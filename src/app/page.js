@@ -13,6 +13,7 @@ import Comments from "../components/Comments";
 import Contact from "../components/Contact";
 import CodolioProfile from "../components/CodolioProfile";
 import Loader from "../components/Loader";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -64,6 +65,10 @@ export default function Home() {
 
           <section id="contact" className="snap-section">
             <Contact data={resumeData} />
+          </section>
+
+          <section className="snap-footer">
+            <Footer />
           </section>
 
           {/* <LiveStatus /> */}
