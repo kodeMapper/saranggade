@@ -19,11 +19,37 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading time (or wait for assets)
-    const timer = setTimeout(() => {
+    // Critical images to preload before showing the page
+    const criticalImages = [
+      // Hero background
+      '/images/hero-new-final.png',
+      // Profile image
+      resumeData.personalInfo.image,
+      // Experience images
+      ...resumeData.experience.map(exp => exp.image).filter(Boolean),
+      // Project thumbnails
+      ...resumeData.projects.map(proj => proj.image).filter(Boolean),
+    ];
+
+    // Preload all images
+    const preloadImages = () => {
+      const promises = criticalImages.map(src => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.src = src;
+          img.onload = resolve;
+          img.onerror = resolve; // Resolve even on error to not block loading
+        });
+      });
+      return Promise.all(promises);
+    };
+
+    // Minimum loading time (to show loader animation) + wait for images
+    const minLoadingTime = new Promise(resolve => setTimeout(resolve, 1500));
+
+    Promise.all([preloadImages(), minLoadingTime]).then(() => {
       setIsLoading(false);
-    }, 2500);
-    return () => clearTimeout(timer);
+    });
   }, []);
 
   return (
