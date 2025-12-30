@@ -52,54 +52,61 @@ export default function Home() {
     });
   }, []);
 
+  // return (
+  //   <>
+  //     {isLoading ? (
+  //       <Loader />
+  //     ) : (
+  //       <main className="snap-container">
+  //         <Navbar />
+  //         <SocialBar />
+
+  //         <section id="home" className="snap-section">
+  //           <Hero data={resumeData.personalInfo} />
+  //         </section>
+
+  //         <section id="about" className="snap-section">
+  //           <About data={resumeData} />
+  //         </section>
+
+  //         <section id="skills" className="snap-section">
+  //           <Skills data={resumeData} />
+  //         </section>
+
+  //         <section id="experience" className="snap-section">
+  //           <Experience data={resumeData} />
+  //         </section>
+
+  //         <section id="projects" className="snap-section">
+  //           <StackingCarousel data={resumeData} />
+  //         </section>
+
+  //         <section className="snap-section">
+  //           <CodolioProfile />
+  //         </section>
+
+  //         <section className="snap-section">
+  //           <Comments />
+  //         </section>
+
+  //         <section id="contact" className="snap-section">
+  //           <Contact data={resumeData} />
+  //         </section>
+
+  //         <section className="snap-footer">
+  //           <Footer />
+  //         </section>
+
+  //         {/* <LiveStatus /> */}
+  //       </main>
+  //     )}
+  //   </>
+  // );
+
   return (
-    <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <main className="snap-container">
-          <Navbar />
-          <SocialBar />
-
-          <section id="home" className="snap-section">
-            <Hero data={resumeData.personalInfo} />
-          </section>
-
-          <section id="about" className="snap-section">
-            <About data={resumeData} />
-          </section>
-
-          <section id="skills" className="snap-section">
-            <Skills data={resumeData} />
-          </section>
-
-          <section id="experience" className="snap-section">
-            <Experience data={resumeData} />
-          </section>
-
-          <section id="projects" className="snap-section">
-            <StackingCarousel data={resumeData} />
-          </section>
-
-          <section className="snap-section">
-            <CodolioProfile />
-          </section>
-
-          <section className="snap-section">
-            <Comments />
-          </section>
-
-          <section id="contact" className="snap-section">
-            <Contact data={resumeData} />
-          </section>
-
-          <section className="snap-footer">
-            <Footer />
-          </section>
-
-          {/* <LiveStatus /> */}
-        </main>
-      )}
-    </>
-  );
+    <div style={{ textAlign: 'center', fontSize: '2rem', color: 'white', backgroundColor: 'black', padding: '2rem' }}>
+      Under Maintainance. We'll be live soon!
+    </div>
+  )
 }
+
