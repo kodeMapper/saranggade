@@ -103,6 +103,7 @@ export default function Home() {
   //   </>
   // );
 
+  // Under Maintainance - 
   return (
     <div style={{ textAlign: 'center', fontSize: '2rem', color: 'white', backgroundColor: 'black', padding: '2rem' }}>
       Under Maintainance. We'll be live soon!
