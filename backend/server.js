@@ -9,6 +9,7 @@ const path = require('path');
 const { checkGithubUpdates, markRepoAsSeen } = require('./services/githubService');
 const { markItemAsSeen } = require('./services/linkedinService');
 const { sendDiscordNotification } = require('./services/discordService');
+const { addFeedbackToGoogleSheet } = require('./services/googleSheetService');
 const { adddPendingUpdate, getUpdateById, resolveUpdate } = require('./services/pendingUpdatesManager');
 const { updatePortfolio } = require('./services/contentUpdater');
 const { exec } = require('child_process');
@@ -233,6 +234,10 @@ app.post('/api/feedback', async (req, res) => {
 
         // Notify via Discord about Feedback
         await sendDiscordNotification('New Feedback Received', { Name: name, Message: text }, null);
+
+
+        // Add to Google Sheet
+        await addFeedbackToGoogleSheet({ name, text });
 
         res.status(201).json(newFeedback);
     } catch (error) {
