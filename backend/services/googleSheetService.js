@@ -3,18 +3,30 @@ const path = require('path');
 // Load env from backend folder explicitly
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
-// Load client secrets from a local file.
-// Expecting 'google-credentials.json' in the backend root or specified via env
-const KEY_FILE_PATH = process.env.GOOGLE_APPLICATION_CREDENTIALS || path.join(__dirname, '../google-credentials.json');
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 
 // The ID of the spreadsheet to update.
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 
-const auth = new google.auth.GoogleAuth({
-    keyFile: KEY_FILE_PATH,
-    scopes: SCOPES,
-});
+// Initialize auth - supports both env variable (for Render) and file (for local dev)
+let auth;
+if (process.env.GOOGLE_CREDENTIALS_JSON) {
+    // Cloud deployment: Parse credentials from environment variable
+    const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
+    auth = new google.auth.GoogleAuth({
+        credentials: credentials,
+        scopes: SCOPES,
+    });
+    console.log('✅ Google Auth: Using credentials from environment variable');
+} else {
+    // Local development: Use credentials file
+    const KEY_FILE_PATH = path.join(__dirname, '../google-credentials.json');
+    auth = new google.auth.GoogleAuth({
+        keyFile: KEY_FILE_PATH,
+        scopes: SCOPES,
+    });
+    console.log('✅ Google Auth: Using credentials from file');
+}
 
 const sheets = google.sheets({ version: 'v4', auth });
 
