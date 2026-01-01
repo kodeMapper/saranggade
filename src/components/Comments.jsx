@@ -8,12 +8,14 @@ const Comments = () => {
   const [text, setText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !text.trim()) return;
 
     setIsSubmitting(true);
+    setError(false);
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
@@ -29,9 +31,14 @@ const Comments = () => {
         setText('');
         
         setTimeout(() => setSubmitted(false), 3000);
+      } else {
+        setError(true);
+        setTimeout(() => setError(false), 4000);
       }
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
+    } catch (err) {
+      console.error('Error submitting feedback:', err);
+      setError(true);
+      setTimeout(() => setError(false), 4000);
     } finally {
       setIsSubmitting(false);
     }
@@ -40,6 +47,17 @@ const Comments = () => {
   return (
     <StyledWrapper id="comments">
       <h2 className="title">Contact Me</h2>
+      
+      {error && (
+        <motion.div 
+          className="error-popup"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+        >
+          ❌ Failed to send feedback. Please try again.
+        </motion.div>
+      )}
       
       {submitted ? (
         <motion.div 
@@ -107,6 +125,19 @@ const StyledWrapper = styled.section`
     margin-bottom: 4rem;
     text-transform: uppercase;
     font-weight: 300;
+  }
+
+  .error-popup {
+    text-align: center;
+    padding: 1rem 2rem;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    color: #f87171;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
   }
 
   .thank-you {

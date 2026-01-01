@@ -40,47 +40,56 @@ const addFeedbackToGoogleSheet = async (feedback) => {
         return;
     }
 
+    // Day names array
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
     try {
+        // First, get all values in column A to find the first empty row
+        const getResponse = await sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: 'A:A',
+        });
+
+        const rows = getResponse.data.values || [];
+        // Find first empty row (rows.length gives us the count, next row is rows.length + 1)
+        // But we need to check for truly empty cells, not just formatted ones
+        let nextRow = 2; // Start after header
+        for (let i = 1; i < rows.length; i++) {
+            if (rows[i] && rows[i][0] && rows[i][0].toString().trim() !== '') {
+                nextRow = i + 2; // +1 for 0-index, +1 for next row
+            }
+        }
+
         const now = new Date();
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const dayName = days[now.getDay()];
         const dateStr = now.toLocaleDateString('en-GB'); // DD/MM/YYYY
+        const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
-        // Prepare the values to append
-        // Columns: [Sr.no, Day, Date, Name, Description, Seen]
-        // Note: For Sr.no, we can use a formula like "=ROW()-1" in the sheet itself, or fetch current rows.
-        // Fetching rows adds latency. Let's send a formula for Sr.no or just a placeholder if complex.
-        // Better: Use "=ROW()-1" so it auto-calculates based on row position.
-
+        // Prepare the values
+        // Columns: [Sr.no, Day, Date, Time, Name, Description, Seen (empty)]
         const values = [
             [
-                '=ROW()-1', // Sr.no (Auto-calculated by Excel/Sheets formula)
+                nextRow - 1, // Sr.no (row number - 1, since row 2 = Sr.no 1)
                 dayName,
                 dateStr,
+                timeStr,
                 feedback.name,
                 feedback.text,
-                'FALSE' // Seen (Checkbox, or initially false)
+                '' // Seen (empty)
             ]
         ];
 
-        const resource = {
-            values,
-        };
+        // Update the specific row
+        const range = `A${nextRow}:G${nextRow}`;
 
-        // Append to 'Feedbacks' sheet. If sheet doesn't exist, it might fail or append to the first one.
-        // We'll append to 'Sheet1' by default if 'Feedbacks' range isn't specific, but let's try 'Sheet1' or just generic append.
-        // It's safer to use just the range 'A:A' or let it find the table.
-        // Let's assume the user has a sheet named 'Feedbacks' or we just use the default first sheet.
-        const range = 'Feedbacks!A:F';
-
-        await sheets.spreadsheets.values.append({
+        await sheets.spreadsheets.values.update({
             spreadsheetId: SPREADSHEET_ID,
             range: range,
             valueInputOption: 'USER_ENTERED',
-            resource,
+            resource: { values },
         });
 
-        console.log('✅ Feedback added to Google Sheet.');
+        console.log(`✅ Feedback added to Google Sheet at row ${nextRow}.`);
 
     } catch (error) {
         console.error('❌ Error writing to Google Sheet:', error.message);
@@ -88,25 +97,6 @@ const addFeedbackToGoogleSheet = async (feedback) => {
             console.error("   - Check if GOOGLE_SHEET_ID is correct.");
         } else if (error.code === 403) {
             console.error("   - Check if the Service Account has 'Editor' access to the Sheet.");
-            console.error("   - Email to invite: <found inside google-credentials.json>");
-        } else if (error.code === 400 && error.message.includes('Unable to parse range')) {
-            // Fallback to Sheet1 if Feedbacks tab is missing
-            try {
-                console.log("   - 'Feedbacks' tab not found, trying 'Sheet1'...");
-                await sheets.spreadsheets.values.append({
-                    spreadsheetId: SPREADSHEET_ID,
-                    range: 'Sheet1!A:F',
-                    valueInputOption: 'USER_ENTERED',
-                    resource: {
-                        values: [
-                            ['=ROW()-1', days[new Date().getDay()], new Date().toLocaleDateString('en-GB'), feedback.name, feedback.text, 'FALSE']
-                        ]
-                    },
-                });
-                console.log('✅ Feedback added to Google Sheet (Sheet1).');
-            } catch (innerErr) {
-                console.error("❌ Failed fallback to Sheet1:", innerErr.message);
-            }
         }
     }
 };
