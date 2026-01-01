@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const cron = require('node-cron');
 const multer = require('multer');
-const path = require('path');
 const { checkGithubUpdates, markRepoAsSeen } = require('./services/githubService');
 const { markItemAsSeen } = require('./services/linkedinService');
 const { sendDiscordNotification } = require('./services/discordService');
