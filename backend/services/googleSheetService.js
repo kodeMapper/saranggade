@@ -1,6 +1,7 @@
 const { google } = require('googleapis');
 const path = require('path');
-require('dotenv').config();
+// Load env from backend folder explicitly
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 // Load client secrets from a local file.
 // Expecting 'google-credentials.json' in the backend root or specified via env
