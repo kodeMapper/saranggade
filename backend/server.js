@@ -401,14 +401,15 @@ function performGitCommit(message) {
         `cd /app`,
         `git config --global user.email "bot@portfolio.com"`,
         `git config --global user.name "Portfolio Bot"`,
+        `rm -rf .git`,
         `git init`,
-        `git remote remove origin || true`,
         `git remote add origin "${remoteUrl}"`,
         `git fetch --depth=1 origin main`,
-        `git reset origin/main`,
+        `git checkout -b main FETCH_HEAD`,
         `git add src/data/resume.json public/images/*`,
-        `git commit -m "${message} [skip ci]"`,
-        `git push origin HEAD:main`
+        `git status`,
+        `git commit -m "${message} [skip ci]" || echo "Nothing new to commit"`,
+        `git push -f origin main`
     ].join(' && ');
 
     console.log("🔄 Starting auto-commit...");
