@@ -401,12 +401,13 @@ function performGitCommit(message) {
         `cd /app`,
         `git config --global user.email "kodeMapper@users.noreply.github.com"`,
         `git config --global user.name "kodeMapper"`,
-        `rm -rf .git`,
-        `git clone --depth=1 "${remoteUrl}" temp_clone`,
-        `cp -r temp_clone/.git .git`,
-        `rm -rf temp_clone`,
+        `git config --global init.defaultBranch main`,
+        `git init`,
+        `git remote set-url origin "${remoteUrl}" || git remote add origin "${remoteUrl}"`,
+        `git fetch --depth=1 origin main`,
+        `git checkout -B main origin/main`,
         `git add src/data/resume.json public/images/*`,
-        `git commit -m "${message} [skip ci]" || true`,
+        `git commit -m "${message} [skip ci]" || echo "Nothing to commit"`,
         `git push origin main`
     ].join(' && ');
 
