@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Kalam:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Kalam:wght@300;400;700&family=Syne:wght@400;500;600;700;800&display=swap');
 
 :root {
   --font-cinzel: 'Cinzel', serif;
   --font-kalam: 'Kalam', cursive;
+  --font-syne: 'Syne', sans-serif;
   /* Default Dark Theme */
   --background: #030014;
   --foreground: #e2e8f0;
@@ -104,7 +105,7 @@ body {
 }
 
 body {
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-syne), sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 

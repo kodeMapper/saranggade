@@ -13,7 +13,7 @@
 
 .title {
     text-align: center;
-    font-family: var(--font-outfit);
+    --font-syne: 'Syne';
     font-size: 1.5rem;
     letter-spacing: 1rem;
     color: var(--section-title);
