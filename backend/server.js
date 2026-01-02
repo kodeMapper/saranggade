@@ -109,7 +109,7 @@ mongoose.connect(MONGO_URI)
 
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
-            console.log(`ℹ️  Server Version: 1.4.0 (Real Email Fix)`);
+            console.log(`ℹ️  Server Version: 1.5.0 (Restored Working Logic)`);
         });
     })
     .catch(err => console.error('❌ MongoDB connection error:', err));
@@ -399,16 +399,16 @@ function performGitCommit(message) {
 
     const commands = [
         `cd /app`,
-        `git config --global user.email "saranganilgade@gmail.com"`,
-        `git config --global user.name "Sarang Gade"`,
-        `git config --global init.defaultBranch main`,
+        `git config --global user.email "bot@portfolio.com"`,
+        `git config --global user.name "Portfolio Bot"`,
         `git init`,
-        `git remote set-url origin "${remoteUrl}" || git remote add origin "${remoteUrl}"`,
+        `git remote remove origin || true`,
+        `git remote add origin "${remoteUrl}"`,
         `git fetch --depth=1 origin main`,
-        `git checkout -B main origin/main`,
+        `git reset origin/main`,
         `git add src/data/resume.json public/images/*`,
-        `git commit -m "${message} [skip ci]" || echo "Nothing to commit"`,
-        `git push origin main`
+        `git commit -m "${message} [skip ci]"`,
+        `git push origin HEAD:main`
     ].join(' && ');
 
     console.log("🔄 Starting auto-commit...");
