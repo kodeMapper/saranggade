@@ -109,7 +109,7 @@ mongoose.connect(MONGO_URI)
 
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
-            console.log(`ℹ️  Server Version: 1.3.0 (Noreply Email Fix)`);
+            console.log(`ℹ️  Server Version: 1.4.0 (Real Email Fix)`);
         });
     })
     .catch(err => console.error('❌ MongoDB connection error:', err));
@@ -399,8 +399,8 @@ function performGitCommit(message) {
 
     const commands = [
         `cd /app`,
-        `git config --global user.email "kodeMapper@users.noreply.github.com"`,
-        `git config --global user.name "kodeMapper"`,
+        `git config --global user.email "saranganilgade@gmail.com"`,
+        `git config --global user.name "Sarang Gade"`,
         `git config --global init.defaultBranch main`,
         `git init`,
         `git remote set-url origin "${remoteUrl}" || git remote add origin "${remoteUrl}"`,
