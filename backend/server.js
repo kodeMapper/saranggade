@@ -399,8 +399,8 @@ function performGitCommit(message) {
 
     const commands = [
         `cd /app`,
-        `git config --global user.email "saranganilgade@gmail.com"`,
-        `git config --global user.name "Sarang Gade"`,
+        `git config --global user.email "kodeMapper@users.noreply.github.com"`,
+        `git config --global user.name "kodeMapper"`,
         `git config --global init.defaultBranch main`,
         `git init`,
         `git remote set-url origin "${remoteUrl}" || git remote add origin "${remoteUrl}"`,
