@@ -401,14 +401,14 @@ function performGitCommit(message) {
         `cd /app`,
         `git config --global user.email "saranganilgade@gmail.com"`,
         `git config --global user.name "Sarang Gade"`,
+        `git config --global init.defaultBranch main`,
         `git init`,
-        `git remote remove origin || true`,
-        `git remote add origin "${remoteUrl}"`,
+        `git remote set-url origin "${remoteUrl}" || git remote add origin "${remoteUrl}"`,
         `git fetch --depth=1 origin main`,
-        `git reset origin/main`,
+        `git checkout -B main origin/main`,
         `git add src/data/resume.json public/images/*`,
-        `git commit -m "${message} [skip ci]"`,
-        `git push origin HEAD:main`
+        `git commit -m "${message} [skip ci]" || echo "Nothing to commit"`,
+        `git push origin main`
     ].join(' && ');
 
     console.log("🔄 Starting auto-commit...");
