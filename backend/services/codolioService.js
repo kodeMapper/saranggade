@@ -183,18 +183,20 @@ const updateCodolioStats = async () => {
             const REPO = 'saranggade';
             const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
 
-            // Synchronized with performGitCommit() in server.js - Clean slate approach
+            // Fixed: Use git init -b main to create main branch directly (not master)
             const commands = [
                 `cd /app`,
                 `git config --global user.email "kodeMapper@users.noreply.github.com"`,
                 `git config --global user.name "Portfolio Bot"`,
+                `git config --global init.defaultBranch main`,
                 // Clean slate - remove existing .git to avoid branch conflicts
                 `rm -rf .git`,
-                `git init`,
+                // Initialize with main branch directly (Git 2.28+)
+                `git init -b main`,
                 `git remote add origin "${remoteUrl}"`,
                 `git fetch --depth=1 origin main`,
-                // Checkout main branch tracking FETCH_HEAD (not master)
-                `git checkout -b main FETCH_HEAD`,
+                // Reset to remote state while staying on main branch
+                `git reset --soft origin/main`,
                 // Add only the codolio screenshots
                 `git add -f public/images/codolio-*.png`,
                 `git status`,

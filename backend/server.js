@@ -109,7 +109,7 @@ mongoose.connect(MONGO_URI)
 
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
-            console.log(`ℹ️  Server Version: 1.6.0 (Synced Git Logic - Codolio Fixed)`);
+            console.log(`ℹ️  Server Version: 1.7.0 (Git Init -b Main Fix)`);
         });
     })
     .catch(err => console.error('❌ MongoDB connection error:', err));
@@ -401,11 +401,14 @@ function performGitCommit(message) {
         `cd /app`,
         `git config --global user.email "kodeMapper@users.noreply.github.com"`,
         `git config --global user.name "Portfolio Bot"`,
+        `git config --global init.defaultBranch main`,
         `rm -rf .git`,
-        `git init`,
+        // Initialize with main branch directly (Git 2.28+)
+        `git init -b main`,
         `git remote add origin "${remoteUrl}"`,
         `git fetch --depth=1 origin main`,
-        `git checkout -b main FETCH_HEAD`,
+        // Reset to remote state while staying on main branch
+        `git reset --soft origin/main`,
         `git add src/data/resume.json public/images/*`,
         `git status`,
         `git commit -m "${message} [skip ci]" || echo "Nothing new to commit"`,
