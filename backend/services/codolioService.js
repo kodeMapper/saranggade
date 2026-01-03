@@ -183,26 +183,25 @@ const updateCodolioStats = async () => {
             const REPO = 'saranggade';
             const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
 
-            // Fixed: Use git init -b main to create main branch directly (not master)
+            // CORRECT APPROACH: Clone repo, update only specific files, push
+            // This avoids the issue where git init + reset deletes all files
             const commands = [
-                `cd /app`,
+                // Setup git config
                 `git config --global user.email "kodeMapper@users.noreply.github.com"`,
                 `git config --global user.name "Portfolio Bot"`,
-                `git config --global init.defaultBranch main`,
-                // Clean slate - remove existing .git to avoid branch conflicts
-                `rm -rf .git`,
-                // Initialize with main branch directly (Git 2.28+)
-                `git init -b main`,
-                `git remote add origin "${remoteUrl}"`,
-                `git fetch --depth=1 origin main`,
-                // Reset to remote state while staying on main branch
-                `git reset --soft origin/main`,
-                // Add only the codolio screenshots
-                `git add -f public/images/codolio-*.png`,
+                // Clone repo to temp directory (full clone to preserve all files)
+                `rm -rf /tmp/repo`,
+                `git clone --depth=1 "${remoteUrl}" /tmp/repo`,
+                // Copy ONLY the codolio images from /app to the cloned repo
+                `cp /app/public/images/codolio-*.png /tmp/repo/public/images/`,
+                // Commit and push from the cloned repo
+                `cd /tmp/repo`,
+                `git add public/images/codolio-*.png`,
                 `git status`,
                 `git commit -m "Auto-update Codolio stats [skip ci]" || echo "Nothing new to commit"`,
-                // Force push to override any conflicts
-                `git push -f origin main`
+                `git push origin main`,
+                // Cleanup
+                `rm -rf /tmp/repo`
             ].join(' && ');
 
             exec(commands, (err, stdout, stderr) => {
