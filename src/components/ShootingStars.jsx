@@ -26,14 +26,12 @@ export const ShootingStars = ({
   maxDelay = 4200,
   starColor = "#9E00FF",
   trailColor = "#2EB9DF",
-  starWidth = 10,
-  starHeight = 1,
-  className = "",
+  starWidth = 12,
+  starHeight = 2,
 }) => {
   const [star, setStar] = useState(null);
-  const [isDark, setIsDark] = useState(true);
   const svgRef = useRef(null);
-  const timeoutRef = useRef(null);
+  const [isDark, setIsDark] = useState(true);
 
   // Detect theme
   useEffect(() => {
@@ -41,7 +39,6 @@ export const ShootingStars = ({
       const theme = document.documentElement.getAttribute('data-theme');
       setIsDark(theme !== 'light');
     };
-    
     checkTheme();
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
@@ -63,16 +60,12 @@ export const ShootingStars = ({
       setStar(newStar);
 
       const randomDelay = Math.random() * (maxDelay - minDelay) + minDelay;
-      timeoutRef.current = setTimeout(createStar, randomDelay);
+      setTimeout(createStar, randomDelay);
     };
 
     createStar();
 
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
+    return () => {};
   }, [minSpeed, maxSpeed, minDelay, maxDelay]);
 
   useEffect(() => {
@@ -85,10 +78,10 @@ export const ShootingStars = ({
           const newDistance = prevStar.distance + prevStar.speed;
           const newScale = 1 + newDistance / 100;
           
-          const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1000;
-          const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+          const maxW = typeof window !== 'undefined' ? window.innerWidth : 1000;
+          const maxH = typeof window !== 'undefined' ? window.innerHeight : 800;
           
-          if (newX < -20 || newX > windowWidth + 20 || newY < -20 || newY > windowHeight + 20) {
+          if (newX < -20 || newX > maxW + 20 || newY < -20 || newY > maxH + 20) {
             return null;
           }
           return {
@@ -106,14 +99,13 @@ export const ShootingStars = ({
     return () => cancelAnimationFrame(animationFrame);
   }, [star]);
 
-  // Theme-based colors
+  // Adjust colors for theme
   const currentStarColor = isDark ? starColor : "#7c3aed";
-  const currentTrailColor = isDark ? trailColor : "#60a5fa";
+  const currentTrailColor = isDark ? trailColor : "#06b6d4";
 
   return (
     <svg 
       ref={svgRef} 
-      className={className}
       style={{
         position: 'absolute',
         inset: 0,
@@ -129,12 +121,12 @@ export const ShootingStars = ({
           y={star.y}
           width={starWidth * star.scale}
           height={starHeight}
-          fill="url(#shooting-gradient)"
+          fill="url(#shootingStarGradient)"
           transform={`rotate(${star.angle}, ${star.x + (starWidth * star.scale) / 2}, ${star.y + starHeight / 2})`}
         />
       )}
       <defs>
-        <linearGradient id="shooting-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id="shootingStarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style={{ stopColor: currentTrailColor, stopOpacity: 0 }} />
           <stop offset="100%" style={{ stopColor: currentStarColor, stopOpacity: 1 }} />
         </linearGradient>

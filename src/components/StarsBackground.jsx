@@ -7,11 +7,10 @@ export const StarsBackground = ({
   twinkleProbability = 0.7,
   minTwinkleSpeed = 0.5,
   maxTwinkleSpeed = 1,
-  className = "",
 }) => {
   const [stars, setStars] = useState([]);
-  const [isDark, setIsDark] = useState(true);
   const canvasRef = useRef(null);
+  const [isDark, setIsDark] = useState(true);
 
   // Detect theme
   useEffect(() => {
@@ -19,7 +18,6 @@ export const StarsBackground = ({
       const theme = document.documentElement.getAttribute('data-theme');
       setIsDark(theme !== 'light');
     };
-    
     checkTheme();
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
@@ -34,7 +32,7 @@ export const StarsBackground = ({
       return {
         x: Math.random() * width,
         y: Math.random() * height,
-        radius: Math.random() * 0.05 + 0.5,
+        radius: Math.random() * 1.2 + 0.5,
         opacity: Math.random() * 0.5 + 0.5,
         twinkleSpeed: shouldTwinkle
           ? minTwinkleSpeed + Math.random() * (maxTwinkleSpeed - minTwinkleSpeed)
@@ -85,13 +83,9 @@ export const StarsBackground = ({
       stars.forEach((star) => {
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        
-        // Different star colors for light/dark mode
-        const starColor = isDark 
-          ? `rgba(255, 255, 255, ${star.opacity})`
-          : `rgba(100, 116, 139, ${star.opacity * 0.6})`;
-        
-        ctx.fillStyle = starColor;
+        // White for dark mode, dark gray for light mode
+        const color = isDark ? `rgba(255, 255, 255, ${star.opacity})` : `rgba(100, 116, 139, ${star.opacity * 0.6})`;
+        ctx.fillStyle = color;
         ctx.fill();
 
         if (star.twinkleSpeed !== null) {
@@ -112,7 +106,6 @@ export const StarsBackground = ({
   return (
     <canvas
       ref={canvasRef}
-      className={className}
       style={{
         position: 'absolute',
         inset: 0,

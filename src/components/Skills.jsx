@@ -2,6 +2,9 @@
 import { motion, useScroll, useSpring, useTransform, useMotionValue, useVelocity, useAnimationFrame } from 'framer-motion';
 import { useRef, useState } from 'react';
 import styles from './Skills.module.css';
+import GradientOrbs from './GradientOrbs';
+import StarsBackground from './StarsBackground';
+import ShootingStars from './ShootingStars';
 
 // Utility to wrap a number between a range
 const wrap = (min, max, v) => {
@@ -159,6 +162,20 @@ const Skills = ({ data }) => {
 
   return (
     <section className={styles.skills}>
+      {/* Background Animations - layered for cosmic effect */}
+      <div className={styles.animationBg}>
+        <GradientOrbs />
+        {/* <StarsBackground starDensity={0.0003} /> */}
+        <ShootingStars 
+          minSpeed={15} 
+          maxSpeed={35} 
+          minDelay={800} 
+          maxDelay={2500}
+          starWidth={15}
+          starHeight={2}
+        />
+      </div>
+
       <h2 className={styles.title}>SKILLS</h2>
       
       <div className={styles.fixedContainer}>
