@@ -3,7 +3,7 @@
     background: var(--background);
     overflow: hidden;
     transition: background 0.3s;
-    height: 100%;
+    height: 100vh;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -12,14 +12,16 @@
     position: relative;
 }
 
-/* Background Animation */
+/* Background Animation - covers full viewport */
 .animationBg {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     z-index: 1;
     pointer-events: none;
+    overflow: hidden;
 }
 
 .title {
@@ -110,4 +112,42 @@
     height: 24px;
     color: var(--primary);
     opacity: 0.8;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .skills {
+        padding: 0 0.5rem;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        letter-spacing: 0.4rem;
+        margin-bottom: 2rem;
+    }
+
+    .fixedContainer {
+        gap: 1.5rem;
+        max-width: 100%;
+    }
+
+    .wrapper {
+        margin-right: 1rem;
+    }
+
+    .tag {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        gap: 0.5rem;
+    }
+
+    .icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .iconFallback {
+        width: 18px;
+        height: 18px;
+    }
 }

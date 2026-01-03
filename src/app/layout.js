@@ -14,6 +14,11 @@ const playfair = Playfair_Display({
 export const metadata = {
   title: "Sarang Gade | Full Stack Developer",
   description: "Portfolio of Sarang Gade",
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({ children }) {
