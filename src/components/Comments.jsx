@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import GradientOrbs from './GradientOrbs';
 
 const Comments = () => {
   const [name, setName] = useState('');
@@ -29,7 +30,6 @@ const Comments = () => {
         setSubmitted(true);
         setName('');
         setText('');
-        
         setTimeout(() => setSubmitted(false), 3000);
       } else {
         setError(true);
@@ -46,97 +46,243 @@ const Comments = () => {
 
   return (
     <StyledWrapper id="comments">
-      <h2 className="title">Contact Me</h2>
-      
-      {error && (
+      {/* Background Animation - Gradient Orbs */}
+      <div className="animation-bg">
+        <GradientOrbs />
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="content-grid">
+        {/* Left Side - Text Content */}
         <motion.div 
-          className="error-popup"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
+          className="left-content"
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
         >
-          ❌ Failed to send feedback. Please try again.
+          <h2 className="section-title">Contact Me</h2>
+          <p className="tagline">
+            Interested in collaborating or have a project in mind? 
+            I'd love to hear from you.
+          </p>
+          
+          <div className="info-blocks">
+            <div className="info-item">
+              <div>
+                <h4>Open for Work</h4>
+                <p>Internships, freelance & collaborations</p>
+              </div>
+            </div>
+            <div className="info-item">
+              <div>
+                <h4>Quick Response</h4>
+                <p>Usually within 24 hours</p>
+              </div>
+            </div>
+          </div>
         </motion.div>
-      )}
-      
-      {submitted ? (
+
+        {/* Right Side - Form */}
         <motion.div 
-          className="thank-you"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
+          className="right-content"
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
         >
-          <h3>Thank you! 🎉</h3>
-          <p>Your feedback has been received.</p>
+          <AnimatePresence mode="wait">
+            {error && (
+              <motion.div 
+                className="error-popup"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                ❌ Failed to send. Please try again.
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            {submitted ? (
+              <motion.div 
+                className="thank-you"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+              >
+                <h3>Message Sent! 🎉</h3>
+                <p>I'll get back to you soon.</p>
+              </motion.div>
+            ) : (
+              <div className="form-container">
+                <h3 className="form-title">Let's Build Something Amazing</h3>
+                <form className="form" onSubmit={handleSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="name">Your Name</label>
+                    <input 
+                      required 
+                      name="name" 
+                      id="name" 
+                      type="text"
+                      placeholder="John Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="textarea">Your Message</label>
+                    <textarea 
+                      required 
+                      cols={50} 
+                      rows={10} 
+                      id="textarea" 
+                      name="textarea"
+                      placeholder="Tell me about your project or idea..."
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  <button type="submit" className="form-submit-btn" disabled={isSubmitting}>
+                    <AnimatePresence mode="wait">
+                      {isSubmitting ? (
+                        <motion.span key="sending" exit={{ opacity: 0 }}>Sending...</motion.span>
+                      ) : (
+                        <motion.span key="idle">Send Message →</motion.span>
+                      )}
+                    </AnimatePresence>
+                  </button>
+                </form>
+              </div>
+            )}
+          </AnimatePresence>
         </motion.div>
-      ) : (
-        <div className="form-container">
-          <form className="form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="name">Your Name</label>
-              <input 
-                required 
-                name="name" 
-                id="name" 
-                type="text"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="textarea">Your Message</label>
-              <textarea 
-                required 
-                cols={50} 
-                rows={10} 
-                id="textarea" 
-                name="textarea"
-                placeholder="Share your thoughts..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                disabled={isSubmitting}
-              />
-            </div>
-            <button type="submit" className="form-submit-btn" disabled={isSubmitting}>
-              {isSubmitting ? 'Sending...' : 'Send Feedback'}
-            </button>
-          </form>
-        </div>
-      )}
+      </div>
     </StyledWrapper>
   );
 }
 
 const StyledWrapper = styled.section`
-  padding: 6rem 1rem;
-  max-width: 500px;
-  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  background: #020617;
+  padding: 4rem 2rem;
 
-  .title {
-    text-align: center;
+  [data-theme='light'] & {
+    background: #f1f5f9;
+  }
+
+  .animation-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .content-grid {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    max-width: 1100px;
+    width: 100%;
+    align-items: center;
+  }
+
+  /* Left Content */
+  .left-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .section-title {
     font-family: var(--font-outfit);
     font-size: 2rem;
-    letter-spacing: 0.5rem;
-    color: var(--section-title);
-    margin-bottom: 4rem;
-    text-transform: uppercase;
     font-weight: 300;
+    letter-spacing: 1rem;
+    color: var(--section-title);
+    text-transform: uppercase;
+    margin: 0 0 1rem 0;
+  }
+
+  .tagline {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 400px;
+  }
+
+  .info-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+
+  [data-theme='light'] & .info-item {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .info-item:hover {
+    transform: translateX(5px);
+    border-color: var(--primary);
+  }
+
+  .info-icon {
+    font-size: 1.5rem;
+  }
+
+  .info-item h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--foreground);
+    font-weight: 600;
+  }
+
+  .info-item p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* Right Content - Form */
+  .right-content {
+    width: 100%;
   }
 
   .error-popup {
     text-align: center;
-    padding: 1rem 2rem;
+    padding: 1rem;
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.3);
     border-radius: 12px;
     color: #f87171;
-    width: 100%;
-    max-width: 400px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     font-weight: 500;
   }
 
@@ -147,212 +293,175 @@ const StyledWrapper = styled.section`
     border: 1px solid rgba(34, 197, 94, 0.2);
     border-radius: 16px;
     color: #4ade80;
-    width: 100%;
+    backdrop-filter: blur(10px);
   }
 
   .thank-you h3 {
-    margin-bottom: 0.5rem;
-    font-size: 1.8rem;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.6rem;
     font-family: var(--font-outfit);
   }
 
+  .thank-you p {
+    margin: 0;
+  }
+
   .form-container {
-    width: 100%;
-    max-width: 400px;
-    background: linear-gradient(#212121, #212121) padding-box,
-                linear-gradient(145deg, transparent 35%,#e81cff, #40ff69ff) border-box;
-    border: 2px solid transparent;
-    padding: 32px 24px;
-    font-size: 14px;
-    font-family: inherit;
-    color: white;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  [data-theme='light'] & .form-container {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .form-title {
+    font-family: var(--font-outfit);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin: 0 0 1.5rem 0;
+    background: linear-gradient(135deg, var(--foreground) 30%, var(--text-muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    box-sizing: border-box;
-    border-radius: 16px;
-    background-size: 200% 100%;
-    animation: gradient 3s ease infinite;
+    gap: 1.25rem;
   }
 
-  @keyframes gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-    }
-
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  .form-container button:active {
-    scale: 0.95;
-  }
-
-  .form-container .form {
+  .form-group {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0.5rem;
   }
 
-  .form-container .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .form-container .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #fffdfda4;
-    font-weight: 400;
-    font-size: 12px;
-  }
-
-  .form-container .form-group input {
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: 8px;
-    color: #fff;
-    font-family: inherit;
-    background-color: transparent;
-    border: 1px solid #414141;
-  }
-
-  .form-container .form-group textarea {
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: 8px;
-    resize: none;
-    color: #fff;
-    height: 96px;
-    border: 1px solid #414141;
-    background-color: transparent;
-    font-family: inherit;
-  }
-
-  .form-container .form-group input::placeholder,
-  .form-container .form-group textarea::placeholder {
-    opacity: 0.5;
-  }
-
-  .form-container .form-group input:focus {
-    outline: none;
-    border-color: #e81cff;
-  }
-
-  .form-container .form-group textarea:focus {
-    outline: none;
-    border-color: #e81cff;
-  }
-
-  .form-container .form-submit-btn {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    align-self: flex-start;
-    font-family: inherit;
-    color: #f2babaff;
+  .form-group label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
     font-weight: 500;
-    width: 40%;
-    background: #04294fda;
-    border: 1px solid #4c6f09ff;
-    padding: 12px 16px;
-    font-size: inherit;
-    gap: 8px;
-    margin-top: 8px;
-    cursor: pointer;
-    border-radius: 6px;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     transition: all 0.3s ease;
   }
 
-  .form-container .form-submit-btn:hover:not(:disabled) {
-    background-color: #fff;
-    border-color: #fff;
-    color: #212121;
+  [data-theme='light'] & .form-group input {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
   }
 
-  .form-container .form-submit-btn:disabled {
+  .form-group textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    resize: none;
+    color: var(--foreground);
+    height: 130px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+  }
+
+  [data-theme='light'] & .form-group textarea {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+  }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+  }
+
+  .form-submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-family: inherit;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: linear-gradient(135deg, var(--primary), #06d48fa8);
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    margin-top: 0.5rem;
+  }
+
+  .form-submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+    filter: brightness(1.05);
+  }
+
+  .form-submit-btn:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .form-submit-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
 
-  @media (max-width: 768px) {
-    padding: 4rem 1.5rem;
-    
-    .form-container {
-      padding: 24px 16px;
+  /* Mobile Responsive */
+  @media (max-width: 900px) {
+    padding: 3rem 1.5rem;
+
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      text-align: center;
     }
 
-    .form-container .form-submit-btn {
+    .left-content {
+      align-items: center;
+    }
+
+    .tagline {
+      max-width: 100%;
+    }
+
+    .info-blocks {
       width: 100%;
+      max-width: 400px;
     }
-  }
 
-  /* Light Mode Styles */
-  /* Light Mode Styles */
-  html[data-theme='light'] & .form-container {
-    background: linear-gradient(#ffffff, #ffffff) padding-box,
-                linear-gradient(145deg, transparent 35%, var(--primary), var(--accent)) border-box;
-    border: 2px solid transparent;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Soft shadow for depth */
-    color: #0f172a;
-    background-size: 200% 100%;
-    animation: gradient 3s ease infinite;
-  }
-
-  html[data-theme='light'] & .form-container .form-group label {
-    color: #475569; /* Darker slate for readability */
-    font-weight: 500;
-  }
-
-  html[data-theme='light'] & .form-container .form-group input,
-  html[data-theme='light'] & .form-container .form-group textarea {
-    color: #1e293b;
-    border-color: #cbd5e1;
-    background-color: #f8fafc; /* Very light slate */
-    border: 1px solid #cbd5e1;
-  }
-
-  html[data-theme='light'] & .form-container .form-group input::placeholder,
-  html[data-theme='light'] & .form-container .form-group textarea::placeholder {
-    color: #94a3b8;
-  }
-
-  html[data-theme='light'] & .form-container .form-group input:focus,
-  html[data-theme='light'] & .form-container .form-group textarea:focus {
-    border-color: #7c3aed;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-  }
-
-  html[data-theme='light'] & .form-container .form-submit-btn {
-    background: transparent;
-    border: 1px solid #7c3aed; /* Primary color border */
-    color: #3a7cedff;
-    font-weight: 600;
-  }
-  .form-container .form-submit-btn {
-    align-self: flex-end;
-  }
-
-
-  html[data-theme='light'] & .form-container .form-submit-btn:hover:not(:disabled) {
-    background-color: #7c3aed;
-    border-color: #7c3aed;
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-  }
-
-  html[data-theme='light'] & .thank-you {
-    background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.2);
-    color: #15803d;
+    .info-item:hover {
+      transform: translateY(-3px);
+    }
   }
 `;
 
