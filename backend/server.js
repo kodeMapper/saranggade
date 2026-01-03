@@ -109,7 +109,7 @@ mongoose.connect(MONGO_URI)
 
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
-            console.log(`ℹ️  Server Version: 1.5.0 (Restored Working Logic)`);
+            console.log(`ℹ️  Server Version: 1.6.0 (Synced Git Logic - Codolio Fixed)`);
         });
     })
     .catch(err => console.error('❌ MongoDB connection error:', err));
@@ -399,7 +399,7 @@ function performGitCommit(message) {
 
     const commands = [
         `cd /app`,
-        `git config --global user.email "bot@portfolio.com"`,
+        `git config --global user.email "kodeMapper@users.noreply.github.com"`,
         `git config --global user.name "Portfolio Bot"`,
         `rm -rf .git`,
         `git init`,

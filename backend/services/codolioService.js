@@ -183,27 +183,35 @@ const updateCodolioStats = async () => {
             const REPO = 'saranggade';
             const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
 
-            // Robust "Stateless" Git Push (Works even if .git is missing in Docker)
+            // Synchronized with performGitCommit() in server.js - Clean slate approach
             const commands = [
-                `cd /app`, // Ensure we are in root
-                `git config --global user.email "bot@portfolio.com"`,
+                `cd /app`,
+                `git config --global user.email "kodeMapper@users.noreply.github.com"`,
                 `git config --global user.name "Portfolio Bot"`,
-                // Ensure it's a git repo (safe Re-init)
+                // Clean slate - remove existing .git to avoid branch conflicts
+                `rm -rf .git`,
                 `git init`,
-                `git remote remove origin || true`, // Remove if exists to avoid collision
                 `git remote add origin "${remoteUrl}"`,
-                // Fetch current state to avoid rejecting push
                 `git fetch --depth=1 origin main`,
-                `git reset origin/main`, // Default (Mixed) reset
-                // Force add to ensure ignored files or unchanged timestamps don't block it
+                // Checkout main branch tracking FETCH_HEAD (not master)
+                `git checkout -b main FETCH_HEAD`,
+                // Add only the codolio screenshots
                 `git add -f public/images/codolio-*.png`,
-                `git commit -m "Auto-update Codolio stats [skip ci]"`,
-                `git push origin HEAD:main`
+                `git status`,
+                `git commit -m "Auto-update Codolio stats [skip ci]" || echo "Nothing new to commit"`,
+                // Force push to override any conflicts
+                `git push -f origin main`
             ].join(' && ');
 
             exec(commands, (err, stdout, stderr) => {
-                if (err) log(`❌ Git Push Failed: ${stderr}`);
-                else log(`✅ Git Push Success: ${stdout}`);
+                if (err) {
+                    log(`❌ Git Push Failed!`);
+                    log(`   Error: ${err.message}`);
+                    log(`   Stderr: ${stderr}`);
+                    log(`   Stdout: ${stdout}`);
+                } else {
+                    log(`✅ Git Push Success: ${stdout}`);
+                }
             });
         } catch (e) { log(`❌ Git Error: ${e.message}`); }
 
