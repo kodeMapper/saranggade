@@ -133,7 +133,7 @@ const Comments = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="textarea">Your Message</label>
+                    <label htmlFor="textarea">Your Message and Contact Details</label>
                     <textarea 
                       required 
                       cols={50} 
