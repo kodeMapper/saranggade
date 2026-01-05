@@ -93,19 +93,19 @@ mongoose.connect(MONGO_URI)
 
         // --- START SERVER & CRON ONLY AFTER DB CONNECTS ---
 
-        // GitHub: Run at 12am, 6am, 12pm, 5pm
-        cron.schedule('0 0,6,12,17 * * *', async () => {
+        // GitHub: Run at 1am, 7am, 1pm, 7pm IST (4 times/day)
+        cron.schedule('0 1,7,13,19 * * *', async () => {
             console.log('⏰ [Scheduled] Running GitHub update check...');
             await runChecks();
-        });
+        }, { timezone: "Asia/Kolkata" });
 
         // LinkedIn: DISABLED - Manual updates only (no Puppeteer to save memory)
 
-        // Codolio: Run at 4am, 11am, 6pm, 11pm
-        cron.schedule('0 4,11,18,23 * * *', async () => {
+        // Codolio: Run at 4am, 10am, 4pm, 10pm IST (4 times/day, staggered from GitHub)
+        cron.schedule('0 4,10,16,22 * * *', async () => {
             console.log('🦉 [Scheduled] Running Codolio Update...');
             await updateCodolioStats();
-        });
+        }, { timezone: "Asia/Kolkata" });
 
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
