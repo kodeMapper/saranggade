@@ -2,7 +2,7 @@
 
 Welcome to my portfolio! This isn't just a static website; it's a **Smart System** designed to maintain itself.
 
-**Live Site:** [saranggade.vercel.app](https://saranggade.vercel.app)
+**Live Site:** [iamsarang.dev](https://iamsarang.dev)
 
 ---
 
