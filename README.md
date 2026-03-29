@@ -10,7 +10,7 @@ Welcome to my portfolio! This isn't just a static website; it's a **Smart System
 
 As a developer, I realized that updating a portfolio is tedious. You do a project, push it to GitHub, then you have to manually copy descriptions, take screenshots, and update your website HTML/JSON. **I wanted to fix that.**
 
-My goal was simple: **"If I do the work, my portfolio should update itself."**
+My goal was simple: **"If I do the work, my portfolio should update itself!"**
 
 ### Real Problems & How We Solved Them
 
