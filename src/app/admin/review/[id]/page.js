@@ -117,6 +117,12 @@ export default function ReviewUpdate() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const normalizeUrl = (url) => {
+        if (!url) return '';
+        if (/^https?:\/\//i.test(url)) return url;
+        return `https://${url}`;
+    };
+
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -146,13 +152,18 @@ export default function ReviewUpdate() {
 
     const handleApprove = async () => {
         try {
+            const editedData = {
+                ...formData,
+                github: normalizeUrl(formData.github),
+                demo: normalizeUrl(formData.demo)
+            };
             const res = await fetch(`${API_URL}/api/admin/updates/${id}/approve`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Basic ' + btoa(`${ADMIN_USER}:${ADMIN_PASS}`)
                 },
-                body: JSON.stringify({ editedData: formData })
+                body: JSON.stringify({ editedData })
             });
             const result = await res.json();
             if (res.ok) {

@@ -67,7 +67,7 @@
       "tech": "Python, Data Modeling, Docker, Express, Flask, Framer Motion, Git, GitHub, JavaScript, Machine Learning, MongoDB, Next.js, Node.js, Postman, React, Vercel, Styled Components",
       "date": "May 2026",
       "github": "https://github.com/kodeMapper/interviewer-bot",
-      "demo": "www.skillwise.live",
+      "demo": "https://skillwise.live",
       "image": "/images/uploads/upload-1778248831388.png",
       "points": [
         "SkillWise is a unified AI interview and proctoring platform that automates technical assessments through adaptive questioning and real-time camera-based monitoring. It utilizes deep learning for automated answer evaluation and personalized resume analysis, delivering a comprehensive report that merges interview performance with detailed integrity logs."
