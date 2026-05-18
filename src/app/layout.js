@@ -1,4 +1,5 @@
 import { Outfit, Playfair_Display } from "next/font/google";
+import { Analytics } from '@vercel/analytics/next';
 import "./globals.css";
 
 const outfit = Outfit({
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
         {/* Devicon for tech logos */}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
         {children}
+        <Analytics />
       </body>
     </html>
   );
