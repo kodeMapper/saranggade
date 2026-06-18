@@ -1,210 +1,243 @@
 "use client";
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ExternalLink, Github, ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
-import styles from './StackingCarousel.module.css';
-import Link from 'next/link';
-import { getTechIcon } from '../utils/techIcons';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { getTechIcon } from "../utils/techIcons";
+import styles from "./StackingCarousel.module.css";
+
+function calculateGap(width) {
+  const minWidth = 1024;
+  const maxWidth = 1456;
+  const minGap = 60;
+  const maxGap = 86;
+  if (width <= minWidth) return minGap;
+  if (width >= maxWidth)
+    return Math.max(minGap, maxGap + 0.06018 * (width - maxWidth));
+  return minGap + (maxGap - minGap) * ((width - minWidth) / (maxWidth - minWidth));
+}
 
 const StackingCarousel = ({ data }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [expandedDesc, setExpandedDesc] = useState({});
-  const [showReadMore, setShowReadMore] = useState({});
-  const descRefs = React.useRef([]);
   const projects = data.projects;
+  const projectsLength = useMemo(() => projects.length, [projects]);
 
-  React.useEffect(() => {
-    const newShowReadMore = {};
-    descRefs.current.forEach((el, index) => {
-      if (el) {
-        if (el.scrollHeight > el.clientHeight) {
-          newShowReadMore[index] = true;
-        }
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(1200);
+  const imageContainerRef = useRef(null);
+  const autoplayIntervalRef = useRef(null);
+
+  const activeProject = useMemo(
+    () => projects[activeIndex],
+    [activeIndex, projects]
+  );
+
+  // Responsive gap
+  useEffect(() => {
+    function handleResize() {
+      if (imageContainerRef.current) {
+        setContainerWidth(imageContainerRef.current.offsetWidth);
       }
-    });
-    setShowReadMore(newShowReadMore);
-  }, [projects]);
-
-  const toggleExpanded = (index, e) => {
-    if (e) {
-        e.preventDefault();
-        e.stopPropagation();
     }
-    setExpandedDesc(prev => ({...prev, [index]: !prev[index]}));
-  };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % projects.length);
-  };
+  // Autoplay
+  useEffect(() => {
+    autoplayIntervalRef.current = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % projectsLength);
+    }, 6000);
+    return () => {
+      if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+    };
+  }, [projectsLength]);
 
-  const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + projects.length) % projects.length);
-  };
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "ArrowLeft") handlePrev();
+      if (e.key === "ArrowRight") handleNext();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+    // eslint-disable-next-line
+  }, [activeIndex, projectsLength]);
 
-  const getCardStyle = (index) => {
-    const total = projects.length;
-    let dist = (index - activeIndex + total) % total;
-    if (dist > total / 2) dist -= total;
-    
-    if (dist === 0) {
-        return {
-            x: 0,
-            scale: 1,
-            opacity: 1,
-            zIndex: 10,
-            filter: 'blur(0px)'
-        };
-    } else if (dist === 1 || dist === -total + 1) { 
-        return {
-            x: '60%', 
-            scale: 0.85,
-            opacity: 0.5,
-            zIndex: 5,
-            filter: 'blur(1px)'
-        };
-    } else if (dist === -1 || dist === total - 1) { 
-        return {
-            x: '-60%',
-            scale: 0.85,
-            opacity: 0.5,
-            zIndex: 5,
-            filter: 'blur(1px)'
-        };
-    } else {
-        return {
-            x: dist > 0 ? '120%' : '-120%',
-            scale: 0.6,
-            opacity: 0,
-            zIndex: 1,
-            filter: 'blur(5px)'
-        };
+  const handleNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % projectsLength);
+    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+  }, [projectsLength]);
+
+  const handlePrev = useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + projectsLength) % projectsLength);
+    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+  }, [projectsLength]);
+
+  // 3D perspective image transforms (left, center, right visible)
+  function getImageStyle(index) {
+    const gap = calculateGap(containerWidth);
+    const maxStickUp = gap * 0.8;
+    const isActive = index === activeIndex;
+    const isLeft = (activeIndex - 1 + projectsLength) % projectsLength === index;
+    const isRight = (activeIndex + 1) % projectsLength === index;
+
+    if (isActive) {
+      return {
+        zIndex: 3,
+        opacity: 1,
+        pointerEvents: "auto",
+        transform: `translateX(0px) translateY(0px) scale(1) rotateY(0deg)`,
+        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+      };
     }
-  };
+    if (isLeft) {
+      return {
+        zIndex: 2,
+        opacity: 1,
+        pointerEvents: "auto",
+        transform: `translateX(-${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(15deg)`,
+        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+      };
+    }
+    if (isRight) {
+      return {
+        zIndex: 2,
+        opacity: 1,
+        pointerEvents: "auto",
+        transform: `translateX(${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(-15deg)`,
+        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+      };
+    }
+    return {
+      zIndex: 1,
+      opacity: 0,
+      pointerEvents: "none",
+      transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+    };
+  }
 
-  const swipeConfidenceThreshold = 10000;
-  const swipePower = (offset, velocity) => {
-    return Math.abs(offset) * velocity;
+  const quoteVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
   };
 
   return (
     <section id="projects" className={styles.carouselSection}>
       <h2 className={styles.title}>PROJECTS</h2>
 
-      <div className={styles.carouselContainer}>
-        {projects.map((project, index) => {
-            const variantValues = getCardStyle(index);
+      <div className={styles.splitLayout}>
+        {/* LEFT: 3D Image Carousel */}
+        <div className={styles.imageContainer} ref={imageContainerRef}>
+          {projects.map((project, index) => (
+            <Link
+              key={index}
+              href={`/project/${index}`}
+              className={styles.imageLink}
+              style={getImageStyle(index)}
+            >
+              {project.image && !project.image.startsWith("linear") ? (
+                <img
+                  src={project.image}
+                  alt={project.name}
+                  className={styles.projectImage}
+                />
+              ) : (
+                <div className={styles.imageFallback} />
+              )}
+            </Link>
+          ))}
+        </div>
 
-            return (
-                <motion.div
-                    key={index}
-                    className={styles.card}
-                    data-expanded={!!expandedDesc[index]}
-                    animate={variantValues}
-                    transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 30
-                    }}
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    onDragEnd={(e, { offset, velocity }) => {
-                        const swipe = swipePower(offset.x, velocity.x);
+        {/* RIGHT: Project Info */}
+        <div className={styles.contentPanel}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              variants={quoteVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className={styles.contentInner}
+            >
+              {/* Project Counter */}
+              <span className={styles.counter}>
+                {String(activeIndex + 1).padStart(2, "0")} / {String(projectsLength).padStart(2, "0")}
+              </span>
 
-                        if (swipe < -swipeConfidenceThreshold) {
-                            handleNext();
-                        } else if (swipe > swipeConfidenceThreshold) {
-                            handlePrev();
-                        }
-                    }}
-                >
-                    {/* Image Area */}
-                    <div className={styles.imageArea}>
-                       <Link href={`/project/${index}`} style={{ display: 'block', width: '100%', height: '100%' }}>
-                           {project.image && !project.image.startsWith('linear') ? (
-                              <img src={project.image} alt={project.name} className={styles.projectImage} />
-                           ) : (
-                              <div style={{ width: '100%', height: '100%', background: 'linear-gradient(45deg, #1e293b, #0f172a)' }} />
-                           )}
-                       </Link>
+              {/* Title */}
+              <Link href={`/project/${activeIndex}`} className={styles.projectTitleLink}>
+                <h3 className={styles.projectTitle}>{activeProject.name}</h3>
+              </Link>
+
+              {/* Date */}
+              {activeProject.date && (
+                <p className={styles.projectDate}>{activeProject.date}</p>
+              )}
+
+              {/* Description with word-by-word blur-in animation */}
+              <div className={styles.projectDesc}>
+                {activeProject.points[0].split(" ").map((word, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ filter: "blur(8px)", opacity: 0, y: 4 }}
+                    animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut", delay: 0.02 * i }}
+                    style={{ display: "inline-block" }}
+                  >
+                    {word}&nbsp;
+                  </motion.span>
+                ))}
+              </div>
+
+              {/* Links */}
+              <div className={styles.linkGroup}>
+                {activeProject.github && (
+                  <a href={activeProject.github} target="_blank" rel="noopener noreferrer" className={styles.textLink}>
+                    Github <ArrowUpRight size={14} />
+                  </a>
+                )}
+                {activeProject.demo && (
+                  <a href={activeProject.demo} target="_blank" rel="noopener noreferrer" className={styles.textLink}>
+                    Live Demo <ArrowUpRight size={14} />
+                  </a>
+                )}
+              </div>
+
+              {/* Tech Stack */}
+              <div className={styles.footerRow}>
+                <span className={styles.label}>tech stack:</span>
+                <div className={styles.techIcons}>
+                  {activeProject.tech.split(",").slice(0, 5).map((t, i) => (
+                    <div key={i} className={styles.techIconWrapper} title={t.trim()}>
+                      <img
+                        src={getTechIcon(t)}
+                        className={styles.techIconImg}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.parentNode.innerText = t.trim().substring(0, 2);
+                        }}
+                        alt={t.trim()}
+                      />
                     </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
 
-                    {/* Info Area - Quickflow Style: Vertical Stack */}
-                    <div className={styles.infoArea}>
-                        
-                        <div className={styles.headerRow}>
-                            <Link href={`/project/${index}`} className={styles.projectTitleLink}>
-                                <h3 className={styles.projectTitle}>{project.name}</h3>
-                            </Link>
-                            <div className={styles.linkGroup}>
-                                <a href={project.github} target="_blank" className={styles.textLink}>
-                                    Github <ArrowUpRight size={14} />
-                                </a>
-                                <a href={project.demo} target="_blank" className={styles.textLink}>
-                                    Live <ArrowUpRight size={14} />
-                                </a>
-                            </div>
-                        </div>
-
-                        <div className={styles.bodyContent} style={{ display: 'flex', flexDirection: 'column' }}>
-                            <p 
-                                ref={(el) => descRefs.current[index] = el}
-                                className={styles.projectDesc} 
-                                style={{ 
-                                    WebkitLineClamp: expandedDesc[index] ? 'unset' : 2, 
-                                    overflowY: expandedDesc[index] ? 'auto' : 'hidden', 
-                                    maxHeight: expandedDesc[index] ? '120px' : 'none',
-                                    paddingRight: expandedDesc[index] ? '4px' : '0'
-                                }}
-                                onPointerDown={(e) => {
-                                    if (expandedDesc[index]) e.stopPropagation();
-                                }}
-                            >
-                                {project.points[0]}
-                                {project.points[1] && ` ${project.points[1]}`}
-                            </p>
-                            {(showReadMore[index] || expandedDesc[index]) && (
-                                <button 
-                                    onClick={(e) => toggleExpanded(index, e)} 
-                                    className={styles.readMore}
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, alignSelf: 'flex-start', fontFamily: 'inherit' }}
-                                >
-                                    {expandedDesc[index] ? '... show less' : '... read more'}
-                                </button>
-                            )}
-                        </div>
-
-                        <div className={styles.footerRow}>
-                             <span className={styles.label}>tech stack used:</span>
-                            <div className={styles.techIcons}>
-                                {project.tech.split(',').slice(0, 4).map((t, i) => (
-                                    <div key={i} className={styles.techIconWrapper} title={t.trim()}>
-                                        <img 
-                                            src={getTechIcon(t)}
-                                            className={styles.techIconImg}
-                                            onError={(e) => {
-                                                e.target.style.display = 'none'; 
-                                                e.target.parentNode.innerText = t.trim().substring(0,2);
-                                            }}
-                                            alt={t.trim()}
-                                        />
-                                    </div>
-                                ))}
-                             </div>
-                        </div>
-
-                    </div>
-                </motion.div>
-            );
-        })}
-      </div>
-
-      <div className={styles.controls}>
-        <button onClick={handlePrev} className={styles.navBtn}>
-            <ChevronLeft size={24} />
-        </button>
-        <button onClick={handleNext} className={styles.navBtn}>
-            <ChevronRight size={24} />
-        </button>
+          {/* Navigation Arrows */}
+          <div className={styles.controls}>
+            <button className={styles.navBtn} onClick={handlePrev} aria-label="Previous project">
+              <ArrowLeft size={22} />
+            </button>
+            <button className={styles.navBtn} onClick={handleNext} aria-label="Next project">
+              <ArrowRight size={22} />
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );
