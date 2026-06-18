@@ -80,9 +80,8 @@ export default function Home() {
             <Skills data={resumeData} />
           </section>
 
-          <section id="experience" className="snap-section">
-            <Experience data={resumeData} />
-          </section>
+          {/* Experience component manages its own snap sections */}
+          <Experience data={resumeData} />
 
           <section id="projects" className="snap-section">
             <StackingCarousel data={resumeData} />

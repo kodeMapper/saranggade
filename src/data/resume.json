@@ -35,18 +35,19 @@
       "location": "Nagpur, Maharashtra",
       "image": "/images/experience/aara-green.png",
       "highlights": [
-        "<span>Completed a 3-month paid internship, building the official <a href='https://merididi.com/' target='_blank' rel='noopener noreferrer' style='color: var(--primary); text-decoration: none;'>'Meri Didi' website ↗</a> and admin panel using React/Supabase, boosting digital presence.</span>"
+        "Architected a role-based access control (RBAC) admin dashboard and worker registration portal (React.js, Express.js, PostgreSQL), reducing onboarding overhead by 40%.",
+        "<span>Translated Figma mockups into pixel-perfect components for the <a href='https://merididi.com/' target='_blank' rel='noopener noreferrer' style='color: var(--primary); text-decoration: none;'>'Meri Didi' website ↗</a> and optimized REST APIs, reducing response latency by 300ms.</span>"
       ]
     },
     {
       "title": "Software Lead",
       "company": "Embedded Club, RCOEM",
-      "duration": "Sep 2025 – Present",
+      "duration": "Sep 2025 to present",
       "location": "Nagpur, Maharashtra",
       "image": "/images/experience/embedded-club.jpg",
       "highlights": [
-        "Conducted technical workshops and guided juniors in the software field.",
-        "Mentored multiple project and hackathon teams, fostering innovation."
+        "Led the 30-member club, conducting technical workshops on Data Structures, Algorithms (DSA), and backend software engineering.",
+        "Mentored 30+ juniors in clean code practices, problem-solving, and agile collaborative development."
       ]
     },
     {
