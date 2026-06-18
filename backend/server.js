@@ -245,7 +245,7 @@ app.post('/api/feedback', async (req, res) => {
     }
 });
 
-app.get('/api/feedback', async (req, res) => {
+app.get('/api/admin/feedback', async (req, res) => {
     try {
         const feedbacks = await Feedback.find().sort({ date: -1 });
         res.status(200).json(feedbacks);

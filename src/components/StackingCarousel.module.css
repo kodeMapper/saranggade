@@ -22,7 +22,7 @@
 .carouselContainer {
     width: 100%;
     max-width: 1200px;
-    height: 500px;
+    height: min(500px, 60vh);
     position: relative;
     display: flex;
     justify-content: center;
@@ -35,7 +35,7 @@
     position: absolute;
     width: 650px;
     /* Slightly narrower for portrait/vertical feel */
-    height: 480px;
+    height: min(480px, 58vh);
     /* Taller */
     background: var(--card-bg);
     border: 1px solid var(--glass-border);
@@ -53,12 +53,14 @@
 
 /* Image Area */
 .imageArea {
-    height: 50%;
+    height: 200px;
+    flex-shrink: 0;
     width: 100%;
     position: relative;
     overflow: hidden;
     background: #0f172a;
 }
+
 
 .projectImage {
     width: 100%;
@@ -78,7 +80,6 @@
     display: flex;
     flex-direction: column;
     background: #0b1221;
-    /* Darker background for card body like reference */
 }
 
 /* Header: Title + Links */
@@ -132,12 +133,32 @@
 /* Body: Description */
 .bodyContent {
     flex: 1;
+    margin-bottom: 1rem;
 }
 
 .projectDesc {
     font-size: 1rem;
     color: #94a3b8;
     line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.readMore {
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 0.5rem;
+    transition: opacity 0.2s;
+}
+
+.readMore:hover {
+    opacity: 0.8;
 }
 
 /* Footer: Tech Stack */

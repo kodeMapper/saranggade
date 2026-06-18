@@ -19,6 +19,12 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Check if we've already loaded in this session
+    if (sessionStorage.getItem('portfolioLoaded')) {
+      setIsLoading(false);
+      return;
+    }
+
     // Critical images to preload before showing the page
     const criticalImages = [
       // Hero background
@@ -48,6 +54,7 @@ export default function Home() {
     const minLoadingTime = new Promise(resolve => setTimeout(resolve, 1500));
 
     Promise.all([preloadImages(), minLoadingTime]).then(() => {
+      sessionStorage.setItem('portfolioLoaded', 'true');
       setIsLoading(false);
     });
   }, []);
@@ -85,7 +92,7 @@ export default function Home() {
             <CodolioProfile />
           </section>
 
-          <section className="snap-section">
+          <section id="comments" className="snap-section">
             <Comments />
           </section>
 

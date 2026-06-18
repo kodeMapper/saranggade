@@ -70,7 +70,10 @@ const Navbar = () => {
   const handleNavClick = (item) => {
     setIsMenuOpen(false);
     setTimeout(() => {
-      const element = document.getElementById(item.toLowerCase());
+      let targetId = item.toLowerCase();
+      // Map "Contact" nav item to the comments/contact-form section
+      if (targetId === 'contact') targetId = 'comments';
+      const element = document.getElementById(targetId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
@@ -161,11 +164,27 @@ const Navbar = () => {
         ease: "easeInOut"
       }}
     >
-      {navItems.map((item) => (
-        <a key={item} href={`#${item.toLowerCase()}`} className={styles.link}>
-          {item}
-        </a>
-      ))}
+      {navItems.map((item) => {
+        const targetId = item === 'Contact' ? 'comments' : item.toLowerCase();
+        return (
+          <a 
+            key={item} 
+            href={`#${targetId}`} 
+            className={styles.link}
+            onClick={(e) => {
+              e.preventDefault();
+              setTimeout(() => {
+                const element = document.getElementById(targetId);
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }, 50);
+            }}
+          >
+            {item}
+          </a>
+        );
+      })}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '1rem', paddingLeft: '1rem', borderLeft: '1px solid var(--glass-border)' }}>
         <ThemeToggle />
         

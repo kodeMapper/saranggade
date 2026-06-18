@@ -82,6 +82,12 @@ const Footer = () => {
         <div className={styles.backgroundDecoration}>
             <div className={styles.bigLogo}>सारंग </div>
         </div>
+        <div className={styles.footerText}>
+          website designed and developed by 
+          <a href="https://www.linkedin.com/in/sarang-gade" target="_blank" rel="noopener noreferrer">
+             Sarang <span style={{ fontSize: '0.9em' }}>↗</span>
+          </a>
+      </div>
       </div>
     </footer>
   );

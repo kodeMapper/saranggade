@@ -8,7 +8,30 @@ import { getTechIcon } from '../utils/techIcons';
 
 const StackingCarousel = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [expandedDesc, setExpandedDesc] = useState({});
+  const [showReadMore, setShowReadMore] = useState({});
+  const descRefs = React.useRef([]);
   const projects = data.projects;
+
+  React.useEffect(() => {
+    const newShowReadMore = {};
+    descRefs.current.forEach((el, index) => {
+      if (el) {
+        if (el.scrollHeight > el.clientHeight) {
+          newShowReadMore[index] = true;
+        }
+      }
+    });
+    setShowReadMore(newShowReadMore);
+  }, [projects]);
+
+  const toggleExpanded = (index, e) => {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    setExpandedDesc(prev => ({...prev, [index]: !prev[index]}));
+  };
 
   const handleNext = () => {
     setActiveIndex((prev) => (prev + 1) % projects.length);
@@ -75,6 +98,7 @@ const StackingCarousel = ({ data }) => {
                 <motion.div
                     key={index}
                     className={styles.card}
+                    data-expanded={!!expandedDesc[index]}
                     animate={variantValues}
                     transition={{
                         type: "spring",
@@ -121,10 +145,32 @@ const StackingCarousel = ({ data }) => {
                             </div>
                         </div>
 
-                        <div className={styles.bodyContent}>
-                            <p className={styles.projectDesc}>
-                                {project.points[0]} {project.points[1] && project.points[1]}
+                        <div className={styles.bodyContent} style={{ display: 'flex', flexDirection: 'column' }}>
+                            <p 
+                                ref={(el) => descRefs.current[index] = el}
+                                className={styles.projectDesc} 
+                                style={{ 
+                                    WebkitLineClamp: expandedDesc[index] ? 'unset' : 2, 
+                                    overflowY: expandedDesc[index] ? 'auto' : 'hidden', 
+                                    maxHeight: expandedDesc[index] ? '120px' : 'none',
+                                    paddingRight: expandedDesc[index] ? '4px' : '0'
+                                }}
+                                onPointerDown={(e) => {
+                                    if (expandedDesc[index]) e.stopPropagation();
+                                }}
+                            >
+                                {project.points[0]}
+                                {project.points[1] && ` ${project.points[1]}`}
                             </p>
+                            {(showReadMore[index] || expandedDesc[index]) && (
+                                <button 
+                                    onClick={(e) => toggleExpanded(index, e)} 
+                                    className={styles.readMore}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, alignSelf: 'flex-start', fontFamily: 'inherit' }}
+                                >
+                                    {expandedDesc[index] ? '... show less' : '... read more'}
+                                </button>
+                            )}
                         </div>
 
                         <div className={styles.footerRow}>

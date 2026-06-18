@@ -154,3 +154,27 @@ html[data-theme='light'] .bigLogo {
     color: #0f172a;
     /* Dark slate color for light mode */
 }
+
+.footerText {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: Verdana, sans-serif;
+    letter-spacing: 0.5px;
+    z-index: 10;
+}
+
+.footerText a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 0.2rem;
+}
+
+.footerText a:hover {
+    text-decoration: underline;
+}
