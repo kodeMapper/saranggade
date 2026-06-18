@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { getTechIcon } from "../utils/techIcons";
 import styles from "./StackingCarousel.module.css";
+import EtherealShadow from "./EtherealShadow";
 
 function calculateGap(width) {
   const minWidth = 1024;
@@ -125,6 +126,12 @@ const StackingCarousel = ({ data }) => {
 
   return (
     <section id="projects" className={styles.carouselSection}>
+      <EtherealShadow 
+        color="var(--primary)" 
+        animation={{ scale: 100, speed: 60 }} 
+        noise={{ opacity: 0.5, scale: 1.2 }} 
+      />
+
       <h2 className={styles.title}>PROJECTS</h2>
 
       <div className={styles.splitLayout}>

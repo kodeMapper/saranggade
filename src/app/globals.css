@@ -161,7 +161,7 @@ a {
 @media (max-width: 768px) {
   .snap-container {
     height: auto;
-    overflow-y: auto;
+    overflow-y: visible;
     scroll-snap-type: none;
     /* Disable snap */
   }

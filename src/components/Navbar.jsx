@@ -77,7 +77,7 @@ const Navbar = () => {
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
-    }, 100);
+    }, 300);
   };
 
   // Mobile: Minimal floating button + dropdown menu
