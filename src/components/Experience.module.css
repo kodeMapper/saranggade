@@ -92,7 +92,7 @@
 .cardContent {
     display: flex;
     gap: 1.5rem;
-    align-items: flex-start;
+    align-items: stretch;
 }
 
 .textContent {
@@ -102,23 +102,33 @@
 .imageContainer {
     flex-shrink: 0;
     width: 280px;
-    /* Increased from 150px to maximize visibility */
-    height: auto;
     border-radius: 8px;
     overflow: hidden;
-    margin-top: 0.5rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imageContainer.whiteBg {
+    background-color: white;
+    padding: 1.5rem;
 }
 
 .expImage {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
     object-fit: cover;
-    /* or contain if we want full document? cover usually looks better in grid. */
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: transform 0.3s ease;
+}
+
+.imageContainer.whiteBg .expImage {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
 .expImage:hover {
@@ -190,6 +200,7 @@
         width: 100%;
         max-width: 280px;
         margin-top: 1rem;
+        height: 150px;
     }
 
     .list {

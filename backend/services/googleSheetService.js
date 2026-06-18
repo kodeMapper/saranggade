@@ -65,22 +65,24 @@ const addFeedbackToGoogleSheet = async (feedback) => {
         const dateStr = now.toLocaleDateString('en-GB'); // DD/MM/YYYY
         const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
-        // Prepare the values
-        // Columns: [Sr.no, Day, Date, Time, Name, Description, Seen (empty)]
+        // Columns: [Sr.no, Day, Date, Time, First Name, Last Name, Reason, Email, Message, Seen (empty)]
         const values = [
             [
                 nextRow - 1, // Sr.no (row number - 1, since row 2 = Sr.no 1)
                 dayName,
                 dateStr,
                 timeStr,
-                feedback.name,
-                feedback.text,
+                feedback.firstName || feedback.name || '',
+                feedback.lastName || '',
+                feedback.reason || '',
+                feedback.email || '',
+                feedback.message || feedback.text || '',
                 '' // Seen (empty)
             ]
         ];
 
         // Update the specific row
-        const range = `A${nextRow}:G${nextRow}`;
+        const range = `A${nextRow}:J${nextRow}`;
 
         await sheets.spreadsheets.values.update({
             spreadsheetId: SPREADSHEET_ID,

@@ -39,7 +39,7 @@ const Experience = ({ data }) => {
                       </ul>
                   </div>
                   {exp.image && (
-                    <div className={styles.imageContainer}>
+                    <div className={`${styles.imageContainer} ${exp.whiteBg ? styles.whiteBg : ''}`}>
                       <img src={exp.image} alt={exp.company} className={styles.expImage} />
                     </div>
                   )}

@@ -50,14 +50,15 @@
       ]
     },
     {
-      "title": "Development Hackathons",
-      "company": "Frontend/Backend Developer",
-      "duration": "Sep 2024 – Present",
-      "location": "Maharashtra",
-      "image": "/images/experience/hackathons.png",
+      "title": "Frontend Developer (Freelance)",
+      "company": "McMillan Geosciences Inc.",
+      "duration": "August 2025 – October 2025",
+      "location": "Remote / Canada",
+      "image": "/images/mcmillan_logo.png",
+      "whiteBg": true,
       "highlights": [
-        "Secured top 10 ranks in 5+ hackathons and won multiple events.",
-        "Led teams to success as a Team Leader in high-pressure environments."
+        "Integrated and tested 15+ backend API endpoints within a React.js platform, identified and resolved data inconsistencies in survey workflows, and improved cross-device reliability for field teams.",
+        "Refactored React component state management to eliminate redundant re-renders, reducing average data rendering time by 40% and improving session stability across low-bandwidth environments."
       ]
     }
   ],

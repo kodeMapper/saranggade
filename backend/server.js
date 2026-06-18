@@ -116,8 +116,13 @@ mongoose.connect(MONGO_URI)
 
 // Feedback Schema (Keep existing logic)
 const feedbackSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    text: { type: String, required: true },
+    firstName: { type: String }, // optional for old data compatibility
+    lastName: { type: String },
+    reason: { type: String, enum: ['client_enquiry', 'collaboration', 'feedback', 'other'] },
+    email: { type: String },
+    message: { type: String },
+    name: { type: String }, // retained for old data
+    text: { type: String }, // retained for old data
     date: { type: Date, default: Date.now }
 });
 const Feedback = mongoose.model('Feedback', feedbackSchema);
@@ -228,16 +233,26 @@ async function runChecks() {
 // --- EXISTING ROUTES ---
 app.post('/api/feedback', async (req, res) => {
     try {
-        const { name, text } = req.body;
-        const newFeedback = new Feedback({ name, text });
+        const { firstName, lastName, reason, email, message } = req.body;
+        
+        // Strict Validation for new entries
+        if (!firstName?.trim() || !lastName?.trim() || !reason || !email?.trim() || !message?.trim()) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const newFeedback = new Feedback({ firstName, lastName, reason, email, message });
         await newFeedback.save();
 
         // Notify via Discord about Feedback
-        await sendDiscordNotification('New Feedback Received', { Name: name, Message: text }, null);
-
+        await sendDiscordNotification('New Feedback Received', { 
+            Name: `${firstName} ${lastName}`, 
+            Reason: reason,
+            Email: email,
+            Message: message 
+        }, null);
 
         // Add to Google Sheet
-        await addFeedbackToGoogleSheet({ name, text });
+        await addFeedbackToGoogleSheet({ firstName, lastName, reason, email, message });
 
         res.status(201).json(newFeedback);
     } catch (error) {

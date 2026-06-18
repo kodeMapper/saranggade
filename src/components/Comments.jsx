@@ -5,15 +5,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import GradientOrbs from './GradientOrbs';
 
 const Comments = () => {
-  const [name, setName] = useState('');
-  const [text, setText] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [reason, setReason] = useState('client_enquiry');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim() || !text.trim()) return;
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !message.trim()) return;
 
     setIsSubmitting(true);
     setError(false);
@@ -23,13 +26,16 @@ const Comments = () => {
       const response = await fetch(`${API_URL}/api/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, text })
+        body: JSON.stringify({ firstName, lastName, reason, email, message })
       });
 
       if (response.ok) {
         setSubmitted(true);
-        setName('');
-        setText('');
+        setFirstName('');
+        setLastName('');
+        setReason('client_enquiry');
+        setEmail('');
+        setMessage('');
         setTimeout(() => setSubmitted(false), 3000);
       } else {
         setError(true);
@@ -119,30 +125,76 @@ const Comments = () => {
               <div className="form-container">
                 <h3 className="form-title">Let's Build Something Amazing</h3>
                 <form className="form" onSubmit={handleSubmit}>
+                  <div style={{ display: 'flex', gap: '1.25rem' }}>
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label htmlFor="firstName">First Name</label>
+                      <input 
+                        required 
+                        name="firstName" 
+                        id="firstName" 
+                        type="text"
+                        placeholder="John"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label htmlFor="lastName">Last Name</label>
+                      <input 
+                        required 
+                        name="lastName" 
+                        id="lastName" 
+                        type="text"
+                        placeholder="Doe"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
+                  
                   <div className="form-group">
-                    <label htmlFor="name">Your Name</label>
+                    <label htmlFor="email">Email Address</label>
                     <input 
                       required 
-                      name="name" 
-                      id="name" 
-                      type="text"
-                      placeholder="John Doe"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      name="email" 
+                      id="email" 
+                      type="email"
+                      placeholder="john@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       disabled={isSubmitting}
                     />
                   </div>
+
                   <div className="form-group">
-                    <label htmlFor="textarea">Your Message and Contact Details</label>
+                    <label htmlFor="reason">Reason for Contact</label>
+                    <select
+                      id="reason"
+                      name="reason"
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                      disabled={isSubmitting}
+                    >
+                      <option value="client_enquiry">Client Enquiry</option>
+                      <option value="collaboration">Collaboration</option>
+                      <option value="feedback">Feedback</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="message">Your Message</label>
                     <textarea 
                       required 
                       cols={50} 
-                      rows={10} 
-                      id="textarea" 
-                      name="textarea"
+                      rows={6} 
+                      id="message" 
+                      name="message"
                       placeholder="Tell me about your project or idea..."
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
                       disabled={isSubmitting}
                     />
                   </div>
@@ -166,15 +218,16 @@ const Comments = () => {
 }
 
 const StyledWrapper = styled.section`
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background: #020617;
-  padding: 4rem 2rem;
+  padding: 3rem 2rem;
 
   [data-theme='light'] & {
     background: #f1f5f9;
@@ -198,6 +251,7 @@ const StyledWrapper = styled.section`
     max-width: 1100px;
     width: 100%;
     align-items: center;
+    margin: auto;
   }
 
   /* Left Content */
@@ -310,7 +364,7 @@ const StyledWrapper = styled.section`
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
@@ -336,13 +390,13 @@ const StyledWrapper = styled.section`
   .form {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 0.9rem;
   }
 
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
   }
 
   .form-group label {
@@ -351,9 +405,10 @@ const StyledWrapper = styled.section`
     font-weight: 500;
   }
 
-  .form-group input {
+  .form-group input,
+  .form-group select {
     width: 100%;
-    padding: 0.9rem 1rem;
+    padding: 0.75rem 1rem;
     border-radius: 10px;
     color: var(--foreground);
     font-family: inherit;
@@ -363,19 +418,30 @@ const StyledWrapper = styled.section`
     transition: all 0.3s ease;
   }
 
-  [data-theme='light'] & .form-group input {
+  [data-theme='light'] & .form-group input,
+  [data-theme='light'] & .form-group select {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     color: #1e293b;
   }
 
+  .form-group select option {
+    background: #020617;
+    color: #f1f5f9;
+  }
+
+  [data-theme='light'] & .form-group select option {
+    background: #ffffff;
+    color: #1e293b;
+  }
+
   .form-group textarea {
     width: 100%;
-    padding: 0.9rem 1rem;
+    padding: 0.75rem 1rem;
     border-radius: 10px;
     resize: none;
     color: var(--foreground);
-    height: 130px;
+    height: 100px;
     font-family: inherit;
     font-size: 0.95rem;
     background: rgba(255, 255, 255, 0.05);
@@ -396,6 +462,7 @@ const StyledWrapper = styled.section`
   }
 
   .form-group input:focus,
+  .form-group select:focus,
   .form-group textarea:focus {
     outline: none;
     border-color: var(--primary);
@@ -413,12 +480,12 @@ const StyledWrapper = styled.section`
     font-size: 0.95rem;
     background: linear-gradient(135deg, var(--primary), #06d48fa8);
     border: none;
-    padding: 1rem;
+    padding: 0.8rem;
     cursor: pointer;
     border-radius: 10px;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
   }
 
   .form-submit-btn:hover:not(:disabled) {
