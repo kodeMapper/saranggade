@@ -3,11 +3,7 @@
     height: 100dvh;
     position: relative;
     overflow: hidden;
-    background: #020617;
-}
-
-[data-theme='light'] .contact {
-    background: #f1f5f9;
+    background: var(--background);
 }
 
 /* Content layer - on top of vortex */
@@ -167,4 +163,13 @@
 
 .footerText a:hover {
     text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .contact {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+        padding: 4rem 0;
+    }
 }

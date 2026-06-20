@@ -256,46 +256,78 @@
 @media (max-width: 768px) {
     .carouselSection {
         padding: 3rem 1rem;
+        overflow: visible;
     }
 
     .title {
-        font-size: 1.3rem;
+        font-size: 1.8rem;
         letter-spacing: 0.4rem;
-        margin-bottom: 2rem;
+        margin-bottom: 5rem;
     }
 
     .splitLayout {
-        gap: 2.5rem;
+        gap: 1.5rem;
     }
 
     .imageContainer {
-        height: 16rem;
+        height: 14rem;
+        width: calc(100% - 50px);
+        margin: 0 auto;
+    }
+
+    .contentPanel {
+        min-height: auto;
+        position: relative;
+    }
+
+    .counter {
+        margin-bottom: 0.5rem;
+        display: inline-block;
     }
 
     .projectTitle {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        padding-right: 80px; /* Prevent title from overlapping controls if it's long */
+    }
+
+    .projectDate {
+        font-size: 0.8rem;
+        margin-bottom: 0.75rem;
     }
 
     .projectDesc {
         font-size: 0.95rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.6;
     }
 
-    .controls {
-        margin-top: 1.5rem;
-    }
-
-    .navBtn {
-        width: 42px;
-        height: 42px;
+    .linkGroup {
+        margin-bottom: 1.25rem;
+        gap: 1rem;
     }
 
     .footerRow {
         flex-wrap: wrap;
         gap: 0.5rem;
+        padding-top: 1rem;
     }
 
     .label {
         width: 100%;
         font-size: 0.75rem;
+    }
+
+    .controls {
+        position: absolute;
+        top: -5px;
+        right: 0;
+        margin-top: 0;
+        gap: 0.5rem;
+    }
+
+    .navBtn {
+        width: 38px;
+        height: 38px;
     }
 }

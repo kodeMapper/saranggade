@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import GradientOrbs from './GradientOrbs';
+import FadeOverlay from './FadeOverlay';
 
 const Comments = () => {
   const [firstName, setFirstName] = useState('');
@@ -56,6 +57,7 @@ const Comments = () => {
       <div className="animation-bg">
         <GradientOrbs />
       </div>
+      <FadeOverlay />
 
       {/* Two Column Layout */}
       <div className="content-grid">
@@ -226,11 +228,13 @@ const StyledWrapper = styled.section`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  background: #020617;
+  background: var(--background);
   padding: 3rem 2rem;
 
-  [data-theme='light'] & {
-    background: #f1f5f9;
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: visible;
   }
 
   .animation-bg {

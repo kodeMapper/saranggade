@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Twitter, Mail } from 'lucide-react';
 import styles from './Contact.module.css';
 import Vortex from './Vortex';
+import FadeOverlay from './FadeOverlay';
 
 const Contact = ({ data }) => {
   const socialLinks = [
@@ -24,6 +25,7 @@ const Contact = ({ data }) => {
         baseSpeed={0.08}
         rangeSpeed={0.5}
       />
+      <FadeOverlay />
 
       {/* Content Layer */}
       <div className={styles.content}>

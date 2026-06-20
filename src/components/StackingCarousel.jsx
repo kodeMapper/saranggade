@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getTechIcon } from "../utils/techIcons";
 import styles from "./StackingCarousel.module.css";
 import EtherealShadow from "./EtherealShadow";
+import FadeOverlay from "./FadeOverlay";
 
 function calculateGap(width) {
   const minWidth = 1024;
@@ -126,11 +127,12 @@ const StackingCarousel = ({ data }) => {
 
   return (
     <section id="projects" className={styles.carouselSection}>
-      <EtherealShadow 
+      {/* <EtherealShadow 
         color="var(--primary)" 
         animation={{ scale: 100, speed: 60 }} 
         noise={{ opacity: 0.5, scale: 1.2 }} 
-      />
+      /> */}
+      <FadeOverlay />
 
       <h2 className={styles.title}>PROJECTS</h2>
 

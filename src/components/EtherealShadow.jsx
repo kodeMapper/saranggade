@@ -62,15 +62,15 @@ export default function EtherealShadow({
   }, [animationEnabled, animationDuration, hueRotateMotionValue]);
 
   return (
-    <div
-      className={className}
-      style={{
-        overflow: "hidden",
-        position: "absolute",
-        left: "50%",
-        top: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "100vw",
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+      <div
+        className={className}
+        style={{
+          overflow: "hidden",
+          position: "sticky",
+        top: 0,
+        left: 0,
+        width: "100%",
         height: "100vh",
         zIndex: 0,
         pointerEvents: "none",
@@ -149,11 +149,12 @@ export default function EtherealShadow({
             backgroundImage: `url("https://framerusercontent.com/images/g0QcWrxr87K0ufOxIUFBakwYA8.png")`,
             backgroundSize: noise.scale * 200,
             backgroundRepeat: "repeat",
-            opacity: noise.opacity / 4,
+            opacity: noise.opacity / 2,
             mixBlendMode: "overlay"
           }}
         />
       )}
+      </div>
     </div>
   );
 }

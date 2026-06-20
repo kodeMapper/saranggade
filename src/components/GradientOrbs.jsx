@@ -19,17 +19,19 @@ export const GradientOrbs = () => {
   }, []);
 
   return (
-    <div 
-      ref={containerRef}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-        pointerEvents: 'none',
-      }}
-    >
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+      <div 
+        ref={containerRef}
+        style={{
+          position: 'sticky',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100vh',
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        }}
+      >
       {/* Main gradient orbs - more visible colors */}
       <div
         style={{
@@ -116,6 +118,7 @@ export const GradientOrbs = () => {
           80% { transform: translate(30px, 40px) scale(0.92); }
         }
       `}</style>
+      </div>
     </div>
   );
 };

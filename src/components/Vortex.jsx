@@ -210,19 +210,22 @@ export const Vortex = (props) => {
   }, [isDark]);
 
   return (
-    <motion.div
-      ref={containerRef}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-      }}
-    >
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+      <motion.div
+        ref={containerRef}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        style={{
+          position: 'sticky',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100vh',
+          overflow: 'hidden',
+          zIndex: 0,
+        }}
+      >
       <canvas 
         ref={canvasRef} 
         style={{
@@ -231,7 +234,8 @@ export const Vortex = (props) => {
           height: '100%',
         }}
       />
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 

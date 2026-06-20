@@ -175,4 +175,8 @@ a {
     padding: 4rem 0;
     /* Add breathing room */
   }
+
+  #home.snap-section {
+    padding-top: 0;
+  }
 }
