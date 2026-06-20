@@ -54,6 +54,8 @@
         height: auto;
         min-height: 100vh;
         min-height: 100dvh;
+        overflow: visible;
+        padding: 0;
     }
 
     .content {
@@ -163,13 +165,4 @@
 
 .footerText a:hover {
     text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-    .contact {
-        height: auto;
-        min-height: 100vh;
-        overflow: visible;
-        padding: 4rem 0;
-    }
-}
+}

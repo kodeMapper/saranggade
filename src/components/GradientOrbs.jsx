@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 // Floating gradient orbs animation - visible in both dark and light modes
 export const GradientOrbs = () => {
   const [isDark, setIsDark] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -18,16 +19,25 @@ export const GradientOrbs = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   return (
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}>
       <div 
         ref={containerRef}
         style={{
-          position: 'sticky',
+          position: isMobile ? 'absolute' : 'sticky',
           top: 0,
           left: 0,
           width: '100%',
-          height: '100vh',
+          height: isMobile ? '100%' : '100vh',
           overflow: 'hidden',
           pointerEvents: 'none',
         }}

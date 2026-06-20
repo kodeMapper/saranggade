@@ -135,6 +135,7 @@ a {
 /* Scroll Snap Logic */
 .snap-container {
   height: 100vh;
+  height: 100dvh;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
@@ -142,6 +143,7 @@ a {
 
 .snap-section {
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   scroll-snap-align: start;
   position: relative;
@@ -157,23 +159,13 @@ a {
   position: relative;
 }
 
-/* Disable snap and fixed heights on mobile for better content flow */
-@media (max-width: 768px) {
-  .snap-container {
-    height: auto;
-    overflow-y: visible;
-    scroll-snap-type: none;
-    /* Disable snap */
-  }
-
+/* On mobile and tablet, allow sections to grow naturally if content exceeds 100vh, but keep scroll snap */
+@media (max-width: 1024px) {
   .snap-section {
     height: auto;
-    min-height: 100vh;
-    scroll-snap-align: none;
+    min-height: 100dvh;
     overflow: visible;
-    /* Allow content to grow */
-    padding: 4rem 0;
-    /* Add breathing room */
+    padding: 0;
   }
 
   #home.snap-section {

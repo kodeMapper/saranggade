@@ -127,7 +127,7 @@ const Experience = ({ data }) => {
           id={index === 0 ? "experience" : `experience-${index}`} 
           data-index={index}
           className="snap-section experience-snap-section"
-          style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: '100vh', backgroundColor: 'var(--background)', overflow: 'hidden' }}
+          style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: '100vh', backgroundColor: 'var(--background)' }}
         >
           {index === 0 && (
             <motion.h2 

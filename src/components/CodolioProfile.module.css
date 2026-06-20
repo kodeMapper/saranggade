@@ -194,7 +194,7 @@
 }
 
 /* Mobile adjustments */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
     .codolio {
         min-height: auto;
         height: auto;

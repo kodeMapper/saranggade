@@ -12,8 +12,17 @@ export const Vortex = (props) => {
   const tickRef = useRef(0);
   const centerRef = useRef([0, 0]);
   const noise3DRef = useRef(null);
-  
   const [isDark, setIsDark] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Configuration
   const particleCount = props.particleCount || 500;
@@ -217,11 +226,11 @@ export const Vortex = (props) => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
         style={{
-          position: 'sticky',
+          position: isMobile ? 'absolute' : 'sticky',
           top: 0,
           left: 0,
           width: '100%',
-          height: '100vh',
+          height: isMobile ? '100%' : '100vh',
           overflow: 'hidden',
           zIndex: 0,
         }}
