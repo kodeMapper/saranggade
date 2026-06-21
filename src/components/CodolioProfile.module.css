@@ -1,252 +1,386 @@
 .codolio {
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: var(--background);
-    padding: 0 1rem;
+    background: transparent;
+    padding: 6rem 1rem;
     overflow: hidden;
-    transition: background 0.3s;
+    position: relative;
 }
 
 .title {
-    text-align: left;
+    text-align: center;
     font-family: var(--font-outfit);
     font-size: 2rem;
-    /* Slightly larger for column header */
-    letter-spacing: 0.5rem;
+    letter-spacing: 1rem;
     color: var(--section-title);
-    margin-bottom: 2rem;
-    /* Reduced margin */
+    margin-bottom: 4rem;
     text-transform: uppercase;
     font-weight: 300;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 1000px;
 }
 
-/* Grid Layout for Content */
-.contentGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
+/* Unified Widget Layout */
+.widgetContainer {
+    display: flex;
+    flex-direction: row;
     width: 100%;
-    max-width: 1200px;
-    align-items: center;
+    max-width: 1000px;
+    background: rgba(15, 23, 42, 0.3);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;
     position: relative;
     z-index: 10;
 }
 
-/* LEFT COLUMN: Codolio Card */
-.cardColumn {
+/* Light Mode Overrides for Widget */
+[data-theme='light'] .widgetContainer {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Left Pane: Profile Info */
+.profileSidebar {
+    width: 320px;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 2.5rem 2rem;
     display: flex;
     flex-direction: column;
-    /* Stack Toggles + Image */
     align-items: center;
-    gap: 1.5rem;
-    margin-top: 7rem;
+    border-right: 1px solid var(--glass-border);
 }
 
-.toggleContainer {
-    display: flex;
-    background: #1a1a1a;
-    padding: 0.25rem;
-    border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    position: relative;
-    gap: 0.25rem;
+[data-theme='light'] .profileSidebar {
+    background: rgb(255, 255, 255, 0.2);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.toggleBtn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.6rem 1.4rem;
-    /* More padding for better pill shape */
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    font-family: var(--font-outfit);
-    font-size: 0.9rem;
-    /* Slightly larger text */
-    font-weight: 500;
-    color: #a3a3a3;
-    transition: all 0.3s ease;
-    outline: none;
-    border-radius: 40px;
-    /* Crucial for pill shape */
+@media (max-width: 768px) {
+    [data-theme='light'] .profileSidebar {
+        background: rgb(255, 255, 255, 0.2);
+    }
 }
 
-/* Flip Animation Styles */
-.flipContainer {
-    width: 320px;
-    height: 600px;
-    /* Approximate height based on images */
-    perspective: 1000px;
-    position: relative;
-    border-radius: 20px;
+.avatarRing {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    margin-bottom: 1.5rem;
 }
 
-.flipper {
+.avatarImg {
     width: 100%;
     height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    border-radius: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--card-bg);
 }
 
-.cardImage {
+.nameSection {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.cardName {
+    color: var(--foreground);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+
+.cardHandle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Segmented Control (Tabs) */
+.tabSwitcher {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    height: auto;
-    display: block;
-    object-fit: contain;
-    border-radius: 20px;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.4rem;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
 }
 
-.toggleBtn.active {
-    color: #fff;
-    background: #ff6b00;
-    /* Simple orange background again */
-    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+[data-theme='light'] .tabSwitcher {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.toggleBtn:hover:not(.active) {
+.tabBtn {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: none;
+    background: transparent;
+    border-radius: 12px;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.tabBtn:hover {
+    color: var(--foreground);
+}
+
+.tabBtn.active {
+    background: var(--primary);
     color: #fff;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+[data-theme='light'] .tabBtn.active {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Right Pane: Stats Content */
+.statsContent {
+    flex: 1;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 400px;
+}
+
+.tabPanel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.panelTitle {
+    color: var(--foreground);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    align-self: flex-end;
+    gap: 0.75rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+@media (max-width: 768px) {
+    .panelTitle {
+        visibility: hidden;
+    }
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.statBox {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: transform 0.3s ease;
+    /* backdrop-filter: blur(10px); */
+}
+
+[data-theme='light'] .statBox {
     background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
 }
 
-.toggleText {
-    /* No longer need high z-index tricks */
+.statBox:hover {
+    transform: translateY(-5px);
+}
+
+.statLabel {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-}
-
-.cardImage {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: contain;
-    border-radius: 20px;
-}
-
-/* RIGHT COLUMN: Coding Platforms */
-.infoColumn {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    color: var(--foreground);
-    text-align: left;
-}
-
-.subHelp {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    font-weight: 300;
-}
-
-.platformList {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.platformCard {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: var(--card-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-}
-
-.platformCard:hover {
-    background: var(--glass-bg);
-    border-color: var(--primary);
-    transform: translateX(10px);
-}
-
-.platformIcon {
-    width: 40px;
-    height: 40px;
-    color: var(--primary);
-}
-
-.platformInfo {
-    display: flex;
-    flex-direction: column;
-}
-
-.platformName {
-    font-size: 1.1rem;
+    color: rgb(255, 255, 255, 0.7);
+    font-size: 0.85rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+[data-theme='light'] .statLabel {
+    color: rgb(0, 0, 0, 0.8);
+}
+
+.statValue {
     color: var(--foreground);
+    font-size: 3rem;
+    font-weight: 700;
+    font-family: inherit; /* Using standard font, not off-theme */
+    line-height: 1;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
-.platformDetail {
-    font-size: 0.9rem;
+.statValue span {
+    font-size: 1rem;
     color: var(--text-muted);
+    font-weight: 500;
+    margin-left: 0.25rem;
 }
 
-/* Mobile adjustments */
-@media (max-width: 1024px) {
+/* Logos & Find Me */
+.findMeSection {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.findMeLabel {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.platformIconRow {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.platformLogo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    cursor: pointer;
+    filter: grayscale(20%);
+}
+
+.platformLogo:hover {
+    transform: translateY(-3px) scale(1.1);
+    filter: grayscale(0%);
+}
+
+.githubLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    color: var(--foreground);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+[data-theme='light'] .githubLink {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.githubLink:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
     .codolio {
-        min-height: auto;
+        padding: 3rem 1rem;
         height: auto;
-        /* Override the fixed 100vh on mobile */
-        padding: 6rem 1rem 4rem 1rem;
-        /* Increased top padding */
-        overflow: visible;
     }
-
+    
     .title {
-        font-size: 2rem;
-        text-align: center;
+        font-size: 1.5rem;
+        letter-spacing: 0.5rem;
+        margin-bottom: 2rem;
     }
 
-    .contentGrid {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-        width: 80vw;
-        margin: 0 auto;
+    .widgetContainer {
+        flex-direction: column;
+        border-radius: 20px;
     }
 
-    .cardColumn {
-        order: 1;
-        /* Keep cards on top */
-        transform: scale(0.9);
+    .profileSidebar {
         width: 100%;
-        margin-top: 2rem;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1.5rem 1rem;
     }
 
-    .flipContainer {
-        width: 100%;
-        max-width: 320px;
-        height: auto;
-        aspect-ratio: 320/600;
+    .avatarRing {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 1rem;
     }
 
-    .infoColumn {
-        text-align: center;
-        align-items: center;
-        width: 100%;
+    .nameSection {
+        margin-bottom: 1.5rem;
     }
 
-    .platformList {
-        width: 100%;
-        align-items: center;
+    .tabSwitcher {
+        flex-direction: row;
+        flex-wrap: wrap;
     }
-
-    .platformCard {
-        width: 100%;
-        max-width: 400px;
+    
+    .tabBtn {
+        flex: 1;
         justify-content: center;
-        /* Center content in card */
-        text-align: left;
+        padding: 0.6rem 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .statsContent {
+        padding: 1.5rem 1rem;
+        min-height: auto;
+    }
+
+    .panelTitle {
+        margin-bottom: 1.5rem;
+        font-size: 1.25rem;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .statBox {
+        padding: 1rem;
+    }
+
+    .statValue {
+        font-size: 2rem;
     }
 }

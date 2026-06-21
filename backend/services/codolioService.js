@@ -1,11 +1,19 @@
+/**
+ * Codolio Stats Service — V2 (REST API)
+ * 
+ * Replaces the Puppeteer-based screenshot approach with lightweight HTTP calls.
+ * Uses the public Codolio API endpoint (no authentication required).
+ * 
+ * Endpoint: GET https://api.codolio.com/profile?userKey=kodeMapper
+ * Returns: Full profile data including all platform stats
+ */
+
 const fs = require('fs');
 const path = require('path');
-const puppeteer = require('puppeteer');
-require('dotenv').config();
 
-const CODOLIO_EMAIL = process.env.CODOLIO_EMAIL;
-const CODOLIO_PASSWORD = process.env.CODOLIO_PASSWORD;
-const OUTPUT_DIR = path.join(__dirname, '../../public/images');
+const CODOLIO_USERNAME = 'kodeMapper';
+const GITHUB_USERNAME = 'kodeMapper';
+const CODOLIO_JSON_PATH = path.join(__dirname, '../../src/data/codolio.json');
 const LOG_FILE = path.join(__dirname, 'codolio_debug.txt');
 
 const log = (msg) => {
@@ -15,215 +23,192 @@ const log = (msg) => {
     fs.appendFileSync(LOG_FILE, logMsg);
 };
 
-const updateCodolioStats = async () => {
-    log("🔄 Starting Codolio Update (Screenshot Mode - V4 - Fixed Click)...");
-    let browser;
+/**
+ * Fetches Codolio profile data via the public REST API.
+ * No authentication required — the profile is public.
+ */
+async function fetchCodolioProfile() {
+    const url = `https://api.codolio.com/profile?userKey=${CODOLIO_USERNAME}`;
+    log(`📡 Fetching Codolio profile from: ${url}`);
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Codolio API returned ${response.status}: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    if (!json.status?.success) {
+        throw new Error(`Codolio API error: ${json.status?.message || 'Unknown error'}`);
+    }
+
+    return json.data;
+}
+
+/**
+ * Fetches GitHub contribution stats via the Codolio API.
+ * This ensures we get the exact numbers shown on the Codolio development card.
+ */
+async function fetchGithubStats() {
+    log(`📡 Fetching GitHub stats from Codolio API for: ${GITHUB_USERNAME}`);
     try {
-        browser = await puppeteer.launch({
-            headless: "new", // Must be headless in production
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-        });
-        const page = await browser.newPage();
-
-        // Listener to debug browser console
-        page.on('console', msg => log(`[BROWSER] ${msg.text()}`));
-
-        // High Quality Viewport
-        await page.setViewport({ width: 1280, height: 1000, deviceScaleFactor: 2 });
-
-        // 1. Login
-        log("➡️ Logging in...");
-        await page.goto('https://codolio.com/login', { waitUntil: 'networkidle2' });
-        await page.type('input[type="email"]', CODOLIO_EMAIL);
-        await page.type('input[type="password"]', CODOLIO_PASSWORD);
-        // Fix: Use Promise.all to avoid "Navigating frame was detached" race condition
-        await Promise.all([
-            page.waitForNavigation({ waitUntil: 'networkidle2' }),
-            page.click('button[type="submit"]'),
-        ]);
-        log("✅ Logged in.");
-
-        // 2. Go to Card Page
-        const cardUrl = 'https://codolio.com/profile/kodeMapper/card';
-        log(`➡️ Navigating to ${cardUrl}...`);
-
-        await new Promise(r => setTimeout(r, 1000));
-        await page.goto(cardUrl, { waitUntil: 'networkidle2', timeout: 60000 });
-        await new Promise(r => setTimeout(r, 4000)); // Render wait
-
-        // 3. Toggle Dark Mode (Spatial Search: 2nd from Top Right)
-        log("🌗 Searching for Dark Mode toggle (Left of Profile)...");
-        const darkModeClicked = await page.evaluate(async () => {
-            try {
-                const clickables = Array.from(document.querySelectorAll('button, div[role="button"], svg, span'));
-                // Top Right Region
-                const rightThreshold = window.innerWidth * 0.7;
-                const topThreshold = 100;
-
-                const candidates = clickables.filter(el => {
-                    const rect = el.getBoundingClientRect();
-                    return rect.left > rightThreshold && rect.top < topThreshold && rect.width > 20;
-                });
-
-                console.log(`Found ${candidates.length} candidates in top right.`);
-
-                if (candidates.length > 0) {
-                    // Sort by x position descending (rightmost first)
-                    candidates.sort((a, b) => b.getBoundingClientRect().left - a.getBoundingClientRect().left);
-
-                    let target = candidates[0];
-                    if (candidates.length >= 2) {
-                        target = candidates[1]; // Left of Profile
-                    }
-
-                    console.log(`Clicking candidate: ${target.tagName} (Title: ${target.title}, Text: ${target.innerText})`);
-
-                    if (typeof target.click === 'function') {
-                        target.click();
-                        return true;
-                    } else {
-                        const evt = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
-                        target.dispatchEvent(evt);
-                        return true;
-                    }
-                }
-            } catch (e) {
-                console.error("Error in DarkMode Toggle:", e.message);
-            }
-            return false;
-        });
-
-        if (darkModeClicked) {
-            log("✅ Clicked Dark Mode toggle. Waiting 3s...");
-            await new Promise(r => setTimeout(r, 3000));
-        } else {
-            log("⚠️ Could not find Dark Mode toggle candidates. Proceeding.");
+        const url = `https://api.codolio.com/github/profile?userKey=${CODOLIO_USERNAME}`;
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`Codolio Github API returned ${response.status}`);
         }
 
-        // 4. Find Card Element Logic (Traverse Up Strategy)
-        const getCardHandle = async () => {
-            return await page.evaluateHandle(() => {
-                const validationText = "@kodeMapper";
-                const allElements = Array.from(document.querySelectorAll('span, div, p'));
-                const target = allElements.find(el => el.innerText.trim() === validationText);
-
-                if (!target) return null;
-
-                let current = target;
-
-                // Go up max 12 levels to find container
-                for (let i = 0; i < 12; i++) {
-                    current = current.parentElement;
-                    if (!current) break;
-
-                    const rect = current.getBoundingClientRect();
-                    // Heuristic: Card is usually ~300-500px wide.
-                    if (rect.width > 250 && rect.width < 900 && rect.height > 300) {
-                        // Found a likely container
-                        if (current.innerText.includes('Codolio') || current.innerText.includes('CARD')) {
-                            return current;
-                        }
-                    }
-                }
-                return current; // Fallback
-            });
+        const json = await response.json();
+        if (!json.status?.success) {
+            throw new Error(`Codolio Github API error: ${json.status?.message || 'Unknown'}`);
+        }
+        
+        const data = json.data;
+        
+        // We still want languages from somewhere. The Codolio github profile doesn't return languages.
+        // We'll rely on a fallback or keep it empty, since languages might not be heavily needed, 
+        // or we can just fetch languages if needed. Wait, the user asked to remove tags! 
+        // We removed tags from UI anyway.
+        return {
+            activeDays: data.totalActiveDays || 0,
+            contributions: data.totalContributions || data.commitCounts || 0,
+            totalRepos: 0,
+            languages: [], // Tags removed in UI
         };
+    } catch (err) {
+        log(`⚠️ Codolio Github API error: ${err.message}. Using fallback.`);
+        return null;
+    }
+}
 
-        // Capture Problem Solving
-        log("📸 Capturing Problem Solving Card...");
-        let cardHandle = await getCardHandle();
+/**
+ * Transforms raw Codolio + GitHub API data into the JSON format 
+ * consumed by the frontend CodolioProfile component.
+ */
+function transformData(codolioData, githubStats) {
+    const platforms = codolioData.platformProfiles?.platformProfiles || [];
 
-        if (cardHandle && (await cardHandle.jsonValue())) {
-            const dest = path.join(OUTPUT_DIR, 'codolio-problem.png');
-            await cardHandle.screenshot({ path: dest });
-            log("✅ Saved codolio-problem.png");
-        } else {
-            log("❌ Element not found! Taking fallback fullpage screenshot.");
-            await page.screenshot({ path: path.join(__dirname, 'debug_fallback_problem.png') });
+    // --- Problem Solving Data ---
+    // Sum total questions across all coding platforms
+    let totalQuestionsSolved = 0;
+    let totalPSActiveDays = 0;
+    const psSubmissionDays = new Set();
+    const psPlatforms = [];
+    const allTags = new Set();
+
+    for (const platform of platforms) {
+        const questions = platform.totalQuestionStats?.totalQuestionCounts || 0;
+        totalQuestionsSolved += questions;
+
+        // Count active days from submission calendars
+        const calendar = platform.dailyActivityStatsResponse?.submissionCalendar;
+        if (calendar) {
+            Object.keys(calendar).forEach(day => psSubmissionDays.add(day));
         }
 
-        // 5. Switch to Development
-        log("➡️ Switching to Development tab...");
-        const devClicked = await page.evaluate(async () => {
-            const allElements = Array.from(document.querySelectorAll('span, div, p, li'));
-            for (const el of allElements) {
-                if (el.innerText && el.innerText.trim() === 'Development') {
-                    el.click();
-                    return true;
-                }
-            }
-            return false;
+        // Build platform list
+        psPlatforms.push({
+            name: platform.platform,
+            handle: platform.userStats?.handle || '',
+            rating: platform.userStats?.currentRating || null,
+            maxRating: platform.userStats?.maxRating || null,
+            rank: platform.userStats?.rank || null,
+            stars: platform.userStats?.stars || null,
+            questions: questions,
+            types: platform.platformDetails?.types || [],
         });
 
-        if (devClicked) {
-            log("   Clicked 'Development'. Waiting...");
-            await new Promise(r => setTimeout(r, 4000));
-
-            // Capture Development
-            cardHandle = await getCardHandle();
-            if (cardHandle && (await cardHandle.jsonValue())) {
-                const dest = path.join(OUTPUT_DIR, 'codolio-dev.png');
-                await cardHandle.screenshot({ path: dest });
-                log("✅ Saved codolio-dev.png");
-            } else {
-                log("❌ Dev Card Element not found.");
-            }
-        } else {
-            log("❌ Could not find 'Development' tab.");
+        // Collect tags
+        if (platform.userStats?.rank) allTags.add(platform.userStats.rank);
+        if (platform.userStats?.stars) allTags.add(`${platform.userStats.stars}Stars`);
+        if (platform.userStats?.languageList) {
+            platform.userStats.languageList.forEach(lang => allTags.add(lang));
         }
+        if (platform.platformDetails?.types) {
+            platform.platformDetails.types.forEach(t => allTags.add(t));
+        }
+    }
 
-        // 6. Push Changes (Persistence Fix for Render)
-        try {
-            const { exec } = require('child_process');
-            log("🔄 Auto-committing Codolio screenshots...");
+    // Use psSubmissionDays count if totalActiveDays wasn't available
+    if (totalPSActiveDays === 0) {
+        totalPSActiveDays = psSubmissionDays.size;
+    }
 
-            // Reusing the same commit logic (Simplified for service context)
-            const USER = process.env.GITHUB_USERNAME || 'kodeMapper';
-            const TOKEN = process.env.GITHUB_TOKEN;
-            const REPO = 'saranggade';
-            const remoteUrl = `https://${USER}:${TOKEN}@github.com/${USER}/${REPO}.git`;
+    // --- Development Data ---
+    const devData = githubStats || {
+        activeDays: 0,
+        contributions: 0,
+        languages: [],
+    };
 
-            // CORRECT APPROACH: Clone repo, update only specific files, push
-            // This avoids the issue where git init + reset deletes all files
-            const commands = [
-                // Setup git config
-                `git config --global user.email "kodeMapper@users.noreply.github.com"`,
-                `git config --global user.name "Portfolio Bot"`,
-                // Clone repo to temp directory (full clone to preserve all files)
-                `rm -rf /tmp/repo`,
-                `git clone --depth=1 "${remoteUrl}" /tmp/repo`,
-                // Copy ONLY the codolio images from /app to the cloned repo
-                `cp /app/public/images/codolio-*.png /tmp/repo/public/images/`,
-                // Commit and push from the cloned repo
-                `cd /tmp/repo`,
-                `git add public/images/codolio-*.png`,
-                `git status`,
-                `git commit -m "Auto-update Codolio stats [skip ci]" || echo "Nothing new to commit"`,
-                `git push origin main`,
-                // Cleanup
-                `rm -rf /tmp/repo`
-            ].join(' && ');
+    // --- Build Output ---
+    return {
+        lastUpdated: new Date().toISOString(),
+        profile: {
+            name: `${codolioData.firstName} ${codolioData.secondName}`,
+            username: codolioData.profileName,
+            avatarUrl: codolioData.imageUrl,
+            bio: codolioData.userDetails?.userPersonalDetails?.bio || '',
+            profileViews: codolioData.profileViews || 0,
+        },
+        development: {
+            activeDays: devData.activeDays,
+            contributions: devData.contributions,
+            totalRepos: devData.totalRepos || 0,
+            githubUsername: codolioData.userDetails?.githubProfile || GITHUB_USERNAME,
+            languages: devData.languages,
+        },
+        problemSolving: {
+            questionsSolved: totalQuestionsSolved,
+            activeDays: totalPSActiveDays,
+            platforms: psPlatforms,
+            tags: [...allTags].slice(0, 8),
+        },
+    };
+}
 
-            exec(commands, (err, stdout, stderr) => {
-                if (err) {
-                    log(`❌ Git Push Failed!`);
-                    log(`   Error: ${err.message}`);
-                    log(`   Stderr: ${stderr}`);
-                    log(`   Stdout: ${stdout}`);
-                } else {
-                    log(`✅ Git Push Success: ${stdout}`);
-                }
-            });
-        } catch (e) { log(`❌ Git Error: ${e.message}`); }
+/**
+ * Main function: Fetches data, transforms it, saves to codolio.json.
+ * Called by cron job (4 times/day) and manual trigger endpoint.
+ */
+const updateCodolioStats = async () => {
+    log('🔄 Starting Codolio Update (REST API - V2)...');
+
+    try {
+        // 1. Fetch data from both APIs concurrently
+        const [codolioData, githubStats] = await Promise.all([
+            fetchCodolioProfile(),
+            fetchGithubStats(),
+        ]);
+
+        log(`✅ Codolio API: Got profile for ${codolioData.profileName}`);
+        log(`✅ GitHub API: ${githubStats ? `${githubStats.contributions} contributions, ${githubStats.activeDays} active days` : 'Using fallback'}`);
+
+        // 2. Transform data
+        const transformedData = transformData(codolioData, githubStats);
+
+        // 3. Save to JSON file
+        fs.writeFileSync(CODOLIO_JSON_PATH, JSON.stringify(transformedData, null, 2));
+        log(`✅ Saved codolio.json (${JSON.stringify(transformedData).length} bytes)`);
+
+        // 4. Git commit (handled by server.js performGitCommit)
+        // The server.js already handles git push via performGitCommit()
+        // We just need to ensure codolio.json is in the commit
+
+        log('🔄 Codolio Update Complete!');
+        return transformedData;
 
     } catch (err) {
         log(`❌ CRITICAL ERROR in Codolio Service: ${err.message}`);
         console.error(err);
-    } finally {
-        if (browser) await browser.close();
-        log("🔄 Finished Codolio Update.");
-        if (require.main === module) process.exit();
+
+        // Graceful degradation: if JSON file exists, it serves as fallback
+        if (fs.existsSync(CODOLIO_JSON_PATH)) {
+            log('ℹ️ Existing codolio.json will be used as fallback.');
+        }
     }
+
+    log('🔄 Finished Codolio Update.');
 };
 
 module.exports = { updateCodolioStats };

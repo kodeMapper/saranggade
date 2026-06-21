@@ -1,7 +1,7 @@
-FROM ghcr.io/puppeteer/puppeteer:23.0.0
+FROM node:20-slim
 
-# Switch to root user to install dependencies if needed
-USER root
+# Install git for auto-commit functionality
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -14,10 +14,6 @@ RUN npm ci --ignore-scripts
 
 # Copy the rest of the application code
 COPY . .
-
-# Set environment variables for Puppeteer
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
 # Expose the port the app runs on
 EXPOSE 5000

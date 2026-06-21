@@ -104,7 +104,14 @@ mongoose.connect(MONGO_URI)
         // Codolio: Run at 4am, 10am, 4pm, 10pm IST (4 times/day, staggered from GitHub)
         cron.schedule('0 4,10,16,22 * * *', async () => {
             console.log('🦉 [Scheduled] Running Codolio Update...');
-            await updateCodolioStats();
+            try {
+                const data = await updateCodolioStats();
+                if (data) {
+                    performGitCommit('Auto-update Codolio stats [skip ci]');
+                }
+            } catch (err) {
+                console.error('❌ Scheduled Codolio update failed:', err);
+            }
         }, { timezone: "Asia/Kolkata" });
 
         app.listen(PORT, () => {
@@ -278,7 +285,13 @@ app.post('/api/trigger-check', async (req, res) => {
 
 app.post('/api/trigger-codolio', async (req, res) => {
     console.log('🦉 Manual Codolio Update Triggered');
-    updateCodolioStats(); // Async
+    updateCodolioStats().then(data => {
+        if (data) {
+            performGitCommit('Manual trigger: Auto-update Codolio stats [skip ci]');
+        }
+    }).catch(err => {
+        console.error('❌ Manual Codolio update failed:', err);
+    });
     res.json({ message: 'Codolio update started in background' });
 });
 
@@ -423,10 +436,11 @@ function performGitCommit(message) {
         `git clone --depth=1 "${remoteUrl}" /tmp/repo`,
         // Copy updated files from /app to the cloned repo
         `cp /app/src/data/resume.json /tmp/repo/src/data/resume.json 2>/dev/null || true`,
+        `cp /app/src/data/codolio.json /tmp/repo/src/data/codolio.json 2>/dev/null || true`,
         `cp -r /app/public/images/* /tmp/repo/public/images/ 2>/dev/null || true`,
         // Commit and push from the cloned repo
         `cd /tmp/repo`,
-        `git add src/data/resume.json public/images/*`,
+        `git add src/data/resume.json src/data/codolio.json public/images/*`,
         `git status`,
         `git commit -m "${message} [skip ci]" || echo "Nothing new to commit"`,
         `git push origin main`,

@@ -1,0 +1,92 @@
+{
+  "lastUpdated": "2026-06-21T10:08:24.502Z",
+  "profile": {
+    "name": "Sarang Gade",
+    "username": "kodeMapper",
+    "avatarUrl": "https://d2v119jmdj3sxo.cloudfront.net/71712_575359299",
+    "bio": "Electronics and Computer Science | Shri. Ramdeobaba College of Engineering and Management, Nagpur",
+    "profileViews": 98
+  },
+  "development": {
+    "activeDays": 290,
+    "contributions": 1398,
+    "totalRepos": 0,
+    "githubUsername": "kodeMapper",
+    "languages": []
+  },
+  "problemSolving": {
+    "questionsSolved": 193,
+    "activeDays": 124,
+    "platforms": [
+      {
+        "name": "leetcode",
+        "handle": "Kodemapper",
+        "rating": 1703,
+        "maxRating": 1703,
+        "rank": null,
+        "stars": null,
+        "questions": 117,
+        "types": [
+          "CP",
+          "DSA"
+        ]
+      },
+      {
+        "name": "geeksforgeeks",
+        "handle": "kodemapper",
+        "rating": null,
+        "maxRating": null,
+        "rank": null,
+        "stars": null,
+        "questions": 4,
+        "types": [
+          "CP",
+          "DSA"
+        ]
+      },
+      {
+        "name": "codeforces",
+        "handle": "kodeMapper",
+        "rating": 379,
+        "maxRating": 379,
+        "rank": "newbie",
+        "stars": null,
+        "questions": 1,
+        "types": [
+          "CP"
+        ]
+      },
+      {
+        "name": "codechef",
+        "handle": "kodemapper",
+        "rating": 1443,
+        "maxRating": 1561,
+        "rank": null,
+        "stars": 2,
+        "questions": 43,
+        "types": [
+          "CP"
+        ]
+      },
+      {
+        "name": "hackerrank",
+        "handle": "saranganilgade",
+        "rating": null,
+        "maxRating": null,
+        "rank": null,
+        "stars": null,
+        "questions": 28,
+        "types": [
+          "DSA"
+        ]
+      }
+    ],
+    "tags": [
+      "Java",
+      "CP",
+      "DSA",
+      "newbie",
+      "2Stars"
+    ]
+  }
+}

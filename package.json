@@ -25,7 +25,6 @@
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.11",
     "ogl": "^1.0.11",
-    "puppeteer": "^24.34.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-markdown": "^10.1.0",
