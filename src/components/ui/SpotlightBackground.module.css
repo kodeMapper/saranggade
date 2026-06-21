@@ -1,0 +1,64 @@
+.spotlightContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+.spotlightOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.spotlight {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+}
+
+.spotlightLeft {
+  width: 50vw;
+  height: 50vh;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%);
+  top: 0;
+  left: 0;
+}
+
+.spotlightMid {
+  width: 60vw;
+  height: 60vh;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+  top: 20%;
+  left: 20%;
+}
+
+.spotlightRight {
+  width: 50vw;
+  height: 50vh;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+  bottom: -10%;
+  right: -10%;
+}
+
+.spotlightContent {
+  position: relative;
+  z-index: 1;
+}
+
+/* Light mode adjustments */
+html[data-theme='light'] .spotlight {
+  opacity: 0.3;
+}
+html[data-theme='light'] .spotlightLeft {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, transparent 70%);
+}
+html[data-theme='light'] .spotlightMid {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+}
+html[data-theme='light'] .spotlightRight {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+}

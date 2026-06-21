@@ -5,6 +5,7 @@ import styles from './CodolioProfile.module.css';
 import { Github, Terminal, BrainCircuit, Trophy, Flame, BookOpen } from 'lucide-react';
 import codolioData from '../data/codolio.json';
 import { VideoBackground } from './ui/VideoBackground';
+import FadeOverlay from './FadeOverlay';
 
 const CodolioProfile = () => {
     const [activeTab, setActiveTab] = useState('development');
@@ -42,6 +43,7 @@ const CodolioProfile = () => {
 
     return (
         <section className={styles.codolio} id="coding-profile">
+            <FadeOverlay></FadeOverlay>
             <VideoBackground />
             <motion.h2 
                 className={styles.title}
