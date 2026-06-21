@@ -137,6 +137,7 @@ a {
   height: 100vh;
   height: 100dvh;
   overflow-y: scroll;
+  overflow-x: hidden;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
 }
@@ -161,10 +162,22 @@ a {
 
 /* On mobile and tablet, allow sections to grow naturally if content exceeds 100vh, but keep scroll snap */
 @media (max-width: 1024px) {
+  /* Hide custom scrollbar on mobile */
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+    display: none;
+  }
+  
+  * {
+    scrollbar-width: none;
+  }
+
   .snap-section {
     height: auto;
     min-height: 100dvh;
-    overflow: visible;
+    overflow-x: clip;
+    overflow-y: visible;
     padding: 0;
   }
 

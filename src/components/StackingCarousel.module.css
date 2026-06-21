@@ -256,7 +256,8 @@
 @media (max-width: 768px) {
     .carouselSection {
         padding: 3rem 1rem;
-        overflow: visible;
+        overflow-x: clip;
+        overflow-y: visible;
     }
 
     .title {

@@ -2,6 +2,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import styles from './About.module.css';
+import EtherealShadow from "./EtherealShadow";
+import FadeOverlay from "./FadeOverlay";
 
 const About = ({ data }) => {
   return (
@@ -9,6 +11,13 @@ const About = ({ data }) => {
         {/* <div className={styles.sectionTitle}>
              A B O U T
         </div> */}
+
+        <EtherealShadow 
+                color="var(--primary)" 
+                animation={{ scale: 100, speed: 80 }} 
+                noise={{ opacity: 0.5, scale: 1.2 }} 
+              />
+              <FadeOverlay />
 
         <div className={styles.contentWrapper}>
             {/* Left Column: Image */}

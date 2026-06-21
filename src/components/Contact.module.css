@@ -54,7 +54,8 @@
         height: auto;
         min-height: 100vh;
         min-height: 100dvh;
-        overflow: visible;
+        overflow-x: clip;
+        overflow-y: visible;
         padding: 0;
     }
 
