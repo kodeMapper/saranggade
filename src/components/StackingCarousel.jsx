@@ -45,6 +45,16 @@ const StackingCarousel = ({ data }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const handleNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % projectsLength);
+    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+  }, [projectsLength]);
+
+  const handlePrev = useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + projectsLength) % projectsLength);
+    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
+  }, [projectsLength]);
+
   // Autoplay
   useEffect(() => {
     autoplayIntervalRef.current = setInterval(() => {
@@ -65,16 +75,6 @@ const StackingCarousel = ({ data }) => {
     return () => window.removeEventListener("keydown", handleKey);
     // eslint-disable-next-line
   }, [activeIndex, projectsLength]);
-
-  const handleNext = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % projectsLength);
-    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
-  }, [projectsLength]);
-
-  const handlePrev = useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + projectsLength) % projectsLength);
-    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
-  }, [projectsLength]);
 
   // 3D perspective image transforms (left, center, right visible)
   function getImageStyle(index) {

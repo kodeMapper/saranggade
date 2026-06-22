@@ -191,7 +191,14 @@ const CodolioProfile = () => {
                                             platformIcons[p.name]?.icon && (
                                                 <a 
                                                     key={i}
-                                                    href={`https://${p.name}.com/${p.handle || ''}`}
+                                                    href={
+                                                        p.name === 'geeksforgeeks' ? `https://www.geeksforgeeks.org/profile/${p.handle}` :
+                                                        p.name === 'codeforces' ? `https://codeforces.com/profile/${p.handle}` :
+                                                        p.name === 'codechef' ? `https://www.codechef.com/users/${p.handle}` :
+                                                        p.name === 'leetcode' ? `https://leetcode.com/u/${p.handle}` :
+                                                        p.name === 'hackerrank' ? `https://www.hackerrank.com/profile/${p.handle}` :
+                                                        `https://${p.name}.com/${p.handle}`
+                                                    }
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className={styles.platformLogo}

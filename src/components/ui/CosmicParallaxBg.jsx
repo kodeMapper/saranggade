@@ -1,6 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import styles from './CosmicParallaxBg.module.css';
 
+// Generate random star positions
+const generateStarBoxShadow = (count) => {
+  let shadows = [];
+  
+  for (let i = 0; i < count; i++) {
+    const x = Math.floor(Math.random() * 2000);
+    const y = Math.floor(Math.random() * 2000);
+    // Use CSS variable for color so we can adapt to light/dark mode
+    shadows.push(`${x}px ${y}px var(--star-color, #FFF)`);
+  }
+  
+  return shadows.join(', ');
+};
+
 /**
  * A cosmic parallax background component with animated stars and text
  */
@@ -10,33 +24,12 @@ const CosmicParallaxBg = ({
   loop = true,
   className = '',
 }) => {
-  const [smallStars, setSmallStars] = useState('');
-  const [mediumStars, setMediumStars] = useState('');
-  const [bigStars, setBigStars] = useState('');
+  const [smallStars] = useState(() => generateStarBoxShadow(700));
+  const [mediumStars] = useState(() => generateStarBoxShadow(200));
+  const [bigStars] = useState(() => generateStarBoxShadow(100));
   
   // Split the text by commas and trim whitespace
   const textParts = text ? text.split(',').map(part => part.trim()) : [];
-  
-  // Generate random star positions
-  const generateStarBoxShadow = (count) => {
-    let shadows = [];
-    
-    for (let i = 0; i < count; i++) {
-      const x = Math.floor(Math.random() * 2000);
-      const y = Math.floor(Math.random() * 2000);
-      // Use CSS variable for color so we can adapt to light/dark mode
-      shadows.push(`${x}px ${y}px var(--star-color, #FFF)`);
-    }
-    
-    return shadows.join(', ');
-  };
-  
-  useEffect(() => {
-    // Generate star shadows when component mounts
-    setSmallStars(generateStarBoxShadow(700));
-    setMediumStars(generateStarBoxShadow(200));
-    setBigStars(generateStarBoxShadow(100));
-  }, []);
   
   return (
     <div 

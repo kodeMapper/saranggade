@@ -9,7 +9,6 @@ const ThemeToggle = () => {
   useEffect(() => {
     // Default to dark
     document.documentElement.setAttribute('data-theme', 'dark');
-    setTheme('dark');
   }, []);
 
   const toggleTheme = () => {
