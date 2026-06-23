@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # Sarang Gade — The Self-Updating Portfolio
 
@@ -284,4 +284,3 @@ Both the frontend middleware (`src/middleware.js`) and backend routes check for 
 - [GitHub](https://github.com/kodeMapper)
 - [LinkedIn](https://linkedin.com/in/sarang-gade)
 - [Portfolio](https://iamsarang.dev)
-]]>
