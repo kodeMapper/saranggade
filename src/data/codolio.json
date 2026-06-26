@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-26T10:30:00.877Z",
+  "lastUpdated": "2026-06-26T16:30:00.781Z",
   "profile": {
     "name": "Sarang Gade",
     "username": "kodeMapper",
@@ -9,20 +9,20 @@
   },
   "development": {
     "activeDays": 295,
-    "contributions": 1427,
+    "contributions": 1428,
     "totalRepos": 0,
     "githubUsername": "kodeMapper",
     "languages": []
   },
   "problemSolving": {
-    "questionsSolved": 207,
+    "questionsSolved": 206,
     "activeDays": 128,
     "platforms": [
       {
         "name": "leetcode",
         "handle": "Kodemapper",
-        "rating": 1703,
-        "maxRating": 1703,
+        "rating": 1723,
+        "maxRating": 1723,
         "rank": null,
         "stars": null,
         "questions": 122,
@@ -42,18 +42,6 @@
         "types": [
           "CP",
           "DSA"
-        ]
-      },
-      {
-        "name": "codeforces",
-        "handle": "kodeMapper",
-        "rating": 379,
-        "maxRating": 379,
-        "rank": "newbie",
-        "stars": null,
-        "questions": 1,
-        "types": [
-          "CP"
         ]
       },
       {
@@ -98,7 +86,6 @@
       "Java",
       "CP",
       "DSA",
-      "newbie",
       "2Stars"
     ]
   }
