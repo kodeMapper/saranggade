@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-23T16:30:00.902Z",
+  "lastUpdated": "2026-07-23T22:30:00.763Z",
   "profile": {
     "name": "Sarang Gade",
     "username": "kodeMapper",
@@ -15,8 +15,8 @@
     "languages": []
   },
   "problemSolving": {
-    "questionsSolved": 259,
-    "activeDays": 153,
+    "questionsSolved": 264,
+    "activeDays": 154,
     "platforms": [
       {
         "name": "leetcode",
@@ -25,7 +25,7 @@
         "maxRating": 1723,
         "rank": null,
         "stars": null,
-        "questions": 155,
+        "questions": 160,
         "types": [
           "CP",
           "DSA"
