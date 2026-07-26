@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-07-26T04:30:00.761Z",
+  "lastUpdated": "2026-07-26T10:30:00.828Z",
   "profile": {
     "name": "Sarang Gade",
     "username": "kodeMapper",
     "avatarUrl": "https://d2v119jmdj3sxo.cloudfront.net/71712_575359299",
     "bio": "Electronics and Computer Science | Shri. Ramdeobaba College of Engineering and Management, Nagpur",
-    "profileViews": 106
+    "profileViews": 107
   },
   "development": {
     "activeDays": 324,
@@ -15,8 +15,8 @@
     "languages": []
   },
   "problemSolving": {
-    "questionsSolved": 268,
-    "activeDays": 156,
+    "questionsSolved": 269,
+    "activeDays": 157,
     "platforms": [
       {
         "name": "leetcode",
@@ -25,7 +25,7 @@
         "maxRating": 1723,
         "rank": null,
         "stars": null,
-        "questions": 164,
+        "questions": 165,
         "types": [
           "CP",
           "DSA"
