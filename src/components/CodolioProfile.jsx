@@ -66,7 +66,7 @@ const CodolioProfile = () => {
                 <div className={styles.profileSidebar}>
                     <div className={styles.avatarRing}>
                         <img 
-                            src="/images/profile.jpg" 
+                            src="/images/Professional.png" 
                             alt={profile.name}
                             className={styles.avatarImg}
                         />
